@@ -1,0 +1,120 @@
+body {
+    font-family: Century Gothic;
+    font-size: 12px;
+    background-color: #fafafa;
+}
+
+.panel {
+    position: fixed;
+    background-color: transparent;
+    right: -15.625em; /*left or right and the width of your navigation panel*/
+    width: 15.625em; /*should match the above value*/
+}
+
+hr {
+    margin: 10px 10px;
+}
+
+/*1. Top Nav bar */
+
+.navbar-fixed-top {
+    background-color: #0093D1;
+}
+
+.navbar-default .navbar-nav > li > a, #logo > a, a:focus {
+    text-decoration: none;
+    color: #000000;
+}
+
+.navbar-default .navbar-nav > li > a:hover {
+    color: #ffffff;
+}
+
+.nav_selected a:hover {
+    color: #0093D1 !important;
+}
+
+.navicon-line {
+    width: 24px;
+    height: 4px;
+    border-radius: 1px;
+    margin-bottom: 3px;
+    background-color: #aaaaaa;
+}
+
+/*3. site content*/
+#sb-site {
+    position: relative;
+    margin-top: 50px;
+}
+
+.sb-site-content {
+    width: 80%;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn, .btn-sm {
+    margin-top: 10px;
+    padding: 2px 5px 2px;
+    font-size: 100%;
+}
+
+h3 {
+    margin-top: 10px;
+    padding: 10px 10px 10px 10px;
+    border-top: 1px solid #0093D1;
+}
+
+div .left {
+    margin-right: 50px;
+}
+
+/*3.1 site common sections */
+
+.sb-site-content a, .sb-site-content a:hover, .sb-site-content a:visited {
+    color: #0093D1;
+}
+
+/*3.B site common articles */
+.sb-site-content article {
+    margin: 10px auto 25px auto;
+    background-color: #ffffff;
+    box-shadow: 0px 0px 2px #0093D1;
+    padding: 10px;
+    width: 100%;
+}
+
+/* table */
+th {
+    text-transform: uppercase;
+    align: center;
+}
+
+
+.search {
+    padding: 5px 5px 0px;
+    margin-bottom: 5px;
+    width: 90%;
+    border-width: 0px 0px 2px 0px;
+    border-color: #444444;
+}
+
+label {
+    padding: 0px 15px 0px 5px;
+}
+
+label.disabled {
+    color: gray;
+}
+
+.container {
+    margin : auto;
+    width: auto;
+}
+
+.btn-selected {
+    background-color: #0093D1;
+    color: white;
+}

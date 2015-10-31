@@ -1,0 +1,79 @@
+var User = require('./user');
+
+function Sqlite(){
+
+    var fs = require("fs");
+    var file = "./sqlite/local.db";
+    var exists = fs.existsSync(file);
+
+    var sqlite3 = require("sqlite3").verbose();
+    var db = new sqlite3.Database(file);
+
+    db.serialize(function() {
+        if(!exists) {
+            db.run("CREATE TABLE API (id integer primary key, " +
+                "clientId VARCHAR(30)," +
+                "clientSecret VARCHAR(60), " +
+                "ownerId INTEGER," +
+                "vhmID VARCHAR(15), "+
+                "redirectUrl VARCHAR(120)," +
+                "accessToken VARCHAR(60)," +
+                "refreshToken VARCHAR(60)," +
+                "expireAt DATETIME)");
+            db.run("CREATE TABLE Users (id integer primary key, " +
+                "firstName VARCHAR(30)," +
+                "lastName VARCHAR(30)," +
+                "email VARCHAR(60)," +
+                "login VARCHAR(60) NOT NULL UNIQUE, " +
+                "password VARCHAR(120) NOT NULL, "+
+                "userEnable BOOL," +
+                "lastLogin DATETIME," +
+                "userGroup INTEGER)");
+            db.run("CREATE TABLE Groups (id integer primary key," +
+                "groupName VARCHAR(30))");
+            db.run("CREATE TABLE AccessPoints (id integer primary key," +
+                "apID VARCHAR(60)," +
+                "hostname VARCHAR(60), " +
+                "ipv4Address VARCHAR(12))");
+            db.run("CREATE TABLE classroom (id integer primary key," +
+                "name VARCHAR(30), " +
+                "accessPoint INTEGER)");
+            db.run("INSERT INTO Users VALUES (1, '', '', '', 'admin', 'aerohive', 'true', '', '')");
+        }
+    });
+
+
+    function modelUser(row){
+        var user = new User();
+        user.userId=row.id;
+        user.firstName=row.firstName;
+        user.lastName=row.lastName;
+        user.email=row.email;
+        user.login=row.login;
+        user.password=row.password;
+        user.userEnabled=row.userEnable;
+        user.lastLogin=row.lastLogin;
+        user.userGroup=row.userGroup;
+        return user;
+    }
+    function getUserByFirstName(FirstName){
+        var usersList = [];
+        db.each("SELECT * FROM Users WHERE firstName LIKE '%"+FirstName+"%", function(err, row) {
+            usersList.push(modelUser(row));
+        });
+        return usersList;
+    }
+    function getUserById(userId){
+        var user;
+        db.each("SELECT * FROM Users WHERE id="+userId, function(err, row) {
+            user = modelUser(row);
+        });
+        return user;
+    }
+    function saveUser(user){
+
+    }
+
+    }
+
+module.exports = Sqlite;

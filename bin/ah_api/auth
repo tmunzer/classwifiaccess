@@ -1,0 +1,34 @@
+var https = require('https');
+
+function getPermanentToken(auth_code, redirect_url, secret, client_id){
+    var options = {
+        host: 'cloud.aerohive.com',
+        port: 443,
+        path: '/services/acct/thirdparty/accesstoken?authCode='+auth_code+'&redirectUri='+redirect_url,
+        method: 'POST',
+        headers: {
+            'X-AH-API-CLIENT-SECRET' : secret,
+            'X-AH-API-CLIENT-ID':client_id
+        }
+    };
+
+    var req = https.request(options, function(res) {
+        console.log('STATUS: ' + res.statusCode);
+        console.log('HEADERS: ' + JSON.stringify(res.headers));
+        res.setEncoding('utf8');
+        res.on('data', function (chunk) {
+            console.log('BODY: ' + chunk);
+        });
+    });
+
+    req.on('error', function(e) {
+        console.log('problem with request: ' + e.message);
+    });
+
+// write data to request body
+    req.write('data\n');
+    req.write('data\n');
+    req.end();
+}
+
+module.exports.getPermanentToken = getPermanentToken;
