@@ -7,6 +7,9 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var passport = require('passport')
+    , LocalStrategy = require('passport-local').Strategy;
+
 var sqlite = require ('./bin/sqlite/sqlite')();
 
 var routes = require('./routes/index');
@@ -63,6 +66,21 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+      User.findOne({ username: username }, function (err, user) {
+        if (err) { return done(err); }
+        if (!user) {
+          return done(null, false, { message: 'Incorrect username.' });
+        }
+        if (!user.validPassword(password)) {
+          return done(null, false, { message: 'Incorrect password.' });
+        }
+        return done(null, user);
+      });
+    }
+));
 
 
 module.exports = app;
