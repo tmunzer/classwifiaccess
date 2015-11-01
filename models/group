@@ -1,0 +1,45 @@
+var db = require("./../app").db;
+
+function modelGroup(row){
+    var group = new Group();
+    group.groupId = row.id;
+    group.groupName = row.groupName;
+    return group;
+}
+
+function Group(){
+    this.groupId="";
+    this.groupName="";
+}
+
+findOne = function(fields, callback){
+    db.findOne("Groups", fields, function(err, group){
+        if (err){
+            callback(err);
+        }
+        callback(err, group);
+    });
+};
+
+findById = function(rowId, callback){
+    db.findById("Groups", rowId, function(err, group){
+        if (err){
+            return err;
+        }
+        callback(err, group);
+    });
+};
+
+getAll = function(callback){
+    db.getAll("Groups", "groupName", function(err, groups){
+        if (err){
+            return err;
+        }
+        callback(err, groups);
+    })
+};
+
+module.exports = Group;
+module.exports.findOne = findOne;
+module.exports.findById = findById;
+module.exports.getAll = getAll;

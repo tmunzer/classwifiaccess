@@ -1,0 +1,38 @@
+extends layout
+block content
+    div(style="width:50%; margin:auto")
+        h3= user_page.user_account
+        label(for="username")= user_page.username
+        input(type="text" class="form-control" name="username" id="username" value=user.username required="" maxlength=60 minlength=4, disabled="disabled")
+        label(for="password")= user_page.password
+        input(type="password" class="form-control" name="password" id="password" value=user_page.password_placeholder minlength=6 maxlength=60, disabled="disabled")
+        hr
+        label(for="firstName")= user_page.firstName
+        input(type="text" class="form-control" name="firstName" id="firstName" value=user.firstName, disabled="disabled")
+        label(for="lastName")= user_page.lastName
+        input(type="text" class="form-control" name="lastName" id="lastName" value=user.lastName, disabled="disabled")
+        label(for="email")= user_page.email
+        input(type="email" class="form-control" name="email" id="email" value=user.email, disabled="disabled")
+        hr
+        label(for="group")= user_page.group
+        select(class="form-control", disabled="disabled", name="userGroup")
+            each item in groups
+                if user.userGroup == item.id
+                    option(id=item.id, selected="selected")= item.groupName
+                else
+                    option(id=item.id)= item.groupName
+        label(for="language")= user_page.language
+        select(class="form-control" name="language", disabled="disabled")
+            each item in languages
+                if user.language == item.id
+                    option(id=item.id, selected="selected")= item.language
+                else
+                    option(id=item.id)= item.language
+        label(for="enable")= user_page.enable
+        case user.userEnable
+            when "true"
+                input(type="checkbox", name="userEnable", style="margin-left:1em", checked, disabled="disabled")
+            default
+                input(type="checkbox", name="userEnable", style="margin-left:1em", disabled="disabled")
+        hr
+        a(href="/user/edit?id="+user.id, class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= user_page.edit_button

@@ -1,0 +1,55 @@
+extends layout
+
+block content
+    div(style="width:50%; margin:auto")
+        h3= user_page.user_account
+        form(action='', method='POST')
+            label(for="username")= user_page.username
+            input(type="text" class="form-control" name="username" id="username" value=user.username required="" maxlength=60 minlength=4)
+            label(for="password")= user_page.password
+            input(type="password" class="form-control" name="password" id="password" placeholder=user_page.password_placeholder minlength=6 maxlength=60)
+            label(for="password")= user_page.confirm_password
+            input(type="password" class="form-control" id="confirm_password" placeholder="")
+            hr
+            label(for="firstName")= user_page.firstName
+            input(type="text" class="form-control" name="firstName" id="firstName" value=user.firstName)
+            label(for="lastName")= user_page.lastName
+            input(type="text" class="form-control" name="lastName" id="lastName" value=user.lastName)
+            label(for="email")= user_page.email
+            input(type="email" class="form-control" name="email" id="email" value=user.email)
+            hr
+            case user.userGroup
+                when 0
+                    label(for="group")= user_page.group
+                    select(class="form-control", name="userGroup")
+                        each item in groups
+                            if user.userGroup == item.id
+                                option(id=item.id, selected="selected")= item.groupName
+                            else
+                                option(id=item.id)= item.groupName
+                default
+                    label(for="group")= user_page.group
+                    select(class="form-control", disabled="disabled", name="userGroup")
+                        each item in groups
+                            if user.userGroup == item.id
+                                option(id=item.id, selected="selected")= item.groupName
+                            else
+                                option(id=item.id)= item.groupName
+            label(for="language")= user_page.language
+            select(class="form-control" name="language")
+                each item in languages
+                    if user.language == item.id
+                        option(id=item.id, selected="selected")= item.language
+                    else
+                        option(id=item.id)= item.language
+            label(for="enable")= user_page.enable
+            case user.userEnable
+                when "true"
+                    input(type="checkbox", name="userEnable", style="margin-left:1em", checked)
+                default
+                    input(type="checkbox", name="userEnable", style="margin-left:1em")
+            hr
+            button(class='btn btn-primary', type='submit', style="margin:0.2em 1em 2em 1em")= user_page.save_button
+            a(href="/", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= user_page.cancel_button
+
+    script(type='text/javascript' src='./javascripts/user.js')

@@ -1,24 +1,25 @@
-var EventEmitter = require("events").EventEmitter;
+//var EventEmitter = require("events").EventEmitter;
+//var messenger = new EventEmitter();
 
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
+//var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var database = require('./bin/sqlite/sqlite');
 
-var passport = require('passport')
-    , LocalStrategy = require('passport-local').Strategy;
-
-var sqlite = require ('./bin/sqlite/sqlite')();
-
-var routes = require('./routes/index');
-var users = require('./routes/users');
-var conf = require('./routes/conf');
+//===============CREATE APP=================
 
 var app = express();
 
-var messenger = new EventEmitter();
+//===============SQLITE=================
+
+var sqlite = new database.Sqlite();
+module.exports.db = sqlite;
+
+
+//===============CONF APP=================
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -32,9 +33,28 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//===============PASSPORT=================
+var passport = require('passport');
+var expressSession = require('express-session');
+app.use(expressSession({secret: 'mySecretKey'}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Using the flash middleware provided by connect-flash to store messages in session
+// and displaying in templates
+var flash = require('connect-flash');
+app.use(flash());
+
+// Initialize Passport
+var initPassport = require('./passport/init');
+initPassport(passport);
+
+//===============ROUTES=================
+
+var routes = require('./routes/index')(passport);
 app.use('/', routes);
-app.use('/users', users);
-app.use('/conf', conf);
+
+//===============ERRORS=================
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -67,20 +87,6 @@ app.use(function(err, req, res, next) {
   });
 });
 
-passport.use(new LocalStrategy(
-    function(username, password, done) {
-      User.findOne({ username: username }, function (err, user) {
-        if (err) { return done(err); }
-        if (!user) {
-          return done(null, false, { message: 'Incorrect username.' });
-        }
-        if (!user.validPassword(password)) {
-          return done(null, false, { message: 'Incorrect password.' });
-        }
-        return done(null, user);
-      });
-    }
-));
 
 
 module.exports = app;

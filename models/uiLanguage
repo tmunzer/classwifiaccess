@@ -1,0 +1,46 @@
+var db = require("./../app").db;
+
+function modelUILanguage(row){
+    var uiLanguage = new UILanguages();
+    uiLanguage.languageId = row.id;
+    uiLanguage.language = row.language;
+    return uiLanguage;
+}
+
+function UILanguages(){
+    this.languageId="";
+    this.language="";
+}
+
+findOne = function(fields, callback){
+    db.findOne("UILanguages", fields, function(err, uiLanguage){
+
+        if (err){
+            callback(err);
+        }
+        callback(err, uiLanguage);
+    });
+};
+
+findById = function(rowId, callback){
+    db.findById("UILanguages", rowId, function(err, uiLanguage){
+        if (err){
+            return err;
+        }
+        callback(err, uiLanguage);
+    });
+};
+
+getAll = function(callback){
+    db.getAll("UILanguages", "language", function(err, uiLanguages){
+        if (err){
+            return err;
+        }
+        callback(err, uiLanguages);
+    })
+};
+
+module.exports = UILanguages;
+module.exports.findOne = findOne;
+module.exports.findById = findById;
+module.exports.getAll = getAll;

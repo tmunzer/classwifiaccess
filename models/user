@@ -1,0 +1,73 @@
+var db = require("./../app").db;
+
+function UserToDB(row){
+    this.user = {};
+    this.user.firstName=row.firstName;
+    this.user.lastName=row.lastName;
+    this.user.email=row.email;
+    this.user.username=row.username;
+    this.user.password=row.password;
+    if (row.userEnable == undefined){
+        this.user.userEnable=false;
+    } else {
+        this.user.userEnable=true;
+    }
+    this.user.userGroup=row.userGroup;
+    this.user.language=row.language;
+}
+
+UserToDB.prototype.updateDB = function(userId, callback){
+    db.updateDB("Users", userId, this.user, function(err){
+        if (err){
+            callback(err);
+        }
+        console.log("User UpdateDB");
+        callback(err);
+    });
+};
+
+function User(){
+    this.userId=null;
+    this.firstName="";
+    this.lastName="";
+    this.email="";
+    this.username="";
+    this.password="";
+    this.userEnabled=false;
+    this.lastLogin="";
+    this.userGroup="";
+    this.language="";
+}
+
+findOne = function(fields, callback){
+    db.findOne("Users", fields, function(err, user){
+        if (err){
+            callback(err);
+        }
+        callback(err, user);
+    });
+};
+
+findById = function(rowId, callback){
+    db.findById("Users", rowId, function(err, user){
+        if (err){
+            return err;
+        }
+        callback(err, user);
+    });
+};
+
+getAll = function(callback){
+    db.getAll("Users", "username", function(err, users){
+        if (err){
+            return err;
+        }
+        callback(err, users);
+    })
+};
+
+module.exports = User;
+module.exports.findOne = findOne;
+module.exports.findById = findById;
+module.exports.getAll = getAll;
+module.exports.UserToDB = UserToDB;

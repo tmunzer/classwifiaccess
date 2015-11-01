@@ -1,0 +1,49 @@
+// Login page
+module.exports.login_page = {
+    login_message:"Connexion à SchoolControl",
+    username:"Nom d\'utilisateur",
+    password:"Mot de passe",
+    login_button:"Connexion",
+    error_login_password: "Mauvais nom d'utilisateur ou mot de passe."
+};
+
+module.exports.user_button = {
+    logout:"Déconnexion",
+    account: "Compte",
+    change_password: "Changer le mot passe"
+};
+
+// Config page
+//API
+module.exports.config_page = {
+    api_configuration:"Configuration de l'API",
+    register:"Enregistrer l'API",
+//Users
+    users:"Utilisateur",
+    new_user:"Nouvel utilisateur",
+    name:"Nom",
+    type:"Groupe",
+    enable:"Activé",
+    last_login:"Dernière connexion"
+};
+//AP
+
+module.exports.user_page = {
+    user_account:"Compte Utilisateur",
+    firstName:"Prénom",
+    lastName:"Nom",
+    username:"Nom Utilisateur",
+    email:"Adresse E-mail",
+    enable:"Utilisateur Activé",
+    lastLogin:"Dernière Connexion",
+    group:"Groupe",
+    language:"Langue",
+    password:"Mot De Passe",
+    confirm_password:"Confirmer le Mot de Passe",
+    save_button:"Enregistrer",
+    cancel_button:"Annuler",
+    password_placeholder:"Non modifié",
+    edit_button:"Modifier"
+};
+
+

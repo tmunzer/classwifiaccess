@@ -1,15 +1,14 @@
-var User = require('./user');
+var bCrypt = require('bcrypt');
+var file = "./sqlite/local.db";
+var sqlite3 = require("sqlite3").verbose();
+var fs = require("fs");
 
-function Sqlite(){
 
-    var fs = require("fs");
-    var file = "./sqlite/local.db";
+var Sqlite = function(){
     var exists = fs.existsSync(file);
-
-    var sqlite3 = require("sqlite3").verbose();
     var db = new sqlite3.Database(file);
-
-    db.serialize(function() {
+    this.db = db;
+    this.db.serialize(function() {
         if(!exists) {
             db.run("CREATE TABLE API (id integer primary key, " +
                 "clientId VARCHAR(30)," +
@@ -21,59 +20,112 @@ function Sqlite(){
                 "refreshToken VARCHAR(60)," +
                 "expireAt DATETIME)");
             db.run("CREATE TABLE Users (id integer primary key, " +
-                "firstName VARCHAR(30)," +
-                "lastName VARCHAR(30)," +
-                "email VARCHAR(60)," +
-                "login VARCHAR(60) NOT NULL UNIQUE, " +
-                "password VARCHAR(120) NOT NULL, "+
-                "userEnable BOOL," +
-                "lastLogin DATETIME," +
-                "userGroup INTEGER)");
+                "firstName VARCHAR(30), " +
+                "lastName VARCHAR(30), " +
+                "email VARCHAR(60), " +
+                "username VARCHAR(60) NOT NULL UNIQUE, " +
+                "password VARCHAR(120) NOT NULL, " +
+                "userEnable BOOL, " +
+                "lastLogin DATETIME, " +
+                "language INTEGER, " +
+                "userGroup INTEGER NOT NULL)");
             db.run("CREATE TABLE Groups (id integer primary key," +
                 "groupName VARCHAR(30))");
             db.run("CREATE TABLE AccessPoints (id integer primary key," +
                 "apID VARCHAR(60)," +
                 "hostname VARCHAR(60), " +
                 "ipv4Address VARCHAR(12))");
-            db.run("CREATE TABLE classroom (id integer primary key," +
+            db.run("CREATE TABLE Classrooms (id integer primary key," +
                 "name VARCHAR(30), " +
                 "accessPoint INTEGER)");
-            db.run("INSERT INTO Users VALUES (1, '', '', '', 'admin', 'aerohive', 'true', '', '')");
+            db.run("CREATE TABLE UILanguages (id integer primary key," +
+                "language VARCHAR(20))");
+            db.run("INSERT INTO Users VALUES (1, '', '', '', 'admin', '"+createHash("aerohive")+"', 'true', '', '', 0)");
+            db.run("INSERT INTO Groups VALUES (1, 'Administrator')");
+            db.run("INSERT INTO Groups VALUES (2, 'Teacher')");
+            db.run("INSERT INTO UILanguages VALUES (1, 'English')");
+            db.run("INSERT INTO UILanguages VALUES (2, 'Francais')");
         }
     });
+};
 
+Sqlite.prototype.updateDB = function(table, rowId, rows, callback){
+    var updateString = "";
+    var fieldNumber = 0;
+    for (var field in rows) {
+        if (field == 'password') {
+            if (rows[field] != "") {
+                console.log(rows[field]);
+                if (fieldNumber != 0) {
+                    updateString += ",  ";
+                }
+                updateString += field + "='" + createHash(rows[field]) + "'";
+                fieldNumber++;
+            }
+        } else {
+            console.log(rows[field]);
+            if (fieldNumber != 0) {
+                updateString += ",  ";
+            }
+            updateString += field + "='" + rows[field] + "'";
+            fieldNumber++;
+        }
+    }
+    updateString = 'UPDATE ' + table + ' SET ' + updateString + ' WHERE id=' + rowId + ";" ;
+    console.log(updateString);
+    this.db.run(updateString, function(err){
+        if (err){
+            return err;
+        }
+        callback(err);
+    })
+};
 
-    function modelUser(row){
-        var user = new User();
-        user.userId=row.id;
-        user.firstName=row.firstName;
-        user.lastName=row.lastName;
-        user.email=row.email;
-        user.login=row.login;
-        user.password=row.password;
-        user.userEnabled=row.userEnable;
-        user.lastLogin=row.lastLogin;
-        user.userGroup=row.userGroup;
-        return user;
+Sqlite.prototype.findOne = function(table, fields, callback){
+    var searchString = "";
+    var fieldNumber = 0;
+    for (var fieldName in fields){
+        if (fieldNumber != 0){
+            searchString += " AND "
+        }
+        searchString += fieldName + "='" + fields[fieldName] +"'";
+        fieldNumber ++;
     }
-    function getUserByFirstName(FirstName){
-        var usersList = [];
-        db.each("SELECT * FROM Users WHERE firstName LIKE '%"+FirstName+"%", function(err, row) {
-            usersList.push(modelUser(row));
-        });
-        return usersList;
-    }
-    function getUserById(userId){
-        var user;
-        db.each("SELECT * FROM Users WHERE id="+userId, function(err, row) {
-            user = modelUser(row);
-        });
-        return user;
-    }
-    function saveUser(user){
+    searchString = "(" + searchString + ")";
+    this.db.get("SELECT * FROM " + table + " WHERE "+searchString, function(err, user){
+        if (err){
+            callback(err);
+        }
+        callback(err, user);
+    });
+};
 
-    }
+Sqlite.prototype.findById = function(table, rowId, callback){
+    this.db.get("SELECT * FROM " + table + " WHERE id = ?", rowId, function(err, user){
+        if (err){
+            throw err;
+        }
+        callback(err, user);
+    });
+};
 
-    }
+Sqlite.prototype.getAll = function(table, orderBy, callback){
+    this.db.all("SELECT * FROM " + table + " ORDER BY " + orderBy, function(err, users){
+        if (err){
+            throw err;
+        }
+        callback(err, users);
+    })
+};
 
-module.exports = Sqlite;
+isValidPassword = function(user, password){
+    return bCrypt.compareSync(password, user.password);
+};
+
+createHash = function(password){
+    return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
+};
+
+module.exports.Sqlite = Sqlite;
+module.exports.isValidPassword = isValidPassword;
+module.exports.createHash = createHash;

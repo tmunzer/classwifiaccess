@@ -8,31 +8,29 @@ html
     script(type='text/javascript' src='./javascripts/FaviconAwesome.js')
     link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
     link(rel='stylesheet', href='/stylesheets/font-awesome.min.css')
-    link(rel='stylesheet', href='/stylesheets/node_app.css')
-  body
-    block nav
-    nav(class="navbar navbar-default navbar-fixed-top" role="navigation")
-      div(class="container" style="width:80%")
-        //logo
-        div(id="logo" class="nav navbar-nav navbar-left")
-          i(class="fa fa-3x fa-connectdevelop")
-          a(href="/") Sentinelle
-          //Menu
-        ul(class="nav navbar-nav navbar-right")
-          li
-            a(href="conf")
-              i(class="fa fa-gear fa-lg")
-          li
-            a(href="#" data-toggle="dropdown")
-              i(class="fa fa-user fa-lg")
-            ul(class="dropdown-menu")
-              li
-                a(href="#") Change Password
-              li(role="separator" class="divider")
-              li
-                a(href="#") Logout
-
-
-    div(id="sb-site")
-      block content
+    body(style="width:80%; margin:auto")
+        block nav
+            .container-narrow
+                .masthead
+                    ul(class="nav nav-pills pull-right")
+                        li
+                            a(href="/")
+                                i(class="fa fa-wifi fa-lg")
+                        li
+                            a(href="conf")
+                                i(class="fa fa-gear fa-lg")
+                        li
+                            a(href="#" data-toggle="dropdown")
+                              i(class="fa fa-user fa-lg")
+                            ul(class="dropdown-menu")
+                              li
+                                a(href="user?id="+user.id)= user_button.account
+                              li(role="separator" class="divider")
+                              li
+                                a(href="/logout")= user_button.logout
+                          li
+                            div(class="nav navbar-nav", style="line-height:50px; vertical-align:middle")= user.username
+                    h3(class="muted") SchoolControl
+                    hr(style="width:100%")
+        block content
 

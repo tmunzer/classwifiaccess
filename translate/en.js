@@ -1,19 +1,49 @@
-// User button
-var logout="Logout";
-var change_password="Change Password";
+// Login page
+module.exports.login_page = {
+    login_message:"Sign in to SchoolControl",
+    username:"Username",
+    password:"Password",
+    login_button:"Sign in",
+    error_login_password: "Invalid username or password."
+};
 
+module.exports. user_button = {
+    logout:"Logout",
+    account: "account",
+    change_password: "Change Password"
+};
 
 // Config page
 //API
-var api_configuration="API Configuration";
-var register="Register API";
-
+module.exports. config_page = {
+    api_configuration:"API Configuration",
+    register:"Register API",
+//Users
+    users:"Users",
+    new_user:"New User",
+    name:"Name",
+    type:"Type",
+    enable:"Enable",
+    last_login:"Last login"
+};
 //AP
 
-//Users
-var users="Users";
-var new_user="New User";
-var name="Name";
-var type="Type";
-var enable="Enable";
-var last_login="Last login";
+module.exports.user_page = {
+    user_account:"User Account",
+    firstName:"First Name",
+    lastName:"Last Name",
+    username:"Username",
+    email:"E-mail Address",
+    enable:"User enabled",
+    lastLogin:"Last connection",
+    group:"Group",
+    language:"Language",
+    password:"Password",
+    confirm_password:"Confirm Password",
+    save_button:"Save",
+    cancel_button:"Cancel",
+    password_placeholder:"Not changed",
+    edit_button:"Edit"
+};
+
+
