@@ -39,8 +39,8 @@ function User(){
     this.language="";
 }
 
-findOne = function(fields, callback){
-    db.findOne("Users", fields, function(err, user){
+findOne = function(fields, options, callback){
+    db.findOne("Users", fields, options, function(err, user){
         if (err){
             callback(err);
         }
@@ -48,8 +48,8 @@ findOne = function(fields, callback){
     });
 };
 
-findById = function(rowId, callback){
-    db.findById("Users", rowId, function(err, user){
+findById = function(rowId, options, callback){
+    db.findById("Users", rowId, options, function(err, user){
         if (err){
             return err;
         }
@@ -57,8 +57,9 @@ findById = function(rowId, callback){
     });
 };
 
-getAll = function(callback){
-    db.getAll("Users", "username", function(err, users){
+getAll = function(options, callback){
+    var options = options || {"orderBy":"username"};
+    db.getAll("Users", options, function(err, users){
         if (err){
             return err;
         }

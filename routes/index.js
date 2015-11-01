@@ -57,10 +57,10 @@ module.exports = function(passport){
     var translationFile = translate(req);
     var userId = req.query.id;
     if ((req.user.id == userId) || (req.user.group != 1)) {
-      User.findById(req.query.id, function(err, user) {
-        Group.getAll(function(err, groups){
+      User.findById(req.query.id, null, function(err, user) {
+        Group.getAll(null, function(err, groups){
           console.log(groups);
-          UILanguage.getAll(function(err, languages) {
+          UILanguage.getAll(null, function(err, languages) {
             res.render('userDisplay', { user: req.user , user: user, groups: groups, languages: languages,
               user_button: translationFile.user_button, user_page: translationFile.user_page});
           });
@@ -78,10 +78,10 @@ module.exports = function(passport){
     // check if requested user to display is the same as the current user
     // or if current user is an admin
     if ((req.user.id == userId) || (req.user.group != 1)) {
-      User.findById(req.query.id, function(err, user) {
-        Group.getAll(function(err, groups){
+      User.findById(req.query.id, null, function(err, user) {
+        Group.getAll(null, function(err, groups){
           console.log(groups);
-          UILanguage.getAll(function(err, languages) {
+          UILanguage.getAll(null, function(err, languages) {
             res.render('userEdit', { user: req.user , user: user, groups: groups, languages: languages,
               user_button: translationFile.user_button, user_page: translationFile.user_page});
           });
@@ -100,7 +100,7 @@ module.exports = function(passport){
       if (req.user.is == "new"){
         console.log('new');
       } else {
-        User.findById(req.query.id, function(err, user) {
+        User.findById(req.query.id, null, function(err, user) {
           var userToDB = new User.UserToDB(req.body);
           userToDB.updateDB(userId, function(err){
             res.redirect('/user?id='+userId);

@@ -12,8 +12,8 @@ function Group(){
     this.groupName="";
 }
 
-findOne = function(fields, callback){
-    db.findOne("Groups", fields, function(err, group){
+findOne = function(fields, options, callback){
+    db.findOne("Groups", fields, options, function(err, group){
         if (err){
             callback(err);
         }
@@ -21,8 +21,8 @@ findOne = function(fields, callback){
     });
 };
 
-findById = function(rowId, callback){
-    db.findById("Groups", rowId, function(err, group){
+findById = function(rowId, options, callback){
+    db.findById("Groups", rowId, options, function(err, group){
         if (err){
             return err;
         }
@@ -30,8 +30,9 @@ findById = function(rowId, callback){
     });
 };
 
-getAll = function(callback){
-    db.getAll("Groups", "groupName", function(err, groups){
+getAll = function(options, callback){
+    var options = options || {"orderBy":"groupName"};
+    db.getAll("Groups", options, function(err, groups){
         if (err){
             return err;
         }

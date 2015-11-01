@@ -39,12 +39,13 @@ var Sqlite = function(){
                 "name VARCHAR(30), " +
                 "accessPoint INTEGER)");
             db.run("CREATE TABLE UILanguages (id integer primary key," +
-                "language VARCHAR(20))");
+                "language VARCHAR(20)," +
+                "code VARCHAR(6))");
             db.run("INSERT INTO Users VALUES (1, '', '', '', 'admin', '"+createHash("aerohive")+"', 'true', '', '', 0)");
             db.run("INSERT INTO Groups VALUES (1, 'Administrator')");
             db.run("INSERT INTO Groups VALUES (2, 'Teacher')");
-            db.run("INSERT INTO UILanguages VALUES (1, 'English')");
-            db.run("INSERT INTO UILanguages VALUES (2, 'Francais')");
+            db.run("INSERT INTO UILanguages VALUES (1, 'English', 'en')");
+            db.run("INSERT INTO UILanguages VALUES (2, 'Francais', 'fr')");
         }
     });
 };
@@ -81,7 +82,41 @@ Sqlite.prototype.updateDB = function(table, rowId, rows, callback){
     })
 };
 
-Sqlite.prototype.findOne = function(table, fields, callback){
+Sqlite.prototype.processOptions = function(options){
+    var options = options || {};
+    var columnsString = "";
+    var orderByString = "";
+    var optionNumber = 0;
+    if (options.hasOwnProperty("columns")){
+        optionNumber = 0;
+        for (var column in options['columns']){
+            if (optionNumber != 0){
+                columnsString += ", ";
+            }
+            columnsString += options['columns'][column];
+            optionNumber++;
+        }
+    } else {
+        columnsString = "*";
+    }
+    if (options.hasOwnProperty("orderBy")){
+        orderByString = " ORDER BY " + options['orderBy'];
+    } else {
+        orderByString = "";
+    }
+    return { "columns": columnsString, "orderBy": orderByString};
+};
+
+
+Sqlite.prototype.findOne = function(table, fields, options, callback){
+    /**
+     Find the first row matching the fields
+     Table: Table to request
+     Fields: object {fieldName: fieldValue}
+     Options: object {option: []} with the following options (optionals)
+        columns: columns to retrieve
+        orderBy: how to sort the result
+     */
     var searchString = "";
     var fieldNumber = 0;
     for (var fieldName in fields){
@@ -92,7 +127,8 @@ Sqlite.prototype.findOne = function(table, fields, callback){
         fieldNumber ++;
     }
     searchString = "(" + searchString + ")";
-    this.db.get("SELECT * FROM " + table + " WHERE "+searchString, function(err, user){
+    var rOptions = this.processOptions(options);
+    this.db.get("SELECT " + rOptions.columns + " FROM " + table + " WHERE "+ searchString, function(err, user){
         if (err){
             callback(err);
         }
@@ -100,8 +136,16 @@ Sqlite.prototype.findOne = function(table, fields, callback){
     });
 };
 
-Sqlite.prototype.findById = function(table, rowId, callback){
-    this.db.get("SELECT * FROM " + table + " WHERE id = ?", rowId, function(err, user){
+Sqlite.prototype.findById = function(table, rowId, options, callback){
+    /**
+     Get one row by its ID
+     Table: Table to request
+     Options: object {option: []} with the following options (optionals)
+         columns: columns to retrieve
+         orderBy: how to sort the result
+     */
+    var rOptions = this.processOptions(options);
+    this.db.get("SELECT " + rOptions.columns + " FROM " + table + " WHERE id = ?", rowId, function(err, user){
         if (err){
             throw err;
         }
@@ -109,14 +153,23 @@ Sqlite.prototype.findById = function(table, rowId, callback){
     });
 };
 
-Sqlite.prototype.getAll = function(table, orderBy, callback){
-    this.db.all("SELECT * FROM " + table + " ORDER BY " + orderBy, function(err, users){
+Sqlite.prototype.getAll = function(table, options, callback){
+/**
+    Get all the row in the Database
+    Table: Table to request
+    Options: object {option: []} with the following options (optionals)
+        columns: columns to retrieve
+        orderBy: how to sort the result
+ */
+    var rOptions = this.processOptions(options);
+    this.db.all("SELECT " + rOptions.columns + " FROM " + table + rOptions.orderBy, function(err, users){
         if (err){
             throw err;
         }
         callback(err, users);
     })
 };
+
 
 isValidPassword = function(user, password){
     return bCrypt.compareSync(password, user.password);
