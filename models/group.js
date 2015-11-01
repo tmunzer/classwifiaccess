@@ -1,10 +1,10 @@
 var db = require("./../app").db;
 
-function modelGroup(row){
-    var group = new Group();
-    group.groupId = row.id;
-    group.groupName = row.groupName;
-    return group;
+function GroupToDB(row){
+    this.group = new Group();
+    this.group.groupId = row.id;
+    this.group.groupName = row.groupName;
+    return this.group;
 }
 
 function Group(){

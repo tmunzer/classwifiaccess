@@ -9,28 +9,38 @@ html
     link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
     link(rel='stylesheet', href='/stylesheets/font-awesome.min.css')
     body(style="width:80%; margin:auto")
-        block nav
-            .container-narrow
-                .masthead
-                    ul(class="nav nav-pills pull-right")
-                        li
-                            a(href="/")
-                                i(class="fa fa-wifi fa-lg")
-                        li
-                            a(href="conf")
-                                i(class="fa fa-gear fa-lg")
-                        li
-                            a(href="#" data-toggle="dropdown")
-                              i(class="fa fa-user fa-lg")
-                            ul(class="dropdown-menu")
+        div.container(style="margin-bottom:30px")
+            block nav
+                .container-narrow
+                    .masthead
+                        ul(class="nav nav-pills pull-right")
+                            li
+                                a(href="/")
+                                    i(class="fa fa-wifi fa-lg")
+                            if user.userGroup == 1
+                                li
+                                    a(href="/conf")
+                                        i(class="fa fa-gear fa-lg")
+                                li
+                                    a(href="/dev")
+                                        i(class="fa fa-terminal fa-lg")
+                            li
+                                a(href="#" data-toggle="dropdown")
+                                  i(class="fa fa-user fa-lg")
+                                ul(class="dropdown-menu")
+                                  li
+                                    a(href="user?id="+user.id)= user_button.account
+                                  li(role="separator" class="divider")
+                                  li
+                                    a(href="/logout")= user_button.logout
                               li
-                                a(href="user?id="+user.id)= user_button.account
-                              li(role="separator" class="divider")
-                              li
-                                a(href="/logout")= user_button.logout
-                          li
-                            div(class="nav navbar-nav", style="line-height:50px; vertical-align:middle")= user.username
-                    h3(class="muted") SchoolControl
-                    hr(style="width:100%")
-        block content
+                                div(class="nav navbar-nav", style="line-height:50px; vertical-align:middle")= user.username
+                        h3(class="muted") SchoolControl
+                        hr(style="width:100%")
+            block content
 
+        block footer
+            #footer.footer(style="bottom:0px; position:fixed; background-color:white; border-top:0.1em solid #eee")
+                div.container
+                    p Copyright
+                        i(class="fa fa-copyright")  Thomas Munzer

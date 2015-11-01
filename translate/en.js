@@ -17,7 +17,8 @@ module.exports. user_button = {
 //API
 module.exports. config_page = {
     api_configuration:"API Configuration",
-    register:"Register API",
+    register:"Register APP",
+    classroom_mgmt:"Classrooms Management",
 //Users
     users:"Users",
     new_user:"New User",
@@ -43,7 +44,10 @@ module.exports.user_page = {
     save_button:"Save",
     cancel_button:"Cancel",
     password_placeholder:"Not changed",
-    edit_button:"Edit"
+    edit_button:"Edit",
+    back_button:"Back",
+    new_user_button:"New User",
+    new_classroom_button:"New Classromm"
 };
 
 

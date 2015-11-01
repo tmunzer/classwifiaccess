@@ -1,10 +1,10 @@
 var db = require("./../app").db;
 
-function modelUILanguage(row){
-    var uiLanguage = new UILanguages();
-    uiLanguage.languageId = row.id;
-    uiLanguage.language = row.language;
-    return uiLanguage;
+function UiLanguageToDB(row){
+    this.uiLanguage = {};
+    this.uiLanguage.languageId = row.id;
+    this.uiLanguage.language = row.language;
+    return this.uiLanguage;
 }
 
 function UILanguages(){

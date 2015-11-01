@@ -1,0 +1,89 @@
+var db = require("./../app").db;
+var apiAuth = require("./../bin/ah_api/auth");
+var apiConf = require("./../bin/ah_api/config");
+
+function ApiToDB(row){
+    this.api = {};
+    this.api.clientId= apiConf.clientId;
+    this.api.ownerId= row.ownerId;
+    this.api.vhmId= row.vhmId;
+    this.api.vpcUrl = row.vpcUrl;
+    this.api.accessToken= row.accessToken;
+    this.api.refreshToken= row.refreshToken;
+    this.api.expireAt= row.expireAt;
+}
+
+ApiToDB.prototype.insertDB = function(callback){
+    console.log(this.api);
+    db.insertDB("API", this.api, function(err){
+        if (err){
+            callback(err);
+        }
+        callback(err);
+    });
+};
+
+function Api(){
+    this.clientId="";
+    this.ownerId="";
+    this.vhmId="";
+    this.vpcUrl="";
+    this.accessToken="";
+    this.refreshToken="";
+    this.expireAt="";
+}
+
+Api.prototype.devApi = function(){
+
+}
+
+Api.prototype.registerApp = function(authCode, callback){
+    apiAuth.getPermanentToken(authCode, apiConf.redirectUrl, apiConf.secret, apiConf.clientId, function(res){
+        callback(res);
+    });
+};
+
+getClientId = function(){
+    return apiConf.clientId;
+};
+
+getRedirectUrl = function(){
+    return apiConf.redirectUrl;
+};
+
+findOne = function(fields, options, callback){
+    db.findOne("API", fields, options, function(err, uiLanguage){
+
+        if (err){
+            callback(err);
+        }
+        callback(err, uiLanguage);
+    });
+};
+
+findById = function(rowId, options, callback){
+    db.findById("API", rowId, options, function(err, uiLanguage){
+        if (err){
+            return err;
+        }
+        callback(err, uiLanguage);
+    });
+};
+
+getAll = function(options, callback){
+    var options = options || {"orderBy":"expireAt"};
+    db.getAll("API", options, function(err, uiLanguages){
+        if (err){
+            return err;
+        }
+        callback(err, uiLanguages);
+    })
+};
+
+module.exports = Api;
+module.exports.findOne = findOne;
+module.exports.findById = findById;
+module.exports.getAll = getAll;
+module.exports.ApiToDB = ApiToDB;
+module.exports.getClientId = getClientId;
+module.exports.getRedirectUrl = getRedirectUrl;

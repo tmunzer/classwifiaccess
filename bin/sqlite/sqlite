@@ -12,10 +12,9 @@ var Sqlite = function(){
         if(!exists) {
             db.run("CREATE TABLE API (id integer primary key, " +
                 "clientId VARCHAR(30)," +
-                "clientSecret VARCHAR(60), " +
                 "ownerId INTEGER," +
-                "vhmID VARCHAR(15), "+
-                "redirectUrl VARCHAR(120)," +
+                "vhmId VARCHAR(15), " +
+                "vpcUrl VARCHAR(60), "+
                 "accessToken VARCHAR(60)," +
                 "refreshToken VARCHAR(60)," +
                 "expireAt DATETIME)");
@@ -41,7 +40,7 @@ var Sqlite = function(){
             db.run("CREATE TABLE UILanguages (id integer primary key," +
                 "language VARCHAR(20)," +
                 "code VARCHAR(6))");
-            db.run("INSERT INTO Users VALUES (1, '', '', '', 'admin', '"+createHash("aerohive")+"', 'true', '', '', 0)");
+            db.run("INSERT INTO Users VALUES (1, '', '', '', 'admin', '"+createHash("aerohive")+"', 'true', '', '1', 1)");
             db.run("INSERT INTO Groups VALUES (1, 'Administrator')");
             db.run("INSERT INTO Groups VALUES (2, 'Teacher')");
             db.run("INSERT INTO UILanguages VALUES (1, 'English', 'en')");
@@ -56,7 +55,6 @@ Sqlite.prototype.updateDB = function(table, rowId, rows, callback){
     for (var field in rows) {
         if (field == 'password') {
             if (rows[field] != "") {
-                console.log(rows[field]);
                 if (fieldNumber != 0) {
                     updateString += ",  ";
                 }
@@ -64,7 +62,6 @@ Sqlite.prototype.updateDB = function(table, rowId, rows, callback){
                 fieldNumber++;
             }
         } else {
-            console.log(rows[field]);
             if (fieldNumber != 0) {
                 updateString += ",  ";
             }
@@ -82,8 +79,39 @@ Sqlite.prototype.updateDB = function(table, rowId, rows, callback){
     })
 };
 
-Sqlite.prototype.processOptions = function(options){
-    var options = options || {};
+Sqlite.prototype.insertDB = function(table, rows, callback){
+    var insertFields = "";
+    var insertValues = "";
+    var fieldNumber = 0;
+    for (var field in rows) {
+        if (fieldNumber != 0) {
+            insertFields += ",  ";
+            insertValues += ",  ";
+        }
+        if (field == 'password') {
+            if (rows[field] != "") {
+                insertFields += field;
+                insertValues += "'" + createHash(rows[field]) + "'";
+                fieldNumber++;
+            }
+        } else {
+            insertFields += field;
+            insertValues += "'" + rows[field] + "'";
+            fieldNumber++;
+        }
+    }
+    var updateString = 'INSERT INTO ' + table + ' (' + insertFields + ') VALUES (' + insertValues + ");" ;
+    console.log(updateString);
+    this.db.run(updateString, function(err){
+        if (err){
+            return err;
+        }
+        callback(err);
+    });
+};
+
+Sqlite.prototype.processOptions = function(rOptions){
+    var options = rOptions || {};
     var columnsString = "";
     var orderByString = "";
     var optionNumber = 0;
@@ -128,11 +156,11 @@ Sqlite.prototype.findOne = function(table, fields, options, callback){
     }
     searchString = "(" + searchString + ")";
     var rOptions = this.processOptions(options);
-    this.db.get("SELECT " + rOptions.columns + " FROM " + table + " WHERE "+ searchString, function(err, user){
+    this.db.get("SELECT " + rOptions.columns + " FROM " + table + " WHERE "+ searchString, function(err, ret){
         if (err){
             callback(err);
         }
-        callback(err, user);
+        callback(err, ret);
     });
 };
 
@@ -145,11 +173,11 @@ Sqlite.prototype.findById = function(table, rowId, options, callback){
          orderBy: how to sort the result
      */
     var rOptions = this.processOptions(options);
-    this.db.get("SELECT " + rOptions.columns + " FROM " + table + " WHERE id = ?", rowId, function(err, user){
+    this.db.get("SELECT " + rOptions.columns + " FROM " + table + " WHERE id = ?", rowId, function(err, ret){
         if (err){
             throw err;
         }
-        callback(err, user);
+        callback(err, ret);
     });
 };
 
@@ -162,11 +190,11 @@ Sqlite.prototype.getAll = function(table, options, callback){
         orderBy: how to sort the result
  */
     var rOptions = this.processOptions(options);
-    this.db.all("SELECT " + rOptions.columns + " FROM " + table + rOptions.orderBy, function(err, users){
+    this.db.all("SELECT " + rOptions.columns + " FROM " + table + rOptions.orderBy, function(err, ret){
         if (err){
             throw err;
         }
-        callback(err, users);
+        callback(err, ret);
     })
 };
 
