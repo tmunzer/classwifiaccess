@@ -44,12 +44,15 @@ block content
                         option(value=item.id)= item.language
             label(for="enable")= user_page.enable
             case userToEdit.userEnable
-                when "true"
+                when true
                     input(type="checkbox", name="userEnable", style="margin-left:1em", checked)
                 default
                     input(type="checkbox", name="userEnable", style="margin-left:1em")
             hr
+            if userToEdit.id
+                a(href="/user?id="+userToEdit.id, class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= user_page.cancel_button
+            else
+                a(href="/conf", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= user_page.cancel_button
             button(class='btn btn-primary', type='submit', style="margin:0.2em 1em 2em 1em")= user_page.save_button
-            a(href=fromUrl, class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= user_page.cancel_button
 
     script(type='text/javascript' src='./javascripts/userToEdit.js')

@@ -42,7 +42,7 @@ function User(){
     this.email="";
     this.username="";
     this.password="";
-    this.userEnabled=true;
+    this.userEnable=true;
     this.lastLogin="";
     this.userGroup="";
     this.language="";

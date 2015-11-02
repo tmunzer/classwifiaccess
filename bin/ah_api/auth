@@ -17,12 +17,12 @@ function getPermanentToken(authCode, redirectUrl, secret, clientId, callback){
         console.log('HEADERS: ' + JSON.stringify(res.headers));
         res.setEncoding('utf8');
         res.on('data', function (data) {
-            callback(data);
+            callback(null, data);
         });
     });
 
-    req.on('error', function(e) {
-        console.log('problem with request: ' + e.message);
+    req.on('error', function(err) {
+        callback(err, null);
     });
 
 // write data to request body
