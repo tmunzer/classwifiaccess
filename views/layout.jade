@@ -1,46 +1,55 @@
 doctype html
 html
-  head
-    title= title
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    script(type='text/javascript' src='./javascripts/jquery-2.1.1.min.js')
-    script(type='text/javascript' src='./javascripts/bootstrap.min.js')
-    script(type='text/javascript' src='./javascripts/FaviconAwesome.js')
-    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
-    link(rel='stylesheet', href='/stylesheets/font-awesome.min.css')
-    body(style="width:80%; margin:auto")
-        div.container(style="margin-bottom:30px")
-            block nav
-                .container-narrow
-                    .masthead
-                        ul(class="nav nav-pills pull-right")
-                            li
-                                a(href="/")
-                                    i(class="fa fa-wifi fa-lg")
-                            if user.userGroup == 1
-                                li
-                                    a(href="/conf")
-                                        i(class="fa fa-gear fa-lg")
-                                li
-                                    a(href="/dev")
-                                        i(class="fa fa-terminal fa-lg")
-                            li
-                                a(href="#" data-toggle="dropdown")
-                                  i(class="fa fa-user fa-lg")
-                                ul(class="dropdown-menu")
-                                  li
-                                    a(href="user?id="+user.id)= user_button.account
-                                  li(role="separator" class="divider")
-                                  li
-                                    a(href="/logout")= user_button.logout
-                              li
-                                div(class="nav navbar-nav", style="line-height:50px; vertical-align:middle")= user.username
-                        h3(class="muted") SchoolControl
-                        hr(style="width:100%")
-            block content
+    head
+        title= title
+        meta(name="viewport" content="width=device-width, initial-scale=1")
+        script(language="JavaScript" type="text/javascript" src='/javascripts/jquery-2.1.1.min.js')
+        script(language="JavaScript" type="text/javascript" src='/javascripts/bootstrap.min.js')
+        script(language="JavaScript" type="text/javascript" src='/javascripts/FaviconAwesome.js')
+        script(src="/socket.io/socket.io.js")
+        block script_header
 
-        block footer
-            #footer.footer(style="bottom:0px; position:fixed; background-color:white; border-top:0.1em solid #eee")
-                div.container
-                    p Copyright
-                        i(class="fa fa-copyright")  Thomas Munzer
+        link(rel='stylesheet' href='/stylesheets/bootstrap.min.css')
+        link(rel='stylesheet' href='/stylesheets/font-awesome.min.css')
+    body(style="width:80%; margin:auto")
+    script.
+        var socket = io();
+    div.container(style="margin-bottom:30px")
+        block nav
+            .container-narrow
+                .masthead
+                    ul(class="nav nav-pills pull-right")
+                        li
+                            a(href="/")
+                                i(class="fa fa-graduation-cap fa-lg")
+                        if user.userGroup == 1
+                            li
+                                a(href="/device/")
+                                    i(class="fa fa-wifi fa-lg")
+                            li
+                                a(href="/conf/")
+                                    i(class="fa fa-gear fa-lg")
+                            li
+                                a(href="/dev/")
+                                    i(class="fa fa-terminal fa-lg")
+                        li
+                            a(href="#" data-toggle="dropdown")
+                                i(class="fa fa-user fa-lg")
+                            ul(class="dropdown-menu")
+                                li
+                                    a(href="/user?id=" + user.id)= user_button.account
+                                li(role="separator" class="divider")
+                                li
+                                    a(href="/logout/")= user_button.logout
+                        li
+                            div(class="nav navbar-nav", style="line-height:50px; vertical-align:middle")= user.username
+                    h3(class="muted") SchoolControl
+                    hr(style="width:100%")
+        block content
+    block footer
+        #footer.footer(style="bottom:0px; position:fixed; background-color:white; border-top:0.1em solid #eee")
+            div.container
+                p Copyright
+                    i(class="fa fa-copyright")  Thomas Munzer
+
+    block script_footer

@@ -1,0 +1,10 @@
+
+function Messenger(server){
+    var messenger = require('socket.io').listen(server);
+    messenger.on('connection', function(socket){
+        console.log('a user connected');
+    });
+    return messenger;
+}
+
+module.exports = Messenger;

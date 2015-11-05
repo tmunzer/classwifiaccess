@@ -7,17 +7,11 @@ var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var database = require('./bin/sqlite/sqlite');
+
 
 //===============CREATE APP=================
 
 var app = express();
-
-//===============SQLITE=================
-
-var sqlite = new database.Sqlite();
-module.exports.db = sqlite;
-
 
 //===============CONF APP=================
 
@@ -32,6 +26,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+//===============SQLITE=================
+
+var database = require('./bin/sqlite/sqlite');
+var db = new database();
+module.exports.db = db;
 
 //===============PASSPORT=================
 var passport = require('passport');

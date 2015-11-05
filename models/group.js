@@ -1,6 +1,6 @@
 var db = require("./../app").db;
 
-function GroupToDB(row){
+function GroupSerializer(row){
     this.group = new Group();
     this.group.groupId = row.id;
     this.group.groupName = row.groupName;
@@ -13,7 +13,7 @@ function Group(){
 }
 
 findOne = function(fields, options, callback){
-    db.findOne("Groups", fields, options, function(err, group){
+    db.findOne("UserGroup", fields, options, function(err, group){
         if (err){
             callback(err);
         }
@@ -22,7 +22,7 @@ findOne = function(fields, options, callback){
 };
 
 findById = function(rowId, options, callback){
-    db.findById("Groups", rowId, options, function(err, group){
+    db.findById("UserGroup", rowId, options, function(err, group){
         if (err){
             return err;
         }
@@ -32,7 +32,7 @@ findById = function(rowId, options, callback){
 
 getAll = function(options, callback){
     var options = options || {"orderBy":"groupName"};
-    db.getAll("Groups", options, function(err, groups){
+    db.getAll("UserGroup", options, function(err, groups){
         if (err){
             return err;
         }
@@ -44,3 +44,4 @@ module.exports = Group;
 module.exports.findOne = findOne;
 module.exports.findById = findById;
 module.exports.getAll = getAll;
+module.exports.GroupSerializer = GroupSerializer;

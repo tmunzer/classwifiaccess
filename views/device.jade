@@ -1,0 +1,17 @@
+extends layout
+
+block content
+    div(class="jumbotron", style="float:left; width:100%")
+        section(id="device")
+
+    script.
+        $(document).ready(
+            socket.on("device", function (device) {
+                var apString = "";
+                for (var param in device){
+                    apString += param + ": " + device[param] + "</br>";
+                }
+                $("#device").append("<article style='float:left; width:30%;'>" + apString + '</article>');
+            })
+        )
+

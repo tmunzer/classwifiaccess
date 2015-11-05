@@ -28,11 +28,14 @@ module.exports = function(passport){
     /* Home Router */
     require("./home")(router, isAuthenticated);
 
+    /* Device Router */
+    require("./device")(router, isAuthenticated);
+
     /* Dev Router */
-    require(".dev")(router, isAuthenticated);
+    require("./dev")(router, isAuthenticated);
 
     router.get("/*", function(req, res, next){
-        res.redirect('/');
+        res.redirect('/home');
     });
 
     return router;

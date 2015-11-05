@@ -1,6 +1,66 @@
 extends layout
+
 block content
     div(class="jumbotron")
-        h1 School Control
-        p(class="lead") This section is still under construction!!!
-        a(class="btn btn-success", id="btn") By Thomas Munzer
+        h2 Dev Interface
+        h4 REST Request parameters
+
+        table.table
+            thead
+                tr
+                    th
+                    th clientID
+                    th SecretID
+                    th ownerID
+                    th vhmID
+                    th vpcUrl
+                    th accessToken
+            tbody(id="apiList")
+                each item in apis
+                    tr
+                        td
+                            input(type="checkbox" class="checkbox" id="api_"+item.id value=item.id)
+                        td(id="clientId_"+item.id)= apiClientId
+                        td(id="secret_"+item.id)= apiSecret
+                        td(id="ownerId_"+item.id)= item.ownerId
+                        td(id="vhmId_"+item.id)= item.vhmId
+                        td(id="vpcUrl_"+item.id)= item.vpcUrl
+                        td(id="accessToken_"+item.id)= item.accessToken
+
+        h2 GET Request URI
+            form(class="firm-inline")
+                div(class="form-group")
+                    div(class="input-group")
+                        div(class="input-group-addon" id="getURILabel") https://
+                        input(type="text" class="form-control" id="getURI" placeholder="/xapi/v1/monitoring/devices?ownerID=abcd")
+block script_footer
+    script.
+        function apiListChanged(currentID) {
+            $('#apiList :checkbox').each(function () {
+                if ($(this).val() == currentID) {
+                    var vpcURL = $('#vpcUrl_' + currentID).text();
+                    $('#getURILabel').text(vpcURL);
+                } else {
+                    $(this).prop("checked", false);
+                }
+            });
+        };
+
+        $(document).ready(function() {
+            $('#apiList > tr:first').find('input').prop('checked', true);
+            apiListChanged($('#apiList > tr:first').find('input').val());
+            $('#apiList :checkbox').change(function () {
+                apiListChanged($(this).val());
+            });
+            socket.on("dev", "req", function (device) {
+                var apString = "";
+                for (var param in device) {
+                    apString += param + ": " + device[param] + "</br>";
+                }
+                $("#test").append("<article style='float:left; width:30%;'>" + apString + '</article>');
+            });
+        })
+
+
+
+

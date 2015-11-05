@@ -5,7 +5,7 @@ var translate = require('./../translate/translate');
 
 module.exports = function(router, isAuthenticated){
     /* GET User Display page. */
-    router.get("/user", isAuthenticated, function(req, res, next){
+    router.get("/user/", isAuthenticated, function(req, res, next){
         // save the userID requested
         var userIdToEdit = req.query.id;
         // check if requested user to display is the same as the current user
@@ -75,9 +75,9 @@ module.exports = function(router, isAuthenticated){
         // or if current user is an admin
         if ((req.user.id == userIdToEdit) || (req.user.userGroup == 1)) {
             // serialize the user
-            var userToDB = new User.UserToDB(req.body);
+            var UserSerializer = new User.UserSerializer(req.body);
             // update the user
-            userToDB.updateDB(userIdToEdit, function(err){
+            UserSerializer.updateDB(userIdToEdit, function(err){
                 res.redirect('/user?id='+userIdToEdit);
             });
         } else {
@@ -85,7 +85,7 @@ module.exports = function(router, isAuthenticated){
         }  });
 
     /* GET New User page. */
-    router.get("/user/new", isAuthenticated, function(req, res, next){
+    router.get("/user/new/", isAuthenticated, function(req, res, next){
         // save the userID requested
         // check if current user is an admin
         if  (req.user.userGroup == 1) {
@@ -112,11 +112,11 @@ module.exports = function(router, isAuthenticated){
         }
     });
     /* POST New User Edit . */
-    router.post("/user/new", isAuthenticated, function(req, res, next) {
+    router.post("/user/new/", isAuthenticated, function(req, res, next) {
         // check if current user is an admin
         if (req.user.userGroup == 1) {
             // serialize the user
-            var userToDB = new User.UserToDB(req.body);
+            var userToDB = new User.UserSerializer(req.body);
             // update the user
             userToDB.insertDB(function(err){
                 res.redirect('/conf');

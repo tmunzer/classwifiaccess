@@ -1,6 +1,6 @@
 var https = require('https');
 
-function getPermanentToken(authCode, redirectUrl, secret, clientId, callback){
+module.exports.getPermanentToken = function(authCode, redirectUrl, secret, clientId, callback){
     var options = {
         host: 'cloud.aerohive.com',
         port: 443,
@@ -17,18 +17,17 @@ function getPermanentToken(authCode, redirectUrl, secret, clientId, callback){
         console.log('HEADERS: ' + JSON.stringify(res.headers));
         res.setEncoding('utf8');
         res.on('data', function (data) {
-            callback(null, data);
+            callback(data);
         });
     });
 
     req.on('error', function(err) {
-        callback(err, null);
+        callback(err);
     });
 
 // write data to request body
     req.write('data\n');
     req.write('data\n');
     req.end();
-}
+};
 
-module.exports.getPermanentToken = getPermanentToken;

@@ -1,6 +1,6 @@
 var db = require("./../app").db;
 
-function UiLanguageToDB(row){
+function UiLanguageSerializer(row){
     this.uiLanguage = {};
     this.uiLanguage.languageId = row.id;
     this.uiLanguage.language = row.language;
@@ -13,7 +13,7 @@ function UILanguages(){
 }
 
 findOne = function(fields, options, callback){
-    db.findOne("UILanguages", fields, options, function(err, uiLanguage){
+    db.findOne("UILanguage", fields, options, function(err, uiLanguage){
 
         if (err){
             callback(err);
@@ -23,7 +23,7 @@ findOne = function(fields, options, callback){
 };
 
 findById = function(rowId, options, callback){
-    db.findById("UILanguages", rowId, options, function(err, uiLanguage){
+    db.findById("UILanguage", rowId, options, function(err, uiLanguage){
         if (err){
             return err;
         }
@@ -33,7 +33,7 @@ findById = function(rowId, options, callback){
 
 getAll = function(options, callback){
     var options = options || {"orderBy":"language"};
-    db.getAll("UILanguages", options, function(err, uiLanguages){
+    db.getAll("UILanguage", options, function(err, uiLanguages){
         if (err){
             return err;
         }
@@ -45,3 +45,4 @@ module.exports = UILanguages;
 module.exports.findOne = findOne;
 module.exports.findById = findById;
 module.exports.getAll = getAll;
+module.exports.UiLanguageSerializer = UiLanguageSerializer;

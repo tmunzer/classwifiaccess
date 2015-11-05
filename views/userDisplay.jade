@@ -37,7 +37,7 @@ block content
         hr
         case userToEdit.userGroup
             when 1
-                a(href="/conf", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= user_page.back_button
+                a(href="/conf/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= user_page.back_button
             default
                 a(href="/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= user_page.back_button
         a(href="/user/edit?id=" + userToEdit.id, class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= user_page.edit_button

@@ -18,7 +18,7 @@ var Sqlite = function(){
                 "accessToken VARCHAR(60)," +
                 "refreshToken VARCHAR(60)," +
                 "expireAt DATETIME)");
-            db.run("CREATE TABLE Users (id integer primary key, " +
+            db.run("CREATE TABLE User (id integer primary key, " +
                 "firstName VARCHAR(30), " +
                 "lastName VARCHAR(30), " +
                 "email VARCHAR(60), " +
@@ -28,44 +28,50 @@ var Sqlite = function(){
                 "lastLogin DATETIME, " +
                 "language INTEGER, " +
                 "userGroup INTEGER NOT NULL)");
-            db.run("CREATE TABLE Groups (id integer primary key," +
+            db.run("CREATE TABLE UserGroup (id integer primary key," +
                 "groupName VARCHAR(30))");
-            db.run("CREATE TABLE AccessPoints (id integer primary key," +
-                "apID VARCHAR(60)," +
+            db.run("CREATE TABLE Device (id integer primary key," +
+                "deviceId VARCHAR(15)," +
+                "ownerId INTEGER, " +
+                "macAddress VARCHAR(16), " +
                 "hostname VARCHAR(60), " +
-                "ipv4Address VARCHAR(12))");
-            db.run("CREATE TABLE Classrooms (id integer primary key," +
+                "serialId VARCHAR(14), " +
+                "model VARCHAR(10), " +
+                "ip VARCHAR(12), " +
+                "simType VARCHAR(10), " +
+                "location VARCHAR(60))");
+            db.run("CREATE TABLE Classroom (id integer primary key," +
                 "name VARCHAR(30), " +
                 "accessPoint INTEGER)");
-            db.run("CREATE TABLE UILanguages (id integer primary key," +
+            db.run("CREATE TABLE UILanguage (id integer primary key," +
                 "language VARCHAR(20)," +
                 "code VARCHAR(6))");
-            db.run("INSERT INTO Users VALUES (1, '', '', '', 'admin', '"+createHash("aerohive")+"', 'true', '', '1', 1)");
-            db.run("INSERT INTO Groups VALUES (1, 'Administrator')");
-            db.run("INSERT INTO Groups VALUES (2, 'Teacher')");
-            db.run("INSERT INTO UILanguages VALUES (1, 'English', 'en')");
-            db.run("INSERT INTO UILanguages VALUES (2, 'Francais', 'fr')");
+            db.run("INSERT INTO User VALUES (1, '', '', '', 'admin', '"+createHash("aerohive")+"', 'true', '', '1', 1)");
+            db.run("INSERT INTO UserGroup VALUES (1, 'Administrator')");
+            db.run("INSERT INTO UserGroup VALUES (2, 'Teacher')");
+            db.run("INSERT INTO UILanguage VALUES (1, 'English', 'en')");
+            db.run("INSERT INTO UILanguage VALUES (2, 'Francais', 'fr')");
         }
     });
 };
 
-Sqlite.prototype.updateDB = function(table, rowId, rows, callback){
+Sqlite.prototype.updateDB = function(table, rowId, entries, callback){
     var updateString = "";
     var fieldNumber = 0;
-    for (var field in rows) {
-        if (field == 'password') {
-            if (rows[field] != "") {
+    for (var entry in entries) {
+        if (entry == 'password') {
+            if (entries[entry] != "") {
                 if (fieldNumber != 0) {
                     updateString += ",  ";
                 }
-                updateString += field + "='" + createHash(rows[field]) + "'";
+                updateString += entry + "='" + createHash(entries[entry]) + "'";
                 fieldNumber++;
             }
         } else {
             if (fieldNumber != 0) {
                 updateString += ",  ";
             }
-            updateString += field + "='" + rows[field] + "'";
+            updateString += entry + "='" + entries[entry] + "'";
             fieldNumber++;
         }
     }
@@ -96,13 +102,13 @@ Sqlite.prototype.insertDB = function(table, rows, callback){
             }
         } else {
             insertFields += field;
-            insertValues += "'" + rows[field] + "'";
+            insertValues += '"' + rows[field] + '"';
             fieldNumber++;
         }
     }
-    var updateString = 'INSERT INTO ' + table + ' (' + insertFields + ') VALUES (' + insertValues + ");" ;
-    console.log(updateString);
-    this.db.run(updateString, function(err){
+    var insertString = 'INSERT INTO ' + table + ' (' + insertFields + ') VALUES (' + insertValues + ");" ;
+    console.log(insertString);
+    this.db.run(insertString, function(err){
         if (err){
             return err;
         }
@@ -156,7 +162,9 @@ Sqlite.prototype.findOne = function(table, fields, options, callback){
     }
     searchString = "(" + searchString + ")";
     var rOptions = this.processOptions(options);
-    this.db.get("SELECT " + rOptions.columns + " FROM " + table + " WHERE "+ searchString, function(err, ret){
+    var selectString = "SELECT " + rOptions.columns + " FROM " + table + " WHERE "+ searchString;
+    console.log(selectString);
+    this.db.get(selectString, function(err, ret){
         if (err){
             callback(err);
         }
@@ -190,7 +198,9 @@ Sqlite.prototype.getAll = function(table, options, callback){
         orderBy: how to sort the result
  */
     var rOptions = this.processOptions(options);
-    this.db.all("SELECT " + rOptions.columns + " FROM " + table + rOptions.orderBy, function(err, ret){
+    var allString = "SELECT " + rOptions.columns + " FROM " + table + rOptions.orderBy;
+    console.log(allString);
+    this.db.all(allString, function(err, ret){
         if (err){
             throw err;
         }
@@ -198,6 +208,14 @@ Sqlite.prototype.getAll = function(table, options, callback){
     })
 };
 
+Sqlite.prototype.deleteById = function (table, rId, callback){
+    this.db.run("DELETE FROM " + table + " WHERE id = "+rId, function(err, ret){
+        if (err){
+            throw err;
+        }
+        callback(err, ret);
+    });
+};
 
 isValidPassword = function(user, password){
     return bCrypt.compareSync(password, user.password);
@@ -207,6 +225,6 @@ createHash = function(password){
     return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
 };
 
-module.exports.Sqlite = Sqlite;
+module.exports = Sqlite;
 module.exports.isValidPassword = isValidPassword;
 module.exports.createHash = createHash;

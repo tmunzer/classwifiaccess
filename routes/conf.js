@@ -4,7 +4,7 @@ var Api = require("./../models/api");
 var translate = require('./../translate/translate');
 
 module.exports = function(router, isAuthenticated){
-    router.get('/conf', isAuthenticated, function(req, res, next) {
+    router.get('/conf/', isAuthenticated, function(req, res, next) {
         if (req.user.userGroup == 1) {
             translate(req.user.language, req, function (translationFile) {
                 User.getAll(null, function(err, userList){

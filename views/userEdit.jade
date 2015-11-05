@@ -52,7 +52,7 @@ block content
             if userToEdit.id
                 a(href="/user?id="+userToEdit.id, class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= user_page.cancel_button
             else
-                a(href="/conf", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= user_page.cancel_button
+                a(href="/conf/", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= user_page.cancel_button
             button(class='btn btn-primary', type='submit', style="margin:0.2em 1em 2em 1em")= user_page.save_button
 
-    script(type='text/javascript' src='./javascripts/userToEdit.js')
+    script(type='text/javascript' src='/javascripts/userToEdit.js')

@@ -1,0 +1,10 @@
+extends layout
+block nav
+block content
+   h1 API Registration Error
+   h2
+      span Error
+      span= error.status
+   pre #{error.code}
+   pre #{error.message}
+   pre #{error.errorParams}

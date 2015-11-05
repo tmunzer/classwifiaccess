@@ -1,6 +1,6 @@
 var db = require("./../app").db;
 
-function UserToDB(row){
+function UserSerializer(row){
     this.user = {};
     this.user.firstName=row.firstName;
     this.user.lastName=row.lastName;
@@ -16,8 +16,8 @@ function UserToDB(row){
     this.user.language=row.language;
 }
 
-UserToDB.prototype.updateDB = function(userId, callback){
-    db.updateDB("Users", userId, this.user, function(err){
+UserSerializer.prototype.updateDB = function(userId, callback){
+    db.updateDB("User", userId, this.user, function(err){
         if (err){
             callback(err);
         }
@@ -26,8 +26,8 @@ UserToDB.prototype.updateDB = function(userId, callback){
     });
 };
 
-UserToDB.prototype.insertDB = function(callback){
-    db.insertDB("Users", this.user, function(err){
+UserSerializer.prototype.insertDB = function(callback){
+    db.insertDB("User", this.user, function(err){
         if (err){
             callback(err);
         }
@@ -49,7 +49,7 @@ function User(){
 }
 
 findOne = function(fields, options, callback){
-    db.findOne("Users", fields, options, function(err, user){
+    db.findOne("User", fields, options, function(err, user){
         if (err){
             callback(err);
         }
@@ -58,7 +58,7 @@ findOne = function(fields, options, callback){
 };
 
 findById = function(rowId, options, callback){
-    db.findById("Users", rowId, options, function(err, user){
+    db.findById("User", rowId, options, function(err, user){
         if (err){
             return err;
         }
@@ -68,7 +68,7 @@ findById = function(rowId, options, callback){
 
 getAll = function(options, callback){
     var options = options || {"orderBy":"username"};
-    db.getAll("Users", options, function(err, users){
+    db.getAll("User", options, function(err, users){
         if (err){
             return err;
         }
@@ -80,4 +80,4 @@ module.exports = User;
 module.exports.findOne = findOne;
 module.exports.findById = findById;
 module.exports.getAll = getAll;
-module.exports.UserToDB = UserToDB;
+module.exports.UserSerializer = UserSerializer;

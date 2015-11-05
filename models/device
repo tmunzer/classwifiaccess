@@ -1,0 +1,87 @@
+var db = require("./../app").db;
+
+function DeviceSerializer(row){
+    this.device = {};
+    this.device.deviceId= row.deviceId;
+    this.device.ownerId= row.ownerId;
+    this.device.macAddress= row.macAddress;
+    this.device.hostname = row.hostname;
+    this.device.serialId= row.serialId;
+    this.device.model= row.model;
+    this.device.ip= row.ip;
+    this.device.simType= row.simType;
+    this.device.location= row.location;
+}
+
+DeviceSerializer.prototype.insertDB = function(callback){
+    db.insertDB("Device", this.device, function(err){
+        if (err){
+            callback(err);
+        }
+        callback(err);
+    });
+};
+
+DeviceSerializer.prototype.updateDB = function(rowId, callback){
+    db.updateDB("Device", rowId, this.device, function(err){
+        if (err){
+            callback(err);
+        }
+        console.log("Device UpdateDB");
+    });
+};
+
+
+function Device(){
+    this.device.deviceId= "";
+    this.device.ownerId= "";
+    this.device.macAddress= "";
+    this.device.hostname = "";
+    this.device.serialId= "";
+    this.device.model= "";
+    this.device.ip= "";
+    this.device.simType= "";
+    this.device.location= "";
+}
+
+
+findOne = function(fields, options, callback){
+    db.findOne("Device", fields, options, function(err, api){
+        if (err){
+            callback(err);
+        }
+        callback(err, api);
+    });
+};
+
+findById = function(rowId, options, callback){
+    db.findById("Device", rowId, options, function(err, api){
+        if (err){
+            return err;
+        }
+        callback(err, api);
+    });
+};
+
+getAll = function(options, callback){
+    var rOptions = options || {"orderBy":"hostname"};
+    db.getAll("Device", rOptions, function(err, apis){
+        if (err){
+            return err;
+        }
+        callback(err, apis);
+    })
+};
+
+deleteByID = function(apiId, callback){
+    db.deleteById("Device", apiId, function(err, ret){
+        callback(err, ret);
+    })
+};
+
+module.exports = Device;
+module.exports.findOne = findOne;
+module.exports.findById = findById;
+module.exports.getAll = getAll;
+module.exports.DeviceSerializer = DeviceSerializer;
+module.exports.deleteByID = deleteByID;

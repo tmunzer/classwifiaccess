@@ -25,7 +25,10 @@ module.exports. config_page = {
     name:"Name",
     type:"Type",
     enable:"Enable",
-    last_login:"Last login"
+    last_login:"Last login",
+    delete_api_title:"Do you want to remove this API access?",
+    cancel:"Cancel",
+    remove:"Remove"
 };
 //AP
 

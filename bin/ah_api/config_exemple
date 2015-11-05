@@ -1,10 +1,5 @@
 //move this file to ./bin/ah_api/config
 
-var redirectUrl = "put_here_your_redirectURL";
-var secret = "put_here_your_secret";
-var clientId = "put_here_your_clientID";
-
-
-module.exports.redirectUrl = redirectUrl;
-module.exports.secret = secret;
-module.exports.clientId = clientId;
+module.exports.redirectUrl = "put_here_your_redirectURL";
+module.exports.secret = "put_here_your_secret";
+module.exports.clientId = "put_here_your_clientID";

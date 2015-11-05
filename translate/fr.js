@@ -25,7 +25,10 @@ module.exports.config_page = {
     name:"Nom",
     type:"Groupe",
     enable:"Activé",
-    last_login:"Dernière connexion"
+    last_login:"Dernière connexion",
+    delete_api_title:"Voulez vous supprimer l'accès à cet API?",
+    cancel:"Annuler",
+    remove:"Supprimer"
 };
 //AP
 

@@ -3,7 +3,7 @@ var translate = require('./../translate/translate');
 
 module.exports = function(router, passport){
     /* GET login page. */
-    router.get('/login', function(req, res) {
+    router.get('/login/', function(req, res) {
         translate(null, req, function(translationFile){
             // Display the Login page with any flash message, if any
             res.render('login', { message: translationFile.login_page[req.flash('message')], text : translationFile.login_page });
@@ -11,9 +11,9 @@ module.exports = function(router, passport){
     });
 
     /* Handle Login POST */
-    router.post('/login', passport.authenticate('login', {
+    router.post('/login/', passport.authenticate('login', {
         successRedirect: '/',
-        failureRedirect: '/login',
+        failureRedirect: '/login/',
         failureFlash : true
     }));
 

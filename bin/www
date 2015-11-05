@@ -5,8 +5,10 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('node_app:server');
+
+var debug = require('debug')('SchoolControl:server');
 var http = require('http');
+
 
 /**
  * Get port from environment and store in Express.
@@ -29,6 +31,11 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
+//===============SOCKET.IO=================
+
+var Messenger = require("./messenger");
+var messenger = Messenger(server);
+module.exports.messenger = messenger;
 /**
  * Normalize a port into a number, string, or false.
  */
