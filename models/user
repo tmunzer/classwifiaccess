@@ -12,7 +12,7 @@ function UserSerializer(row){
     } else {
         this.user.userEnable=true;
     }
-    this.user.userGroup=row.userGroup;
+    this.user.GroupId=row.GroupId;
     this.user.language=row.language;
 }
 
@@ -44,7 +44,7 @@ function User(){
     this.password="";
     this.userEnable=true;
     this.lastLogin="";
-    this.userGroup="";
+    this.GroupId="";
     this.language="";
 }
 

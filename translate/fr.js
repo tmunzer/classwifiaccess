@@ -49,8 +49,12 @@ module.exports.user_page = {
     password_placeholder:"Non modifié",
     edit_button:"Modifier",
     back_button:"Retour",
-    new_user_button:"Nouvel Utilisateur",
-    new_classroom_button:"Nouvelle Salle"
+    new_user_button:"Nouvel Utilisateur"
 };
 
+module.exports.classroom_page = {
+    classNumber:"Numéro de Salle",
+    deviceId: "Equipement Associé",
+    new_classroom_button:"Nouvelle Salle"
+};
 

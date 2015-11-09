@@ -1,20 +1,18 @@
 var User = require("./../models/user");
 var Group = require("./../models/group");
 var UILanguage = require('./../models/UiLanguage');
-var translate = require('./../translate/translate');
 
-module.exports = function(router, isAuthenticated){
+module.exports = function(router, isAuthenticated, isAdmin, translationFile){
     /* GET User Display page. */
-    router.get("/user/", isAuthenticated, function(req, res, next){
+    router.get("/user/", isAuthenticated, isAdmin, translationFile, function(req, res, next){
         // save the userID requested
         var userIdToEdit = req.query.id;
         // check if requested user to display is the same as the current user
         // or if current user is an admin
-        if ((req.user.id == userIdToEdit) || (req.user.userGroup == 1)) {
+        if ((req.user.id == userIdToEdit) || (req.isAdmin)) {
             // get the user to edit in the DB
             User.findById(userIdToEdit, null, function(err, userToEdit) {
                 // Find the language for this user
-                translate(req.user.language, req, function (translationFile) {
                     // list all groups to display
                     Group.getAll(null, function (err, groups) {
                         // list all languages to display
@@ -25,10 +23,9 @@ module.exports = function(router, isAuthenticated){
                                 userToEdit: userToEdit,
                                 groups: groups,
                                 languages: languages,
-                                user_button: translationFile.user_button,
-                                user_page: translationFile.user_page,
+                                user_button: req.translationFile.user_button,
+                                user_page: req.translationFile.user_page,
                             });
-                        });
                     });
                 });
             });
@@ -38,15 +35,14 @@ module.exports = function(router, isAuthenticated){
     });
 
     /* GET User Edit page. */
-    router.get('/user/edit', isAuthenticated, function(req, res, next) {
+    router.get('/user/edit', isAuthenticated, isAdmin, translationFile, function(req, res, next) {
         var userIdToEdit = req.query.id;
         // check if requested user to display is the same as the current user
         // or if current user is an admin
-        if ((req.user.id == userIdToEdit) || (req.user.userGroup == 1)) {
+        if ((req.user.id == userIdToEdit) || (req.isAdmin)) {
             // get the user to edit in the DB
             User.findById(userIdToEdit, null, function(err, userToEdit) {
                 // Find the language for this user
-                translate(req.user.language, req, function (translationFile) {
                     // list all groups to display
                     Group.getAll(null, function (err, groups) {
                         // list all languages to display
@@ -57,9 +53,8 @@ module.exports = function(router, isAuthenticated){
                                 userToEdit: userToEdit,
                                 groups: groups,
                                 languages: languages,
-                                user_button: translationFile.user_button,
-                                user_page: translationFile.user_page,
-                            });
+                                user_button: req.translationFile.user_button,
+                                user_page: req.translationFile.user_page,
                         });
                     });
                 });
@@ -69,11 +64,11 @@ module.exports = function(router, isAuthenticated){
         }
     });
     /* POST User Edit page. */
-    router.post("/user/edit", isAuthenticated, function(req, res, next) {
+    router.post("/user/edit", isAuthenticated, isAdmin, translationFile, function(req, res, next) {
         var userIdToEdit = req.query.id;
         // check if requested user to display is the same as the current user
         // or if current user is an admin
-        if ((req.user.id == userIdToEdit) || (req.user.userGroup == 1)) {
+        if ((req.user.id == userIdToEdit) || (req.isAdmin)) {
             // serialize the user
             var UserSerializer = new User.UserSerializer(req.body);
             // update the user
@@ -85,12 +80,11 @@ module.exports = function(router, isAuthenticated){
         }  });
 
     /* GET New User page. */
-    router.get("/user/new/", isAuthenticated, function(req, res, next){
+    router.get("/user/new/", isAuthenticated, isAdmin, translationFile, function(req, res, next){
         // save the userID requested
         // check if current user is an admin
-        if  (req.user.userGroup == 1) {
+        if  (req.isAdmin) {
             // Find the language for this user
-            translate(req.user.language, req, function (translationFile) {
                 // list all groups to display
                 Group.getAll(null, function (err, groups) {
                     // list all languages to display
@@ -101,10 +95,9 @@ module.exports = function(router, isAuthenticated){
                             userToEdit: new User(),
                             groups: groups,
                             languages: languages,
-                            user_button: translationFile.user_button,
-                            user_page: translationFile.user_page,
+                            user_button: req.translationFile.user_button,
+                            user_page: req.translationFile.user_page
                         });
-                    });
                 });
             });
         } else {
@@ -112,9 +105,9 @@ module.exports = function(router, isAuthenticated){
         }
     });
     /* POST New User Edit . */
-    router.post("/user/new/", isAuthenticated, function(req, res, next) {
+    router.post("/user/new/", isAuthenticated, isAdmin, translationFile, function(req, res, next) {
         // check if current user is an admin
-        if (req.user.userGroup == 1) {
+        if (req.isAdmin) {
             // serialize the user
             var userToDB = new User.UserSerializer(req.body);
             // update the user

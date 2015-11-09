@@ -10,7 +10,8 @@ var Sqlite = function(){
     this.db = db;
     this.db.serialize(function() {
         if(!exists) {
-            db.run("CREATE TABLE API (id integer primary key, " +
+            db.run("CREATE TABLE API (id integer primary key," +
+                "scId VARCHAR(8), " +
                 "clientId VARCHAR(30)," +
                 "ownerId INTEGER," +
                 "vhmId VARCHAR(15), " +
@@ -19,6 +20,7 @@ var Sqlite = function(){
                 "refreshToken VARCHAR(60)," +
                 "expireAt DATETIME)");
             db.run("CREATE TABLE User (id integer primary key, " +
+                "scId VARCHAR(8), " +
                 "firstName VARCHAR(30), " +
                 "lastName VARCHAR(30), " +
                 "email VARCHAR(60), " +
@@ -27,10 +29,12 @@ var Sqlite = function(){
                 "userEnable BOOL, " +
                 "lastLogin DATETIME, " +
                 "language INTEGER, " +
-                "userGroup INTEGER NOT NULL)");
+                "GroupId INTEGER NOT NULL)");
             db.run("CREATE TABLE UserGroup (id integer primary key," +
+                "scId VARCHAR(8), " +
                 "groupName VARCHAR(30))");
             db.run("CREATE TABLE Device (id integer primary key," +
+                "scId VARCHAR(8), " +
                 "deviceId VARCHAR(15)," +
                 "ownerId INTEGER, " +
                 "macAddress VARCHAR(16), " +
@@ -41,14 +45,21 @@ var Sqlite = function(){
                 "simType VARCHAR(10), " +
                 "location VARCHAR(60))");
             db.run("CREATE TABLE Classroom (id integer primary key," +
-                "name VARCHAR(30), " +
-                "accessPoint INTEGER)");
+                "scId VARCHAR(8), " +
+                "className VARCHAR(30), " +
+                "DeviceID INTEGER)");
+            db.run("CREATE TABLE Course (id integer primary key," +
+                "scId VARCHAR(8)," +
+                "ClassroomId INTEGER," +
+                "UserID INTEGER," +
+                "startTime DATETIME," +
+                "endTime DATETIME)");
             db.run("CREATE TABLE UILanguage (id integer primary key," +
                 "language VARCHAR(20)," +
                 "code VARCHAR(6))");
-            db.run("INSERT INTO User VALUES (1, '', '', '', 'admin', '"+createHash("aerohive")+"', 'true', '', '1', 1)");
-            db.run("INSERT INTO UserGroup VALUES (1, 'Administrator')");
-            db.run("INSERT INTO UserGroup VALUES (2, 'Teacher')");
+            db.run("INSERT INTO User VALUES (1, 1, '', '', '', 'admin', '"+createHash("aerohive")+"', 'true', '', '1', 1)");
+            db.run("INSERT INTO UserGroup VALUES (1, 1, 'Administrator')");
+            db.run("INSERT INTO UserGroup VALUES (2, 1, 'Teacher')");
             db.run("INSERT INTO UILanguage VALUES (1, 'English', 'en')");
             db.run("INSERT INTO UILanguage VALUES (2, 'Francais', 'fr')");
         }

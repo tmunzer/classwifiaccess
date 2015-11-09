@@ -1,0 +1,67 @@
+var db = require("./../app").db;
+
+function ClassroomSeralizer(row){
+    this.classromm = {};
+    this.classromm.className=row.className;
+    this.classromm.deviceId=row.deviceId;
+}
+
+ClassroomSeralizer.prototype.updateDB = function(classroomId, callback){
+    db.updateDB("Classroom", classroomId, this.classromm, function(err){
+        if (err){
+            callback(err);
+        }
+        console.log("Classroom UpdateDB");
+        callback(err);
+    });
+};
+
+ClassroomSeralizer.prototype.insertDB = function(callback){
+    db.insertDB("Classroom", this.classromm, function(err){
+        if (err){
+            callback(err);
+        }
+        callback(err);
+    });
+};
+
+function Classroom(){
+    this.classroomId=null;
+    this.className="";
+    this.deviceId="";
+
+}
+
+findOne = function(fields, options, callback){
+    db.findOne("Classroom", fields, options, function(err, classromm){
+        if (err){
+            callback(err);
+        }
+        callback(err, classromm);
+    });
+};
+
+findById = function(rowId, options, callback){
+    db.findById("Classroom", rowId, options, function(err, classromm){
+        if (err){
+            return err;
+        }
+        callback(err, classromm);
+    });
+};
+
+getAll = function(options, callback){
+    var options = options || {"orderBy":"className"};
+    db.getAll("Classroom", options, function(err, classromms){
+        if (err){
+            return err;
+        }
+        callback(err, classromms);
+    })
+};
+
+module.exports = Classroom;
+module.exports.findOne = findOne;
+module.exports.findById = findById;
+module.exports.getAll = getAll;
+module.exports.ClassroomSeralizer = ClassroomSeralizer;

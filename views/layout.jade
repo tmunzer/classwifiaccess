@@ -22,7 +22,7 @@ html
                         li
                             a(href="/")
                                 i(class="fa fa-graduation-cap fa-lg")
-                        if user.userGroup == 1
+                        if user.GroupId == 1
                             li
                                 a(href="/device/")
                                     i(class="fa fa-wifi fa-lg")
@@ -43,6 +43,11 @@ html
                                     a(href="/logout/")= user_button.logout
                         li
                             div(class="nav navbar-nav", style="line-height:50px; vertical-align:middle")= user.username
+                        if apiList
+                            li
+                                select
+                                    each api in apiList
+                                        option(value=api.id)= api.vhmId
                     h3(class="muted") SchoolControl
                     hr(style="width:100%")
         block content

@@ -1,13 +1,9 @@
-var translate = require('./../translate/translate');
 
-
-module.exports = function(router, passport){
+module.exports = function(router, passport, translationFile){
     /* GET login page. */
-    router.get('/login/', function(req, res) {
-        translate(null, req, function(translationFile){
-            // Display the Login page with any flash message, if any
-            res.render('login', { message: translationFile.login_page[req.flash('message')], text : translationFile.login_page });
-        });
+    router.get('/login/', translationFile, function(req, res) {
+        // Display the Login page with any flash message, if any
+        res.render('login', { message: req.translationFile.login_page[req.flash('message')], text : req.translationFile.login_page });
     });
 
     /* Handle Login POST */

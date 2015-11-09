@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var translate = require('./../translate/translate');
+var Api = require("./../models/api");
 
 var isAuthenticated = function (req, res, next) {
     // if user is authenticated in the session, call the next() to call the next request handler
@@ -11,28 +13,52 @@ var isAuthenticated = function (req, res, next) {
     res.redirect('/login');
 };
 
+var isAdmin = function(req, res, next){
+    req.isAdmin = req.user.GroupId == 1;
+    Api.getAll(null, function(apiList){
+        req.apiList = apiList;
+        console.log(apiList);
+        return next();
+    });
+};
+
+var translationFile = function(req, res, next) {
+    var userLanguage;
+    if (req.user){
+        userLanguage = req.user.language;
+    } else {
+        userLanguage = null;
+    }
+    translate(userLanguage, req, function (translationFile) {
+        req.translationFile = translationFile;
+        next();
+    })
+};
+
 module.exports = function(passport){
 
+
+
     /* Login Router */
-    require("./login")(router, passport);
+    require("./login")(router, passport, translationFile);
 
     /* Conf Router */
-    require("./conf")(router, isAuthenticated);
+    require("./conf")(router, isAuthenticated, isAdmin, translationFile);
 
     /* User Router */
-    require("./user")(router, isAuthenticated);
+    require("./user")(router, isAuthenticated, isAdmin, translationFile);
 
     /* API Router */
-    require("./api")(router, isAuthenticated);
+    require("./api")(router, isAuthenticated, isAdmin, translationFile);
 
     /* Home Router */
-    require("./home")(router, isAuthenticated);
+    require("./home")(router, isAuthenticated, isAdmin, translationFile);
 
     /* Device Router */
-    require("./device")(router, isAuthenticated);
+    require("./device")(router, isAuthenticated, isAdmin, translationFile);
 
     /* Dev Router */
-    require("./dev")(router, isAuthenticated);
+    require("./dev")(router, isAuthenticated, isAdmin, translationFile);
 
     router.get("/*", function(req, res, next){
         res.redirect('/home');

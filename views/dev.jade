@@ -28,11 +28,14 @@ block content
                         td(id="accessToken_"+item.id)= item.accessToken
 
         h2 GET Request URI
-            form(class="firm-inline")
+            form(class="firm-inline", methos="POST", action="/dev/req")
                 div(class="form-group")
                     div(class="input-group")
                         div(class="input-group-addon" id="getURILabel") https://
-                        input(type="text" class="form-control" id="getURI" placeholder="/xapi/v1/monitoring/devices?ownerID=abcd")
+                        input(type="text" class="form-control" id="api_uri" placeholder="/xapi/v1/monitoring/devices?ownerID=abcd")
+                input(type="hidden" id="api_req" value="")
+                button(class="btn btn-success", type="submit") Send Request
+
 block script_footer
     script.
         function apiListChanged(currentID) {
@@ -40,6 +43,7 @@ block script_footer
                 if ($(this).val() == currentID) {
                     var vpcURL = $('#vpcUrl_' + currentID).text();
                     $('#getURILabel').text(vpcURL);
+                    $('#api_req').val(currentID);
                 } else {
                     $(this).prop("checked", false);
                 }

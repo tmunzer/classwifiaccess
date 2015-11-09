@@ -18,20 +18,20 @@ block content
             label(for="email")= user_page.email
             input(type="email" class="form-control" name="email" id="email" value=userToEdit.email)
             hr
-            case user.userGroup
+            case user.GroupId
                 when 1
                     label(for="group")= user_page.group
-                    select(class="form-control", name="userGroup")
+                    select(class="form-control", name="GroupId")
                         each item in groups
-                            if userToEdit.userGroup == item.id
+                            if userToEdit.GroupId == item.id
                                 option(value=item.id, selected="selected")= item.groupName
                             else
                                 option(value=item.id)= item.groupName
                 default
                     label(for="group")= user_page.group
-                    select(class="form-control", disabled="disabled", name="userGroup")
+                    select(class="form-control", disabled="disabled", name="GroupId")
                         each item in groups
-                            if userToEdit.userGroup == item.id
+                            if userToEdit.GroupId == item.id
                                 option(value=item.id, selected="selected")= item.groupName
                             else
                                 option(value=item.id)= item.groupName
@@ -43,11 +43,10 @@ block content
                     else
                         option(value=item.id)= item.language
             label(for="enable")= user_page.enable
-            case userToEdit.userEnable
-                when true
-                    input(type="checkbox", name="userEnable", style="margin-left:1em", checked)
-                default
-                    input(type="checkbox", name="userEnable", style="margin-left:1em")
+            if userToEdit.userEnable
+                input(type="checkbox", name="userEnable", style="margin-left:1em", checked)
+            else
+                input(type="checkbox", name="userEnable", style="margin-left:1em")
             hr
             if userToEdit.id
                 a(href="/user?id="+userToEdit.id, class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= user_page.cancel_button

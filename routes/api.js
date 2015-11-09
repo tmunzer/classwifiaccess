@@ -1,8 +1,8 @@
 var Api = require("./../models/api");
 
-module.exports = function(router, isAuthenticated){
-    router.get('/api/reg', isAuthenticated, function(req, res) {
-        if (req.user.userGroup == 1) {
+module.exports = function(router, isAuthenticated, isAdmin, translationFile){
+    router.get('/api/reg', isAuthenticated, isAdmin, translationFile, function(req, res) {
+        if (req.isAdmin) {
             if (req.query.hasOwnProperty('error')) {
                 var error = {status: req.query.error, stack: ""};
                 res.render('error', {user: req.user, error: error});
@@ -30,8 +30,8 @@ module.exports = function(router, isAuthenticated){
             }
         }
     });
-    router.get('/api/delete', isAuthenticated, function(req, res) {
-        if (req.user.userGroup == 1) {
+    router.get('/api/delete', isAuthenticated, isAdmin, translationFile, function(req, res) {
+        if (req.isAdmin) {
             if (req.query.hasOwnProperty("id")){
                 var apiId = req.query.id;
                 Api.deleteByID(apiId, function(){

@@ -1,14 +1,15 @@
 var User = require("./../models/user");
-var translate = require('./../translate/translate');
 var api = require('./../bin/ah_api/req');
 
-module.exports = function(router, isAuthenticated){
+module.exports = function(router, isAuthenticated, isAdmin, translationFile){
     /* GET Home Page */
-    router.get('/device/', isAuthenticated, function(req, res) {
+    router.get('/device/', isAuthenticated, isAdmin, translationFile, function(req, res) {
         User.findById(req.query.id, null, function (err, user) {
-            translate(user, req, function (translationFile) {
-                api.getDevices();
-                res.render('device', {user: req.user, user_button: translationFile.user_button});
+            api.getDevices();
+            res.render('device', {
+                user: req.user,
+                user_button: req.translationFile.user_button,
+                apiList: req.apiList
             });
         });
     });
