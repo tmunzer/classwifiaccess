@@ -1,4 +1,7 @@
 var db = require("./../app").db;
+var Group = require('./group');
+var School = require('./school');
+var UiLanguage = require('./uiLanguage');
 
 function UserSerializer(row){
     this.user = {};
@@ -13,7 +16,8 @@ function UserSerializer(row){
         this.user.userEnable=true;
     }
     this.user.GroupId=row.GroupId;
-    this.user.language=row.language;
+    this.user.LanguageId=row.LanguageId;
+    this.user.SchoolId=row.SchoolId;
 }
 
 UserSerializer.prototype.updateDB = function(userId, callback){
@@ -36,7 +40,7 @@ UserSerializer.prototype.insertDB = function(callback){
 };
 
 function User(){
-    this.userId=null;
+    this.id=null;
     this.firstName="";
     this.lastName="";
     this.email="";
@@ -45,34 +49,102 @@ function User(){
     this.userEnable=true;
     this.lastLogin="";
     this.GroupId="";
+    this.groupName="";
+    this.SchoolId="";
+    this.schoolName="";
+    this.LanguageId="";
     this.language="";
 }
 
+createUser = function(userFromDB, callback){
+    var user = new User();
+    user.id = userFromDB.id;
+    user.firstName = userFromDB.firstName;
+    user.lastName = userFromDB.lastName;
+    user.email = userFromDB.email;
+    user.username = userFromDB.username;
+    user.password = userFromDB.password;
+    user.userEnable = userFromDB.userEnable;
+    user.lastLogin = userFromDB.lastLogin;
+    user.GroupId = userFromDB.GroupId;
+    Group.findById(user.GroupId, null, function(err, group){
+        if (group){
+            user.groupName = group.groupName;
+        }
+        user.SchoolId = userFromDB.SchoolId;
+        School.findById(user.SchoolId, null, function(err, school){
+            if (school) {
+                user.schoolName = school.schoolName;
+            }
+            user.LanguageId = userFromDB.LanguageId;
+            UiLanguage.findById(user.LanguageId, null, function(err, uiLanguage){
+                if (uiLanguage){
+                    user.language = uiLanguage.language;
+                }
+                callback(user);
+            });
+        });
+    });
+};
+
 findOne = function(fields, options, callback){
-    db.findOne("User", fields, options, function(err, user){
+    db.findOne("User", fields, options, function(err, userFromDB){
         if (err){
             callback(err);
+        } else if (!userFromDB) {
+            callback(null, null);
+        } else {
+            createUser(userFromDB, function (user) {
+                callback(err, user);
+            });
         }
-        callback(err, user);
     });
 };
 
 findById = function(rowId, options, callback){
-    db.findById("User", rowId, options, function(err, user){
+    db.findById("User", rowId, options, function(err, userFromDB){
         if (err){
-            return err;
+            callback(err);
+        } else if (!userFromDB) {
+            callback(null, null);
+        } else {
+            createUser(userFromDB, function (user) {
+                callback(err, user);
+            });
         }
-        callback(err, user);
     });
 };
 
+
+
 getAll = function(options, callback){
-    var options = options || {"orderBy":"username"};
-    db.getAll("User", options, function(err, users){
+    var rOptions = options || {"orderBy":"username"};
+    db.getAll("User", rOptions, function(err, usersFromDB){
         if (err){
-            return err;
+            callback(err);
+        } else if (!usersFromDB){
+            callback(null, null);
+        } else {
+            if (usersFromDB) {
+                var insert = 0;
+                var users = [];
+                for (var i = 0; i < usersFromDB.length; i++) {
+                    createUser(usersFromDB[i], function (user) {
+                        users.push(user);
+                        insert ++;
+                        if (insert == usersFromDB.length) {
+                            callback(null, users);
+                        }
+                    })
+                }
+            }
         }
-        callback(err, users);
+    });
+};
+
+deleteByID = function(userId, callback){
+    db.deleteById("User", userId, function(err, ret){
+        callback(ret, err);
     })
 };
 
@@ -81,3 +153,4 @@ module.exports.findOne = findOne;
 module.exports.findById = findById;
 module.exports.getAll = getAll;
 module.exports.UserSerializer = UserSerializer;
+module.exports.deleteById = deleteByID;

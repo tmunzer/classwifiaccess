@@ -4,7 +4,6 @@ function UiLanguageSerializer(row){
     this.uiLanguage = {};
     this.uiLanguage.languageId = row.id;
     this.uiLanguage.language = row.language;
-    return this.uiLanguage;
 }
 
 function UILanguages(){

@@ -2,13 +2,12 @@ var db = require("./../app").db;
 
 function GroupSerializer(row){
     this.group = new Group();
-    this.group.groupId = row.id;
+    this.id = row.id;
     this.group.groupName = row.groupName;
-    return this.group;
 }
 
 function Group(){
-    this.groupId="";
+    this.id="";
     this.groupName="";
 }
 
@@ -31,7 +30,7 @@ findById = function(rowId, options, callback){
 };
 
 getAll = function(options, callback){
-    var options = options || {"orderBy":"groupName"};
+    var options = options || {"orderBy":"id"};
     db.getAll("UserGroup", options, function(err, groups){
         if (err){
             return err;

@@ -14,20 +14,16 @@ block content
         label(for="email")= user_page.email
         input(type="email" class="form-control" name="email" id="email" value=userToEdit.email, disabled="disabled")
         hr
+        label(for="group")= user_page.school
+        select(class="form-control" name="SchoolId", disabled="disabled")
+            option(selected="selected")= userToEdit.schoolName
+        hr
         label(for="group")= user_page.group
         select(class="form-control", disabled="disabled", name="userGroup")
-            each item in groups
-                if userToEdit.userGroup == item.id
-                    option(id=item.id, selected="selected")= item.groupName
-                else
-                    option(id=item.id)= item.groupName
+            option(selected="selected")= userToEdit.groupName
         label(for="language")= user_page.language
         select(class="form-control" name="language", disabled="disabled")
-            each item in languages
-                if userToEdit.language == item.id
-                    option(id=item.id, selected="selected")= item.language
-                else
-                    option(id=item.id)= item.language
+            option(selected="selected")= userToEdit.language
         label(for="enable")= user_page.enable
         case userToEdit.userEnable
             when "true"
@@ -35,9 +31,9 @@ block content
             default
                 input(type="checkbox", name="userEnable", style="margin-left:1em", disabled="disabled")
         hr
-        case userToEdit.userGroup
+        case user.GroupId
             when 1
-                a(href="/conf/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= user_page.back_button
+                a(href="/conf/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= buttons.back_button
             default
-                a(href="/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= user_page.back_button
-        a(href="/user/edit?id=" + userToEdit.id, class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= user_page.edit_button
+                a(href="/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= buttons.back_button
+        a(href="/user/edit?id=" + userToEdit.id, class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= buttons.edit_button

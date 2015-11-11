@@ -1,0 +1,72 @@
+var db = require("./../app").db;
+
+function SchoolSerializer(row){
+    this.school = {};
+    this.school.schoolName = row.schoolName;
+}
+
+
+SchoolSerializer.prototype.updateDB = function(schoolId, callback){
+    db.updateDB("School", schoolId, this.school, function(err){
+        if (err){
+            callback(err);
+        }
+        console.log("School UpdateDB");
+        callback(err);
+    });
+};
+
+SchoolSerializer.prototype.insertDB = function(callback){
+    db.insertDB("School", this.school, function(err){
+        if (err){
+            callback(err);
+        }
+        callback(err);
+    });
+};
+
+function School(){
+    this.id="";
+    this.schoolName="";
+}
+
+findOne = function(fields, options, callback){
+    db.findOne("School", fields, options, function(err, school){
+        if (err){
+            callback(err);
+        }
+        callback(err, school);
+    });
+};
+
+findById = function(rowId, options, callback){
+    db.findById("School", rowId, options, function(err, school){
+        if (err){
+            return err;
+        }
+        callback(err, school);
+    });
+};
+
+getAll = function(options, callback){
+    var options = options || {"orderBy":"schoolName"};
+    db.getAll("School", options, function(err, schools){
+        if (err){
+            return err;
+        }
+        callback(err, schools);
+    })
+};
+
+deleteByID = function(schoolId, callback){
+    db.deleteById("School", schoolId, function(err, ret){
+        callback(ret, err);
+    })
+};
+
+module.exports = School;
+module.exports.findOne = findOne;
+module.exports.findById = findById;
+module.exports.getAll = getAll;
+module.exports.SchoolSerializer = SchoolSerializer;
+module.exports.deleteById = deleteByID;

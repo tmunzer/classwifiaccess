@@ -1,7 +1,7 @@
 
-module.exports = function(router, passport, translationFile){
+module.exports = function(router, passport){
     /* GET login page. */
-    router.get('/login/', translationFile, function(req, res) {
+    router.get('/login/', function(req, res) {
         // Display the Login page with any flash message, if any
         res.render('login', { message: req.translationFile.login_page[req.flash('message')], text : req.translationFile.login_page });
     });

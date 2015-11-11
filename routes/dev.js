@@ -1,11 +1,11 @@
 var apiReq = require("./../bin/ah_api/req");
 var api = require("./../models/api");
 
-module.exports = function(router, isAuthenticated, isAdmin, translationFile){
+module.exports = function(router, isAuthenticated){
     /* GET Dev tools */
 
     router.get("/dev/", isAuthenticated, function(req, res, next) {
-        if (req.isAdmin) {
+        if (req.session.isAdmin) {
             api.getAll(null, function(err, apis){
                 var apiSecret = api.getSecret();
                 var apiClientId = api.getClientId();
@@ -13,6 +13,7 @@ module.exports = function(router, isAuthenticated, isAdmin, translationFile){
                 console.log(apiClientId);
                 res.render('dev', {
                     user: req.user,
+                    session: req.session,
                     apiSecret: apiSecret,
                     apiClientId: apiClientId,
                     apis: apis,

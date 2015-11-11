@@ -16,23 +16,35 @@ module.exports.user_button = {
 // Config page
 //API
 module.exports.config_page = {
-    api_configuration:"Configuration de l'APP",
+    api_configuration:"Configuration de l'API",
     register:"Enregistrer l'API",
-    classroom_mgmt:"Gestion des classes",
+    user_mgmt:"Gestion des Utilisateurs",
+    classroom_mgmt:"Gestion des Classes",
+    school_mgmt:"Gestion des Ecoles",
 //Users
-    users:"Utilisateurs",
-    new_user:"Nouvel utilisateur",
-    name:"Nom",
-    type:"Groupe",
-    enable:"Activé",
-    last_login:"Dernière connexion",
     delete_api_title:"Voulez vous supprimer l'accès à cet API?",
+    delete_user_title:"Voulez vous supprimer cet Utilisateur?",
+    delete_class_title:"Voulez vous supprimer cette Classe?",
+    delete_school_title:"Voulez vous supprimer cette Ecole?",
+    api_none:"Aucune",
+    link_api_conf:"Paramètre de l'API",
+    link_api_text:"Lier l'API à l'école ",
     cancel:"Annuler",
-    remove:"Supprimer"
+    remove:"Supprimer",
+    school:"Ecole"
 };
 //AP
 
+module.exports.classroom_page = {
+    classroom:'Salle de Classe',
+    classroomName:"Nome de la Salle de Classe",
+    device:"Point d'Accès",
+    school:"Ecole",
+    new_classroom_button:"Nouvelle Salle"
+};
+
 module.exports.user_page = {
+    users:"Utilisateurs",
     user_account:"Compte Utilisateur",
     firstName:"Prénom",
     lastName:"Nom",
@@ -40,21 +52,24 @@ module.exports.user_page = {
     email:"Adresse E-mail",
     enable:"Utilisateur Activé",
     lastLogin:"Dernière Connexion",
+    school:"Ecole",
     group:"Groupe",
     language:"Langue",
     password:"Mot De Passe",
     confirm_password:"Confirmer le Mot de Passe",
-    save_button:"Enregistrer",
-    cancel_button:"Annuler",
     password_placeholder:"Non modifié",
-    edit_button:"Modifier",
-    back_button:"Retour",
     new_user_button:"Nouvel Utilisateur"
 };
 
-module.exports.classroom_page = {
-    classNumber:"Numéro de Salle",
-    deviceId: "Equipement Associé",
-    new_classroom_button:"Nouvelle Salle"
+module.exports.school_page = {
+    school:"Ecole",
+    schoolName:"Nom",
+    new_school_button:"Nouvelle Ecole"
 };
 
+module.exports.buttons = {
+    edit_button:"Modifier",
+    back_button:"Retour",
+    save_button:"Enregistrer",
+    cancel_button:"Annuler"
+};

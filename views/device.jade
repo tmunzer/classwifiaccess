@@ -1,17 +1,32 @@
-extends layout
+extends layout_admin
 
 block content
     div(class="jumbotron", style="float:left; width:100%")
         section(id="device")
+            if deviceList
+                for device in deviceList
+                    article(style='float:left; width:30%;')
+                        h4= device.hostName
+                        label Connected
+                        case device.connected
+                           when true
+                               span(class="label label-success")= device.connected
+                           when false
+                               span(class="label label-danger")= device.connected
+                        br
+                        label MAC Address:
+                        span= device.macAddress
+                        br
+                        label Serial Number:
+                        span= device.serialId
+                        br
+                        label IP Address:
+                        span= device.ip
+                        br
+                        label Location:
+                        span= device.locations
+                        br
+                        label Connected Clients
+                        span(class="badge")= device.activeClients
 
-    script.
-        $(document).ready(
-            socket.on("device", function (device) {
-                var apString = "";
-                for (var param in device){
-                    apString += param + ": " + device[param] + "</br>";
-                }
-                $("#device").append("<article style='float:left; width:30%;'>" + apString + '</article>');
-            })
-        )
 

@@ -20,38 +20,62 @@ block content
             hr
             case user.GroupId
                 when 1
+                    label(for="group")= user_page.school
+                    select(class="form-control" name="SchoolId" id="SchoolId")
+                        each item in schools
+                            if userToEdit.SchoolId == item.id
+                                option(value=item.id, selected="selected")= item.schoolName
+                            else
+                                option(value=item.id)= item.schoolName
+                    hr
                     label(for="group")= user_page.group
-                    select(class="form-control", name="GroupId")
+                    select(class="form-control", name="GroupId", id="GroupId")
                         each item in groups
                             if userToEdit.GroupId == item.id
                                 option(value=item.id, selected="selected")= item.groupName
                             else
                                 option(value=item.id)= item.groupName
                 default
+                    label(for="group")= user_page.school
+                    select(class="form-control" name="SchoolId", disabled="disabled")
+                        each item in schools
+                            if userToEdit.SchoolId == item.id
+                                option(value=item.id, selected="selected")= item.schoolName
+                    hr
                     label(for="group")= user_page.group
                     select(class="form-control", disabled="disabled", name="GroupId")
                         each item in groups
                             if userToEdit.GroupId == item.id
                                 option(value=item.id, selected="selected")= item.groupName
-                            else
-                                option(value=item.id)= item.groupName
             label(for="language")= user_page.language
-            select(class="form-control" name="language")
+            select(class="form-control" name="LanguageId")
                 each item in languages
-                    if userToEdit.language == item.id
+                    if userToEdit.LanguageId == item.id
                         option(value=item.id, selected="selected")= item.language
                     else
                         option(value=item.id)= item.language
-            label(for="enable")= user_page.enable
-            if userToEdit.userEnable
-                input(type="checkbox", name="userEnable", style="margin-left:1em", checked)
+            if userToEdit.id == user.id
+                input(type="hidden", name="userEnable", value=userToEdit.userEnable)
             else
-                input(type="checkbox", name="userEnable", style="margin-left:1em")
+                label(for="enable")= user_page.enable
+                if userToEdit.userEnable
+                    input(type="checkbox", name="userEnable", style="margin-left:1em", checked)
+                else
+                    input(type="checkbox", name="userEnable", style="margin-left:1em")
             hr
             if userToEdit.id
-                a(href="/user?id="+userToEdit.id, class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= user_page.cancel_button
+                a(href="/user?id="+userToEdit.id, class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
             else
-                a(href="/conf/", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= user_page.cancel_button
-            button(class='btn btn-primary', type='submit', style="margin:0.2em 1em 2em 1em")= user_page.save_button
+                a(href="/conf/", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
+            button(class='btn btn-primary', type='submit', style="margin:0.2em 1em 2em 1em")= buttons.save_button
 
-    script(type='text/javascript' src='/javascripts/userToEdit.js')
+    script.
+        $("#GroupId").change(function() {
+            if ($(this).val() == 1) {
+                $("#SchoolId").prop("disabled", true);
+                $("#SchoolId").val("1");
+            } else {
+                $("#SchoolId").prop("disabled", false);
+            }
+        });
+

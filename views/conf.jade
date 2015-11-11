@@ -1,22 +1,32 @@
 extends layout
 
 block script_header
-   script(language="JavaScript" type="text/javascript" src='/javascripts/conf.js')
-
 
 block content
-
    div(class="modal fade" id="confirmRemoveModal" tabindex="-1" role="dialog" aria-labelledby="confirmRemoveModalLabel" aria-hidden="true")
       div(class="modal-dialog")
          div(class="modal-content")
             div(class="modal-header")
                h4(class="modal-title" id="confirmRemoveModalLabel") Confirmation
             div(class="modal-body")
-               span= config_page.delete_api_title
+               span(id="oText")
             div(class="modal-footer")
                button(type="button" class="btn btn-primary" data-dismiss="modal")= config_page.cancel
-               a(type="button" id="aRemoveApi" href="" class="btn btn-danger")= config_page.remove
-
+               a(type="button" id="oRemove" href="" class="btn btn-danger")= config_page.remove
+   div(class="modal fade" id="linkApiToSchool" tabindex="-1" role="dialog" aria-labelledby="linkApiToSchoolLabel" aria-hidden="true")
+      div(class="modal-dialog")
+         form(id="apiConfig", action='', method='POST')
+            div(class="modal-content")
+               div(class="modal-header")
+                  h4(class="modal-title" id="linkApiToSchoolLabel")= config_page.link_api_conf
+               div(class="modal-body")
+                  label(for="group")= config_page.link_api_text
+                  select(class="form-control", name="SchoolId")
+                     each item in schoolList
+                        option(value=item.id)= item.schoolName
+               div(class="modal-footer")
+                  button(type="button" class="btn btn-primary" data-dismiss="modal")= config_page.cancel
+                  button(class='btn btn-primary', type='submit')= buttons.save_button
 
    section(class='sb-site-content')
       h3= config_page.api_configuration
@@ -25,52 +35,40 @@ block content
       table.table
          thead
             tr
-               th API
+               th= config_page.school
                th ownerID
                th vhmID
                th vpcUrl
                th accessToken
-               th refreshToken
                th expireAt
-               th action
+               th Action
          tbody
             each api in apiList
                tr
-                  td= api.id
+                  if api.SchoolId == 1
+                     td
+                        a(href="#", type='button', style="margin:auto 0.5em", onclick="api_conf("+api.id+")")= config_page.api_none
+                  else
+                     td
+                        a(href="#", type='button', style="margin:auto 0.5em", onclick="api_conf("+api.id+")")= api.schoolName
                   td= api.ownerId
                   td= api.vhmId
                   td= api.vpcUrl
                   td= api.accessToken
-                  td= api.refreshToken
                   td= api.expireAt
                   td
                      a(href="/api/refresh?id=" + api.id, type='button', style="margin:auto 0.5em")
                         i(class="fa fa-refresh")
-                     a(href="/api/delete?id=" + api.id, type='button', style="margin:auto 0.5em", onclick="confirm_delete()")
+                     a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('api', "+api.id+")")
                         i(class="fa fa-remove")
-      hr
-      h3= config_page.classroom_mgmt
-      a(href="/class/new/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= classroom_page.new_classroom_button
-      table.table
-         thead
-            tr
-               th= classroom_page.classNumber
-               th= classroom_page.deviceId
-               th Action
-         tbody
-            each classroom in classList
-               tr
-                  td
-                     a(href="/class?id=" + classroom.id)= classroom.className
-                  td  classroom.deviceId
-
 
       hr
-      h3= config_page.users
+      h3= config_page.user_mgmt
       a(href="/user/new/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= user_page.new_user_button
       table.table
          thead
             tr
+               th= user_page.school
                th= user_page.username
                th= user_page.firstName
                th= user_page.lastName
@@ -79,35 +77,109 @@ block content
                th= user_page.lastLogin
                th Action
          tbody
-            each user in userList
-               if user.userEnable == "true"
+            each userToDisplay in userList
+               if userToDisplay.userEnable == "true"
                   tr
+                     td= userToDisplay.schoolName
                      td
-                        a(href="/user?id="+user.id)= user.username
-                     td= user.firstName
-                     td= user.lastName
-                     each group in groupList
-                        if group.id == user.userGroup
-                           td= group.groupName
-                     td= user.userEnable
-                     td= user.lastLogin
+                        a(href="/user?id="+userToDisplay.id)= userToDisplay.username
+                     td= userToDisplay.firstName
+                     td= userToDisplay.lastName
+                     td= userToDisplay.groupName
+                     td= userToDisplay.userEnable
+                     td= userToDisplay.lastLogin
                      td
-                        a(href="/user/edit?id="+user.id, type='button', style="margin:auto 0.5em")
+                        a(href="/user/edit?id="+userToDisplay.id, type='button', style="margin:auto 0.5em")
                            i(class="fa fa-edit")
-                        a(href="/user/edit?id="+user.id, type='button', style="margin:auto 0.5em")
-                           i(class="fa fa-remove")
+                        if userToDisplay.id == user.id
+                          i(class="fa fa-remove" style="margin:auto 0.5em")
+                        else
+                           a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('user', " + userToDisplay.id + ")")
+                              i(class="fa fa-remove")
+
                else
                   tr.active
+                     td= userToDisplay.schoolName
                      td
-                        a(href="/user?id="+user.id)= user.username
-                     td= user.firstName
-                     td= user.lastName
-                     td= user.userGroup
-                     td= user.userEnable
-                     td= user.lastLogin
+                        a(href="/user?id="+userToDisplay.id)= userToDisplay.username
+                     td= userToDisplay.firstName
+                     td= userToDisplay.lastName
+                     td= userToDisplay.userGroup
+                     td= userToDisplay.userEnable
+                     td= userToDisplay.lastLogin
                      td
-                        a(href="/user/edit?id="+user.id, type='button', style="margin:auto 0.5em")
+                        a(href="/user/edit?id="+userToDisplay.id, type='button', style="margin:auto 0.5em")
                            i(class="fa fa-edit")
-                        a(href="/user/edit?id="+user.id, type='button', style="margin:auto 0.5em")
+                        a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('user', " + userToDisplay.id + ")")
                            i(class="fa fa-remove")
 
+      hr
+      h3= config_page.classroom_mgmt
+      a(href="/classroom/new/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= classroom_page.new_classroom_button
+      table.table
+         thead
+            tr
+               th= classroom_page.school
+               th= classroom_page.classroomName
+               th= classroom_page.device
+               th Action
+         tbody
+            each classroom in classList
+               tr
+                  td= classroom.schoolName
+                  td
+                     a(href="/classroom?id=" + classroom.id)= classroom.classroomName
+                  td= classroom.deviceHostname
+                  td
+                     a(href="/classroom/edit?id=" + classroom.id, type='button', style="margin:auto 0.5em")
+                        i(class="fa fa-edit")
+                     a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('classroom', " + classroom.id + ")")
+                        i(class="fa fa-remove")
+      hr
+      h3= config_page.school_mgmt
+      a(href="/school/new/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= school_page.new_school_button
+      table.table
+         thead
+            tr
+               th= school_page.schoolName
+               th Action
+         tbody
+            each school in schoolList
+               if school.id != 1
+                  tr
+                     td
+                        a(href="/school?id=" + school.id)= school.schoolName
+                     td
+                        a(href="/school/edit?id=" + school.id, type='button', style="margin:auto 0.5em")
+                           i(class="fa fa-edit")
+                        a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('school', " + school.id + ")")
+                           i(class="fa fa-remove")
+
+
+   script.
+      function confirm_delete(oType, oId) {
+         switch (oType){
+            case "api":
+               $('#oRemove').attr('href', '/api/delete?id=' + oId);
+               $('#oText').text("#{config_page.delete_api_title}");
+               break;
+            case "user":
+               $('#oRemove').attr('href', '/user/delete?id=' + oId);
+               $('#oText').text("#{config_page.delete_user_title}");
+               break;
+            case "classroom":
+               $('#oRemove').attr('href', '/classroom/delete?id=' + oId);
+               $('#oText').text("#{config_page.delete_class_title}");
+               break;
+            case "school":
+               $('#oRemove').attr('href', '/school/delete?id=' + oId);
+               $('#oText').text("#{config_page.delete_school_title}");
+               break;
+         }
+         $('#confirmRemoveModal').modal('show');
+      }
+      function api_conf(apiId) {
+         $('#apiConfig').attr('action', '/api/update?id=' + apiId);
+         $('#linkApiToSchool').modal('show');
+
+      }

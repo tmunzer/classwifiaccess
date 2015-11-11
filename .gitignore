@@ -4,3 +4,4 @@ bin/ah_api/config
 .idea/workspace.xml
 
 .idea/
+*.db

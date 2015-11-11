@@ -1,14 +1,17 @@
 var db = require("./../app").db;
+var School = require("./school");
+var Device = require("./device");
 
-function ClassroomSeralizer(row){
+function ClassroomSeralizer(row) {
     this.classromm = {};
-    this.classromm.className=row.className;
-    this.classromm.deviceId=row.deviceId;
+    this.classromm.classroomName = row.classroomName;
+    this.classromm.DeviceId = row.DeviceId;
+    this.classromm.SchoolId = row.SchoolId;
 }
 
-ClassroomSeralizer.prototype.updateDB = function(classroomId, callback){
-    db.updateDB("Classroom", classroomId, this.classromm, function(err){
-        if (err){
+ClassroomSeralizer.prototype.updateDB = function (classroomId, callback) {
+    db.updateDB("Classroom", classroomId, this.classromm, function (err) {
+        if (err) {
             callback(err);
         }
         console.log("Classroom UpdateDB");
@@ -16,47 +19,94 @@ ClassroomSeralizer.prototype.updateDB = function(classroomId, callback){
     });
 };
 
-ClassroomSeralizer.prototype.insertDB = function(callback){
-    db.insertDB("Classroom", this.classromm, function(err){
-        if (err){
+ClassroomSeralizer.prototype.insertDB = function (callback) {
+    db.insertDB("Classroom", this.classromm, function (err) {
+        if (err) {
             callback(err);
         }
         callback(err);
     });
 };
 
-function Classroom(){
-    this.classroomId=null;
-    this.className="";
-    this.deviceId="";
-
+function Classroom() {
+    this.id = null;
+    this.classroomName = "";
+    this.DeviceId = "";
+    this.deviceHostname = "";
+    this.SchoolId = "";
+    this.schoolName = "";
 }
 
-findOne = function(fields, options, callback){
-    db.findOne("Classroom", fields, options, function(err, classromm){
-        if (err){
+createClassroom = function (classroomFromDB, callback) {
+    var classroom = new Classroom();
+    classroom.id = classroomFromDB.id;
+    classroom.classroomName = classroomFromDB.classroomName;
+    classroom.DeviceId = classroomFromDB.DeviceId;
+    Device.findById(classroom.DeviceId, null, function (err, device) {
+        console.log(classroom);
+        console.log(device);
+        if (device) {
+            classroom.deviceHostname = device.hostName;
+        }
+        classroom.SchoolId = classroomFromDB.SchoolId;
+        School.findById(classroom.SchoolId, null, function (err, school) {
+            if (school) {
+                classroom.schoolName = school.schoolName;
+            }
+            callback(classroom);
+        });
+    });
+};
+
+findOne = function (fields, options, callback) {
+    db.findOne("Classroom", fields, options, function (err, classroomFromDB) {
+        if (err) {
             callback(err);
         }
-        callback(err, classromm);
+        createClassroom(classroomFromDB, function(classroom){
+            callback(err, classroom);
+        });
     });
 };
 
-findById = function(rowId, options, callback){
-    db.findById("Classroom", rowId, options, function(err, classromm){
-        if (err){
+findById = function (rowId, options, callback) {
+    db.findById("Classroom", rowId, options, function (err, classroomFromDB) {
+        if (err) {
             return err;
         }
-        callback(err, classromm);
+        createClassroom(classroomFromDB, function(classroom){
+            callback(err, classroom);
+        });    });
+};
+
+getAll = function (options, callback) {
+    var rOptions = options || {"orderBy": "classroomName"};
+    db.getAll("Classroom", rOptions, function(err, classroomsFromDB){
+        if (err){
+            callback(err);
+        } else if (!classroomsFromDB){
+            callback(null, null);
+        } else {
+            if (classroomsFromDB) {
+                var insert = 0;
+                var classrooms = [];
+                for (var i = 0; i < classroomsFromDB.length; i++) {
+                    createClassroom(classroomsFromDB[i], function (user) {
+                        classrooms.push(user);
+                        insert ++;
+                        if (insert == classroomsFromDB.length) {
+                            callback(null, classrooms);
+                        }
+                    })
+                }
+            }
+        }
     });
 };
 
-getAll = function(options, callback){
-    var options = options || {"orderBy":"className"};
-    db.getAll("Classroom", options, function(err, classromms){
-        if (err){
-            return err;
-        }
-        callback(err, classromms);
+deleteByID = function(classroomId, callback){
+    db.deleteById("Classroom", classroomId, function(err, ret){
+        callback(ret, err);
     })
 };
 
@@ -64,4 +114,5 @@ module.exports = Classroom;
 module.exports.findOne = findOne;
 module.exports.findById = findById;
 module.exports.getAll = getAll;
+module.exports.deleteById = deleteByID;
 module.exports.ClassroomSeralizer = ClassroomSeralizer;

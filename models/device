@@ -5,12 +5,12 @@ function DeviceSerializer(row){
     this.device.deviceId= row.deviceId;
     this.device.ownerId= row.ownerId;
     this.device.macAddress= row.macAddress;
-    this.device.hostname = row.hostname;
+    this.device.hostName = row.hostName;
     this.device.serialId= row.serialId;
     this.device.model= row.model;
     this.device.ip= row.ip;
     this.device.simType= row.simType;
-    this.device.location= row.location;
+    this.device.locations= row.locations;
 }
 
 DeviceSerializer.prototype.insertDB = function(callback){
@@ -18,6 +18,7 @@ DeviceSerializer.prototype.insertDB = function(callback){
         if (err){
             callback(err);
         }
+        console.log("Device InsertDB");
         callback(err);
     });
 };
@@ -28,48 +29,50 @@ DeviceSerializer.prototype.updateDB = function(rowId, callback){
             callback(err);
         }
         console.log("Device UpdateDB");
+        callback(err);
     });
 };
 
 
 function Device(){
-    this.device.deviceId= "";
-    this.device.ownerId= "";
-    this.device.macAddress= "";
-    this.device.hostname = "";
-    this.device.serialId= "";
-    this.device.model= "";
-    this.device.ip= "";
-    this.device.simType= "";
-    this.device.location= "";
+    this.id=null;
+    this.deviceId= "";
+    this.ownerId= "";
+    this.macAddress= "";
+    this.hostName = "";
+    this.serialId= "";
+    this.model= "";
+    this.ip= "";
+    this.simType= "";
+    this.locations= "";
 }
 
 
 findOne = function(fields, options, callback){
-    db.findOne("Device", fields, options, function(err, api){
+    db.findOne("Device", fields, options, function(err, device){
         if (err){
             callback(err);
         }
-        callback(err, api);
+        callback(err, device);
     });
 };
 
 findById = function(rowId, options, callback){
-    db.findById("Device", rowId, options, function(err, api){
+    db.findById("Device", rowId, options, function(err, device){
         if (err){
             return err;
         }
-        callback(err, api);
+        callback(err, device);
     });
 };
 
 getAll = function(options, callback){
-    var rOptions = options || {"orderBy":"hostname"};
-    db.getAll("Device", rOptions, function(err, apis){
+    var rOptions = options || {"orderBy":"hostName"};
+    db.getAll("Device", rOptions, function(err, devices){
         if (err){
             return err;
         }
-        callback(err, apis);
+        callback(err, devices);
     })
 };
 

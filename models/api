@@ -1,6 +1,7 @@
 var db = require("./../app").db;
 var apiAuth = require("./../bin/ah_api/auth");
 var apiConf = require("./../bin/ah_api/config");
+var School = require("./school");
 
 function ApiSerializer(row){
     this.api = {};
@@ -11,7 +12,18 @@ function ApiSerializer(row){
     this.api.accessToken= row.accessToken;
     this.api.refreshToken= row.refreshToken;
     this.api.expireAt= row.expireAt;
+    this.api.SchoolId = row.SchoolId;
 }
+
+ApiSerializer.prototype.updateDB = function(apiId, callback){
+    db.updateDB("API", apiId, this.api, function(err){
+        if (err){
+            callback(err);
+        }
+        console.log("API UpdateDB");
+        callback(err);
+    });
+};
 
 ApiSerializer.prototype.insertDB = function(callback){
     console.log(this.api);
@@ -32,6 +44,7 @@ function ApiErrorSerializer(row){
 }
 
 function Api(){
+    this.id=null;
     this.clientId="";
     this.ownerId="";
     this.vhmId="";
@@ -39,8 +52,29 @@ function Api(){
     this.accessToken="";
     this.refreshToken="";
     this.expireAt="";
+    this.SchoolId="";
+    this.schoolName="";
 }
 
+
+createAPI = function(apiFromDB, callback){
+    var api = new Api();
+    api.id = apiFromDB.id;
+    api.clientId = apiFromDB.clientId;
+    api.ownerId = apiFromDB.ownerId;
+    api.vhmId = apiFromDB.vhmId;
+    api.vpcUrl = apiFromDB.vpcUrl;
+    api.accessToken = apiFromDB.accessToken;
+    api.refreshToken = apiFromDB.refreshToken;
+    api.expireAt = apiFromDB.expireAt;
+    api.SchoolId = apiFromDB.SchoolId;
+    School.findById(api.SchoolId, null, function(err, school){
+        if (school){
+            api.schoolName = school.schoolName;
+        }
+        callback(api);
+    });
+};
 
 Api.prototype.registerApp = function(authCode, callback){
     apiAuth.getPermanentToken(authCode, apiConf.redirectUrl, apiConf.secret, apiConf.clientId, function(res){
@@ -61,41 +95,90 @@ getSecret = function(){
 };
 
 findOne = function(fields, options, callback){
-    db.findOne("API", fields, options, function(err, api){
-
+    db.findOne("API", fields, options, function(err, apiFromDB){
         if (err){
             callback(err);
+        } else if (!apiFromDB) {
+            callback(null, null);
+        } else {
+            createAPI(apiFromDB, function (api) {
+                callback(err, api);
+            });
         }
-        callback(err, api);
+    });
+};
+
+findAll = function(fields, options, callback){
+    db.findAll("API", fields, options, function(err, apiFromDB){
+        if (err){
+            callback(err);
+        } else if (apiFromDB.length == 0) {
+            callback(null, null);
+        } else {
+            var apiList = [];
+            var apiNum = 0;
+            for (var api in apiFromDB){
+                createAPI(apiFromDB[api], function (apiObject) {
+                    apiList.push(apiObject);
+                    apiNum++;
+                    if (apiNum == apiFromDB.length) {
+                        callback(err, apiList);
+                    }
+                });
+            }
+        }
     });
 };
 
 findById = function(rowId, options, callback){
-    db.findById("API", rowId, options, function(err, api){
+    db.findById("API", rowId, options, function(err, apiFromDB){
         if (err){
-            return err;
+            callback(err);
+        } else if (!apiFromDB) {
+            callback(null, null);
+        } else {
+            createAPI(apiFromDB, function (api) {
+                callback(err, api);
+            });
         }
-        callback(err, api);
     });
 };
 
+
+
 getAll = function(options, callback){
     var rOptions = options || {"orderBy":"vhmId"};
-    db.getAll("API", rOptions, function(err, apis){
+    db.getAll("API", rOptions, function(err, apisFromDB){
         if (err){
-            return err;
+            callback(err);
+        } else if (!apisFromDB){
+            callback(null, null);
+        } else {
+            if (apisFromDB) {
+                var insert = 0;
+                var apis = [];
+                for (var i = 0; i < apisFromDB.length; i++) {
+                    createAPI(apisFromDB[i], function (api) {
+                        apis.push(api);
+                        insert ++;
+                        if (insert == apisFromDB.length) {
+                            callback(null, apis);
+                        }
+                    })
+                }
+            }
         }
-        callback(err, apis);
     })
 };
 
-deleteByID = function(apiId, callback){
+deleteById = function(apiId, callback){
     db.deleteById("API", apiId, function(err, ret){
         callback(ret, err);
     })
 };
 
 module.exports = Api;
+module.exports.findAll = findAll;
 module.exports.findOne = findOne;
 module.exports.findById = findById;
 module.exports.getAll = getAll;
@@ -104,4 +187,4 @@ module.exports.ApiErrorSerializer = ApiErrorSerializer;
 module.exports.getClientId = getClientId;
 module.exports.getSecret = getSecret;
 module.exports.getRedirectUrl = getRedirectUrl;
-module.exports.deleteByID = deleteByID;
+module.exports.deleteById = deleteById;

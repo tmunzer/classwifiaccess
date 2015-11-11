@@ -1,7 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var translate = require('./../translate/translate');
-var Api = require("./../models/api");
 
 var isAuthenticated = function (req, res, next) {
     // if user is authenticated in the session, call the next() to call the next request handler
@@ -13,19 +11,24 @@ var isAuthenticated = function (req, res, next) {
     res.redirect('/login');
 };
 
+//===============MIDDLEWARE=================
+var translate = require('./../translate/translate');
+var Api = require("./../models/api");
+
 var isAdmin = function(req, res, next){
-    req.isAdmin = req.user.GroupId == 1;
-    Api.getAll(null, function(apiList){
-        req.apiList = apiList;
-        console.log(apiList);
-        return next();
-    });
+    if (!req.session.hasOwnProperty('isAdmin')){
+        req.session.isAdmin == undefined;
+    }
+    if ((req.user && req.session.isAdmin == undefined)){
+        req.session.isAdmin = req.user.GroupId == 1;
+    }
+    next();
 };
 
 var translationFile = function(req, res, next) {
     var userLanguage;
     if (req.user){
-        userLanguage = req.user.language;
+        userLanguage = req.user.LanguageId;
     } else {
         userLanguage = null;
     }
@@ -35,30 +38,50 @@ var translationFile = function(req, res, next) {
     })
 };
 
+var schoolId = function(req, res, next){
+    if (!req.session.hasOwnProperty('SchoolId')){
+        req.session.SchoolId =  undefined;
+    }
+    if ((req.user) && (req.session.SchoolId == undefined)) {
+        req.session.SchoolId = req.user.SchoolId;
+    }
+    next();
+};
+
+//===============ROUTER=================
 module.exports = function(passport){
-
-
+    router.use(isAdmin);
+    router.use(translationFile);
+    router.use(schoolId);
 
     /* Login Router */
-    require("./login")(router, passport, translationFile);
+    require("./login")(router, passport);
 
     /* Conf Router */
-    require("./conf")(router, isAuthenticated, isAdmin, translationFile);
+    require("./conf")(router, isAuthenticated);
 
     /* User Router */
-    require("./user")(router, isAuthenticated, isAdmin, translationFile);
+    require("./user")(router, isAuthenticated);
+
+    /* School Router */
+    require("./school")(router, isAuthenticated);
+
+    /* Classroom Router */
+    require("./classroom")(router, isAuthenticated);
 
     /* API Router */
-    require("./api")(router, isAuthenticated, isAdmin, translationFile);
+    require("./api")(router, isAuthenticated);
 
     /* Home Router */
-    require("./home")(router, isAuthenticated, isAdmin, translationFile);
+    require("./home")(router, isAuthenticated);
 
     /* Device Router */
-    require("./device")(router, isAuthenticated, isAdmin, translationFile);
+    require("./device")(router, isAuthenticated);
 
     /* Dev Router */
-    require("./dev")(router, isAuthenticated, isAdmin, translationFile);
+    require("./dev")(router, isAuthenticated);
+
+    require("./admin")(router, isAuthenticated);
 
     router.get("/*", function(req, res, next){
         res.redirect('/home');

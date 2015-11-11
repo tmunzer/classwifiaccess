@@ -11,16 +11,15 @@ var Sqlite = function(){
     this.db.serialize(function() {
         if(!exists) {
             db.run("CREATE TABLE API (id integer primary key," +
-                "scId VARCHAR(8), " +
                 "clientId VARCHAR(30)," +
                 "ownerId INTEGER," +
                 "vhmId VARCHAR(15), " +
                 "vpcUrl VARCHAR(60), "+
                 "accessToken VARCHAR(60)," +
                 "refreshToken VARCHAR(60)," +
-                "expireAt DATETIME)");
+                "expireAt DATETIME," +
+                "SchoolId INTEGER)");
             db.run("CREATE TABLE User (id integer primary key, " +
-                "scId VARCHAR(8), " +
                 "firstName VARCHAR(30), " +
                 "lastName VARCHAR(30), " +
                 "email VARCHAR(60), " +
@@ -28,13 +27,12 @@ var Sqlite = function(){
                 "password VARCHAR(120) NOT NULL, " +
                 "userEnable BOOL, " +
                 "lastLogin DATETIME, " +
-                "language INTEGER, " +
+                "LanguageId INTEGER, " +
+                "SchoolId INTEGER, " +
                 "GroupId INTEGER NOT NULL)");
             db.run("CREATE TABLE UserGroup (id integer primary key," +
-                "scId VARCHAR(8), " +
                 "groupName VARCHAR(30))");
             db.run("CREATE TABLE Device (id integer primary key," +
-                "scId VARCHAR(8), " +
                 "deviceId VARCHAR(15)," +
                 "ownerId INTEGER, " +
                 "macAddress VARCHAR(16), " +
@@ -43,28 +41,36 @@ var Sqlite = function(){
                 "model VARCHAR(10), " +
                 "ip VARCHAR(12), " +
                 "simType VARCHAR(10), " +
-                "location VARCHAR(60))");
+                "location VARCHAR(60)," +
+                "SchoolId INTEGER)");
             db.run("CREATE TABLE Classroom (id integer primary key," +
-                "scId VARCHAR(8), " +
-                "className VARCHAR(30), " +
-                "DeviceID INTEGER)");
+                "classroomName VARCHAR(30), " +
+                "DeviceId INTEGER," +
+                "SchoolId INTEGER)");
             db.run("CREATE TABLE Course (id integer primary key," +
-                "scId VARCHAR(8)," +
+                "startTime DATETIME," +
+                "endTime DATETIME," +
                 "ClassroomId INTEGER," +
                 "UserID INTEGER," +
-                "startTime DATETIME," +
-                "endTime DATETIME)");
+                "SchoolId INTEGER)");
             db.run("CREATE TABLE UILanguage (id integer primary key," +
                 "language VARCHAR(20)," +
                 "code VARCHAR(6))");
-            db.run("INSERT INTO User VALUES (1, 1, '', '', '', 'admin', '"+createHash("aerohive")+"', 'true', '', '1', 1)");
-            db.run("INSERT INTO UserGroup VALUES (1, 1, 'Administrator')");
-            db.run("INSERT INTO UserGroup VALUES (2, 1, 'Teacher')");
+            db.run('CREATE TABLE School (id integer primary key,' +
+                'schoolName VARCHAR(32))');
+            db.run("INSERT INTO User VALUES (1, '', '', '', 'admin', '"+createHash("aerohive")+"', 'true', '', '1', '', '1')");
+            db.run("INSERT INTO UserGroup VALUES (1, 'Administrator')");
+            db.run("INSERT INTO UserGroup VALUES (2, 'Operator')");
+            db.run("INSERT INTO UserGroup VALUES (3, 'Teacher')");
+            db.run("INSERT INTO UserGroup VALUES (4, 'Monitor')");
+            db.run("INSERT INTO School VALUES (1, 'All')");
             db.run("INSERT INTO UILanguage VALUES (1, 'English', 'en')");
             db.run("INSERT INTO UILanguage VALUES (2, 'Francais', 'fr')");
         }
     });
 };
+
+
 
 Sqlite.prototype.updateDB = function(table, rowId, entries, callback){
     var updateString = "";
@@ -127,7 +133,7 @@ Sqlite.prototype.insertDB = function(table, rows, callback){
     });
 };
 
-Sqlite.prototype.processOptions = function(rOptions){
+processOptions = function(rOptions){
     var options = rOptions || {};
     var columnsString = "";
     var orderByString = "";
@@ -172,10 +178,40 @@ Sqlite.prototype.findOne = function(table, fields, options, callback){
         fieldNumber ++;
     }
     searchString = "(" + searchString + ")";
-    var rOptions = this.processOptions(options);
+    var rOptions = processOptions(options);
     var selectString = "SELECT " + rOptions.columns + " FROM " + table + " WHERE "+ searchString;
     console.log(selectString);
     this.db.get(selectString, function(err, ret){
+        if (err){
+            callback(err);
+        }
+        callback(err, ret);
+    });
+};
+
+Sqlite.prototype.findAll = function(table, fields, options, callback){
+    /**
+     Find the rows matching the fields
+     Table: Table to request
+     Fields: object {fieldName: fieldValue}
+     Options: object {option: []} with the following options (optionals)
+     columns: columns to retrieve
+     orderBy: how to sort the result
+     */
+    var searchString = "";
+    var fieldNumber = 0;
+    for (var fieldName in fields){
+        if (fieldNumber != 0){
+            searchString += " AND "
+        }
+        searchString += fieldName + "='" + fields[fieldName] +"'";
+        fieldNumber ++;
+    }
+    searchString = "(" + searchString + ")";
+    var rOptions = processOptions(options);
+    var selectString = "SELECT " + rOptions.columns + " FROM " + table + " WHERE "+ searchString;
+    console.log(selectString);
+    this.db.all(selectString, function(err, ret){
         if (err){
             callback(err);
         }
@@ -191,7 +227,7 @@ Sqlite.prototype.findById = function(table, rowId, options, callback){
          columns: columns to retrieve
          orderBy: how to sort the result
      */
-    var rOptions = this.processOptions(options);
+    var rOptions = processOptions(options);
     this.db.get("SELECT " + rOptions.columns + " FROM " + table + " WHERE id = ?", rowId, function(err, ret){
         if (err){
             throw err;
@@ -208,7 +244,7 @@ Sqlite.prototype.getAll = function(table, options, callback){
         columns: columns to retrieve
         orderBy: how to sort the result
  */
-    var rOptions = this.processOptions(options);
+    var rOptions = processOptions(options);
     var allString = "SELECT " + rOptions.columns + " FROM " + table + rOptions.orderBy;
     console.log(allString);
     this.db.all(allString, function(err, ret){

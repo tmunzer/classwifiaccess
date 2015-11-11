@@ -1,0 +1,22 @@
+extends layout
+block content
+    div(style="width:50%; margin:auto")
+        h3= classroom_page.classroom
+        label(for="className")= classroom_page.classroomName
+        input(type="text" class="form-control" name="classroomName" id="classroomName" value=classroomToEdit.classroomName required="" maxlength=60 minlength=4, disabled="disabled")
+        hr
+        label(for="DeviceId")= classroom_page.device
+        select(class="form-control", disabled="disabled", name="DeviceId")
+            option(selected="selected")= classroomToEdit.deviceHostname
+        hr
+        if user.GroupId == 1
+            label(for="SchoolId")= classroom_page.school
+            select(class='form-control' name="SchoolId" disabled="disabled")
+                option(selected="selected" )= classroomToEdit.schoolName
+            hr
+        case user.GroupId
+            when 1
+                a(href="/conf/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= buttons.back_button
+            default
+                a(href="/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= buttons.back_button
+        a(href="/classroom/edit?id=" + classroomToEdit.id, class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= buttons.edit_button
