@@ -15,6 +15,7 @@ module.exports = function(router, isAuthenticated){
                         if (apiDataJSON.hasOwnProperty("data")) {
                             for (var owner in apiDataJSON.data) {
                                 var apiReg = new Api.ApiSerializer(apiDataJSON.data[owner]);
+                                apiReg.SchoolId = 1;
                                 apiReg.insertDB(function (err) {
                                     res.redirect('/conf');
                                 });

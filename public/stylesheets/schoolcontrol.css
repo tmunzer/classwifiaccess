@@ -1,0 +1,12 @@
+div td div {
+    box-shadow: 3px 3px 20px #BBB;
+    border-radius:3px;
+    float:left;
+    width:80%;
+    margin: 1em;
+    padding: 1em;
+}
+
+div td {
+    vertical-align: top;
+}

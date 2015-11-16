@@ -1,7 +1,7 @@
 extends layout_admin
 
 block content
-    div(class="jumbotron")
+    div
         h2 Dev Interface
         h4 REST Request parameters
 
@@ -16,34 +16,115 @@ block content
                     th vpcUrl
                     th accessToken
             tbody(id="apiList")
-                each item in apis
-                    tr
-                        td
-                            input(type="checkbox" class="checkbox" id="api_"+item.id value=item.id)
-                        td(id="clientId_"+item.id)= apiClientId
-                        td(id="secret_"+item.id)= apiSecret
-                        td(id="ownerId_"+item.id)= item.ownerId
-                        td(id="vhmId_"+item.id)= item.vhmId
-                        td(id="vpcUrl_"+item.id)= item.vpcUrl
-                        td(id="accessToken_"+item.id)= item.accessToken
+                if apiList
+                    if api_req
+                        each item, i in apiList
+                            tr
+                                td
+                                    if api_req == item.id
+                                        input(type="checkbox" selected="selected" class="checkbox" id="api_"+item.id value=item.id)
+                                    else
+                                        input(type="checkbox" class="checkbox" id="api_"+item.id value=item.id)
+                                td(id="clientId_"+item.id)= apiClientId
+                                td(id="secret_"+item.id)= apiSecret
+                                td(id="ownerId_"+item.id)= item.ownerId
+                                td(id="vhmId_"+item.id)= item.vhmId
+                                td(id="vpcUrl_"+item.id)= item.vpcUrl
+                                td(id="accessToken_"+item.id)= item.accessToken
+                    else
+                        each item, i in apiList
+                            tr
+                                td
+                                    if i == 1
+                                        input(type="checkbox" selected="selected" class="checkbox" id="api_" + item.id value=item.id)
+                                    else
+                                        input(type="checkbox" class="checkbox" id="api_" + item.id value=item.id)
+                                td(id="clientId_" + item.id)= apiClientId
+                                td(id="secret_" + item.id)= apiSecret
+                                td(id="ownerId_" + item.id)= item.ownerId
+                                td(id="vhmId_" + item.id)= item.vhmId
+                                td(id="vpcUrl_" + item.id)= item.vpcUrl
+                                td(id="accessToken_" + item.id)= item.accessToken
+        h2 Create Request
+        select(class="form-control" id="select_req")
+        form(method="POST", action="/dev/")
+            div(class="form-group")
+                div(class="input-group")
+                    div(class="input-group-addon" id="getURILabel" style="padding-right:0px") https://
+                    if api_uri
+                        input(type="text" class="form-control" style="padding-left:0px" id="api_uri" name="api_uri" placeholder="/xapi/v1/monitoring/devices?ownerID=abcd")=api_uri
+                    else
+                        input(type="text" class="form-control" style="padding-left:0px" id="api_uri" name="api_uri" placeholder="/xapi/v1/monitoring/devices?ownerID=abcd")
+            input(type="hidden" id="api_req" name="api_req" value="")
+            button(class="btn btn-success", type="submit") Send Request
 
-        h2 GET Request URI
-            form(class="firm-inline", methos="POST", action="/dev/req")
-                div(class="form-group")
-                    div(class="input-group")
-                        div(class="input-group-addon" id="getURILabel") https://
-                        input(type="text" class="form-control" id="api_uri" placeholder="/xapi/v1/monitoring/devices?ownerID=abcd")
-                input(type="hidden" id="api_req" value="")
-                button(class="btn btn-success", type="submit") Send Request
+        if result
+            h2 Request
+            div(class="bs-example bs-example-tabs" data-example-id="togglable-tabs")
+                ul(id="myTabs" class="nav nav-tabs" role="tablist")
+                    li(role="presentation" class="")
+                        a(href="#Headers" id="Headers-tab" role="tab" data-toggle="tab" aria-controls="Headers" aria-expanded="false") Headers
+
+                    li(role="presentation" class="")
+                        a(href="#Response" role="tab" id="Response-tab" data-toggle="tab" aria-controls="Response" aria-expanded="false") Response
+                div(id="myTabContent" class="tab-content")
+                    div(role="tabpanel" class="tab-pane fade" id="Headers" aria-labelledby="Headers-tab")
+                        h4 Request
+                        span= result.request.options.method + " " + result.request.options.host + ":" + result.request.options.port + "/" + result.request.options.path
+                        hr
+                        for value, key in result.request.options.headers
+                            div= key + ": "
+                                span= value
+                        hr
+                        h4 Response
+                        span= "Code: " + result.result.status
+                        br
+                        span= "Headers: " + result.result.headers
+                    div(role="tabpanel" class="tab-pane fade" id="Response" aria-labelledby="Response-tab")
+                        div(style='padding-left:2em')
+                            span {
+                            br
+                            for item in result.data
+                                div(style='padding-left:2em')
+                                    span {
+                                    br
+                                    div(style='padding-left:2em')
+                                        for value, key in item
+                                            span= key + ": " + value
+                                            br
+                                    span }
+                            span }
+
+
+
 
 block script_footer
     script.
+
+        var api_select = {
+            1: 'custom',
+            2: 'stations list',
+            3: 'stations info',
+            4: 'device list',
+            5: 'device info'
+        }
+        var api_uri = {
+            1: '',
+            2: "/xapi/v1/monitor/clients?{ownerId}{startTime,endTime,page,pageSize}",
+            3: "/xapi/v1/monitor/clients/?{ownerId}&{clientId}",
+            4: "/xapi/v1/monitoring/devices?{ownerId}&{showActiveClientCount,page,pageSize}",
+            5: "/xapi/v1/monitoring/devices/?{ownerId}&{deviceId}"
+        }
+
+        var apiId = "";
+
         function apiListChanged(currentID) {
             $('#apiList :checkbox').each(function () {
                 if ($(this).val() == currentID) {
                     var vpcURL = $('#vpcUrl_' + currentID).text();
                     $('#getURILabel').text(vpcURL);
                     $('#api_req').val(currentID);
+                    apiId = $(this).val();
                 } else {
                     $(this).prop("checked", false);
                 }
@@ -51,18 +132,24 @@ block script_footer
         };
 
         $(document).ready(function() {
+
             $('#apiList > tr:first').find('input').prop('checked', true);
             apiListChanged($('#apiList > tr:first').find('input').val());
             $('#apiList :checkbox').change(function () {
                 apiListChanged($(this).val());
             });
-            socket.on("dev", "req", function (device) {
-                var apString = "";
-                for (var param in device) {
-                    apString += param + ": " + device[param] + "</br>";
-                }
-                $("#test").append("<article style='float:left; width:30%;'>" + apString + '</article>');
-            });
+
+            for (var api in api_select){
+                $("#select_req").append("<option value="+api_uri[api]+">"+api_select[api]+" -- "+api_uri[api]+"</option>");
+            }
+
+            $("#select_req").change(function () {
+                var apiString = $(this).val();
+                var ownerId = $("#ownerId_" + apiId).text();
+                apiString = apiString.replace('{ownerId}', "ownerId="+ownerId);
+                $('#api_uri').val(apiString);
+            })
+
         })
 
 

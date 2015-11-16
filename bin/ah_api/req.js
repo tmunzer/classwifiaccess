@@ -5,8 +5,10 @@ var www = require('./../www');
 
 var Device = require("./../../models/device");
 
-function apiRequest(api, path, callback, dev) {
-
+function apiRequest(api, path, callback) {
+    var result = {};
+    result.request = {};
+    result.result = {};
     path = path.replace('#{ownerId}', api.ownerId);
     var host = api.vpcUrl.replace('https://', "");
     var options = {
@@ -22,22 +24,31 @@ function apiRequest(api, path, callback, dev) {
         }
     };
     console.log(options);
+    result.request.options = options;
     var req = https.request(options, function (res) {
-        console.log('STATUS: ' + res.statusCode);
-        console.log('HEADERS: ' + JSON.stringify(res.headers));
+        result.result.status = res.statusCode;
+        console.log('STATUS: ' + result.result.status);
+        result.result.headers = JSON.stringify(res.headers);
+        console.log('HEADERS: ' + result.result.headers);
         res.setEncoding('utf8');
-        res.on('data', function (data) {
+        var data = '';
+        res.on('data', function (chunk) {
+            data += chunk;
+        });
+        res.on('end', function () {
+            console.log(data);
             var dataJSON = JSON.parse(data);
-            callback(dataJSON.data);
+            console.log(dataJSON);
+            result.data = dataJSON.data;
+            callback(result);
+        });
+        req.on('error', function (err) {
+            console.log("=====ERROR=====");
+            console.log(err);
         });
     });
-    if (dev) {
-        www.messenger.emit("dev", req);
-    }
 
-    req.on('error', function (err) {
-        console.log(err);
-    });
+
 
 // write data to request body
     req.write('data\n');
@@ -52,9 +63,9 @@ module.exports.getDevices = function (api, callback) {
     var path = '/xapi/v1/monitoring/devices?ownerId=#{ownerId}';
 
     // send the API request
-    apiRequest(api, path, function (devicesFromAPI) {
-        if (devicesFromAPI){
-
+    apiRequest(api, path, function (result) {
+        if (result){
+            var devicesFromAPI = result.data;
             var deviceList = [];
             var processed = 0;
 
@@ -92,8 +103,8 @@ module.exports.getDevices = function (api, callback) {
     })
 };
 
-module.exports.dev = function (apiId, path) {
-    apiRequest(path, function (res) {
-        www.messenger.emit("dev", res);
+module.exports.dev = function (apiId, path, callback) {
+    apiRequest(apiId, path, function (result) {
+        callback(result);
     })
 };

@@ -41,26 +41,32 @@ block content
                th vpcUrl
                th accessToken
                th expireAt
-               th Action
+               th
+                  div(style="float:right") Action
          tbody
             each api in apiList
                tr
-                  if api.SchoolId == 1
-                     td
-                        a(href="#", type='button', style="margin:auto 0.5em", onclick="api_conf("+api.id+")")= config_page.api_none
-                  else
-                     td
-                        a(href="#", type='button', style="margin:auto 0.5em", onclick="api_conf("+api.id+")")= api.schoolName
+                  case api.SchoolId
+                     when ""
+                        td
+                           a(href="#", type='button', style="margin:auto 0.5em", onclick="api_conf(" + api.id + ")")= config_page.api_none
+                     when 1
+                        td
+                           a(href="#", type='button', style="margin:auto 0.5em", onclick="api_conf("+api.id+")")= config_page.api_none
+                     default
+                        td
+                           a(href="#", type='button', style="margin:auto 0.5em", onclick="api_conf("+api.id+")")= api.schoolName
                   td= api.ownerId
                   td= api.vhmId
                   td= api.vpcUrl
                   td= api.accessToken
                   td= api.expireAt
                   td
-                     a(href="/api/refresh?id=" + api.id, type='button', style="margin:auto 0.5em")
-                        i(class="fa fa-refresh")
-                     a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('api', "+api.id+")")
-                        i(class="fa fa-remove")
+                     div(style="float:right")
+                        a(href="/api/refresh?id=" + api.id, type='button', style="margin:auto 0.5em")
+                           i(class="fa fa-refresh")
+                        a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('api', "+api.id+")")
+                           i(class="fa fa-remove")
 
       hr
       h3= config_page.user_mgmt
@@ -75,7 +81,8 @@ block content
                th= user_page.group
                th= user_page.enable
                th= user_page.lastLogin
-               th Action
+               th
+                  div(style="float:right") Action
          tbody
             each userToDisplay in userList
                if userToDisplay.userEnable == "true"
@@ -89,13 +96,14 @@ block content
                      td= userToDisplay.userEnable
                      td= userToDisplay.lastLogin
                      td
-                        a(href="/user/edit?id="+userToDisplay.id, type='button', style="margin:auto 0.5em")
-                           i(class="fa fa-edit")
-                        if userToDisplay.id == user.id
-                          i(class="fa fa-remove" style="margin:auto 0.5em")
-                        else
-                           a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('user', " + userToDisplay.id + ")")
-                              i(class="fa fa-remove")
+                        div(style="float:right")
+                           a(href="/user/edit?id="+userToDisplay.id, type='button', style="margin:auto 0.5em")
+                              i(class="fa fa-edit")
+                           if userToDisplay.id == user.id
+                             i(class="fa fa-remove" style="margin:auto 0.5em")
+                           else
+                              a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('user', " + userToDisplay.id + ")")
+                                 i(class="fa fa-remove")
 
                else
                   tr.active
@@ -108,10 +116,11 @@ block content
                      td= userToDisplay.userEnable
                      td= userToDisplay.lastLogin
                      td
-                        a(href="/user/edit?id="+userToDisplay.id, type='button', style="margin:auto 0.5em")
-                           i(class="fa fa-edit")
-                        a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('user', " + userToDisplay.id + ")")
-                           i(class="fa fa-remove")
+                        div(style="float:right")
+                           a(href="/user/edit?id="+userToDisplay.id, type='button', style="margin:auto 0.5em")
+                              i(class="fa fa-edit")
+                           a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('user', " + userToDisplay.id + ")")
+                              i(class="fa fa-remove")
 
       hr
       h3= config_page.classroom_mgmt
@@ -122,7 +131,8 @@ block content
                th= classroom_page.school
                th= classroom_page.classroomName
                th= classroom_page.device
-               th Action
+               th
+                  div(style="float:right") Action
          tbody
             each classroom in classList
                tr
@@ -131,10 +141,11 @@ block content
                      a(href="/classroom?id=" + classroom.id)= classroom.classroomName
                   td= classroom.deviceHostname
                   td
-                     a(href="/classroom/edit?id=" + classroom.id, type='button', style="margin:auto 0.5em")
-                        i(class="fa fa-edit")
-                     a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('classroom', " + classroom.id + ")")
-                        i(class="fa fa-remove")
+                     div(style="float:right")
+                        a(href="/classroom/edit?id=" + classroom.id, type='button', style="margin:auto 0.5em")
+                           i(class="fa fa-edit")
+                        a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('classroom', " + classroom.id + ")")
+                           i(class="fa fa-remove")
       hr
       h3= config_page.school_mgmt
       a(href="/school/new/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= school_page.new_school_button
@@ -142,7 +153,8 @@ block content
          thead
             tr
                th= school_page.schoolName
-               th Action
+               th
+                  div(style="float:right") Action
          tbody
             each school in schoolList
                if school.id != 1
@@ -150,10 +162,11 @@ block content
                      td
                         a(href="/school?id=" + school.id)= school.schoolName
                      td
-                        a(href="/school/edit?id=" + school.id, type='button', style="margin:auto 0.5em")
-                           i(class="fa fa-edit")
-                        a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('school', " + school.id + ")")
-                           i(class="fa fa-remove")
+                        div(style="float:right")
+                           a(href="/school/edit?id=" + school.id, type='button', style="margin:auto 0.5em")
+                              i(class="fa fa-edit")
+                           a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('school', " + school.id + ")")
+                              i(class="fa fa-remove")
 
 
    script.
