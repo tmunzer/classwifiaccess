@@ -8,7 +8,7 @@ block content
             input(type="text" class="form-control" name="schoolName" id="schoolName" value=schoolToEdit.schoolName required="" maxlength=60 minlength=4)
             hr
             if schoolToEdit.id
-                a(href="/school?id="+schoolToEdit.id, class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
+                a(href="/conf/school?id="+schoolToEdit.id, class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
             else
                 a(href="/conf/", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
             button(class='btn btn-primary', type='submit', style="margin:0.2em 1em 2em 1em")= buttons.save_button

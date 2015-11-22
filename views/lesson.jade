@@ -1,0 +1,23 @@
+extends layout_admin
+block content
+    div(style="float:left; width:100%; padding: 0px")
+        section(id="classroom")
+            if lessonList
+                table(class="table")
+                    thead
+                        tr
+                            th School Name
+                            th Class Name
+                            th start date
+                            th end date
+                            th teacher
+                            th action
+                    tbody
+                        for item in lessonList
+                            tr
+                                td= schoolName
+                                td= classroomName
+                                td= startDate
+                                td= endDate
+                                td= username
+                                td

@@ -29,12 +29,19 @@ block content
                                 option(value=item.id)= item.schoolName
                     hr
                     label(for="group")= user_page.group
-                    select(class="form-control", name="GroupId", id="GroupId")
-                        each item in groups
-                            if userToEdit.GroupId == item.id
-                                option(value=item.id, selected="selected")= item.groupName
-                            else
-                                option(value=item.id)= item.groupName
+                    if userToEdit.id == user.id
+                        label(for="group")= user_page.group
+                        select(class="form-control", disabled="disabled", name="GroupId")
+                            each item in groups
+                                if userToEdit.GroupId == item.id
+                                    option(value=item.id, selected="selected")= item.groupName
+                    else
+                        select(class="form-control", name="GroupId", id="GroupId")
+                            each item in groups
+                                if userToEdit.GroupId == item.id
+                                    option(value=item.id, selected="selected")= item.groupName
+                                else
+                                    option(value=item.id)= item.groupName
                 default
                     label(for="group")= user_page.school
                     select(class="form-control" name="SchoolId", disabled="disabled")
@@ -64,7 +71,7 @@ block content
                     input(type="checkbox", name="userEnable", style="margin-left:1em")
             hr
             if userToEdit.id
-                a(href="/user?id="+userToEdit.id, class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
+                a(href="/conf/user?id="+userToEdit.id, class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
             else
                 a(href="/conf/", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
             button(class='btn btn-primary', type='submit', style="margin:0.2em 1em 2em 1em")= buttons.save_button

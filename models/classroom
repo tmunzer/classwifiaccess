@@ -3,14 +3,14 @@ var School = require("./school");
 var Device = require("./device");
 
 function ClassroomSeralizer(row) {
-    this.classromm = {};
-    this.classromm.classroomName = row.classroomName;
-    this.classromm.DeviceId = row.DeviceId;
-    this.classromm.SchoolId = row.SchoolId;
+    this.classroom = {};
+    this.classroom.classroomName = row.classroomName;
+    this.classroom.DeviceId = row.DeviceId;
+    this.classroom.SchoolId = row.SchoolId;
 }
 
 ClassroomSeralizer.prototype.updateDB = function (classroomId, callback) {
-    db.updateDB("Classroom", classroomId, this.classromm, function (err) {
+    db.updateDB("Classroom", classroomId, this.classroom, function (err) {
         if (err) {
             callback(err);
         }
@@ -20,7 +20,7 @@ ClassroomSeralizer.prototype.updateDB = function (classroomId, callback) {
 };
 
 ClassroomSeralizer.prototype.insertDB = function (callback) {
-    db.insertDB("Classroom", this.classromm, function (err) {
+    db.insertDB("Classroom", this.classroom, function (err) {
         if (err) {
             callback(err);
         }
@@ -29,7 +29,7 @@ ClassroomSeralizer.prototype.insertDB = function (callback) {
 };
 
 function Classroom() {
-    this.id = null;
+    this.id = "";
     this.classroomName = "";
     this.DeviceId = "";
     this.deviceHostname = "";
@@ -39,22 +39,44 @@ function Classroom() {
 
 createClassroom = function (classroomFromDB, callback) {
     var classroom = new Classroom();
-    classroom.id = classroomFromDB.id;
-    classroom.classroomName = classroomFromDB.classroomName;
-    classroom.DeviceId = classroomFromDB.DeviceId;
-    Device.findById(classroom.DeviceId, null, function (err, device) {
-        console.log(classroom);
-        console.log(device);
-        if (device) {
-            classroom.deviceHostname = device.hostName;
-        }
-        classroom.SchoolId = classroomFromDB.SchoolId;
-        School.findById(classroom.SchoolId, null, function (err, school) {
-            if (school) {
-                classroom.schoolName = school.schoolName;
+    if (classroomFromDB){
+        classroom.id = classroomFromDB.id;
+        classroom.classroomName = classroomFromDB.classroomName;
+        classroom.DeviceId = classroomFromDB.DeviceId;
+        Device.findById(classroom.DeviceId, null, function (err, device) {
+            if (device) {
+                classroom.deviceHostname = device.hostName;
             }
-            callback(classroom);
+            classroom.SchoolId = classroomFromDB.SchoolId;
+            School.findById(classroom.SchoolId, null, function (err, school) {
+                if (school) {
+                    classroom.schoolName = school.schoolName;
+                }
+                callback(classroom);
+            });
         });
+    }
+};
+
+findAll = function(fields, options, callback){
+    db.findAll("Classroom", fields, options, function(err, classroomFromDB){
+        if (err) {
+            callback(err);
+        } else if (classroomFromDB.length == 0) {
+            callback(null, null);
+        } else {
+            var apiList = [];
+            var apiNum = 0;
+            for (var classroom in classroomFromDB){
+                createCassroom(classroomFromDB[classroom], function (classroomObject) {
+                    apiList.push(classroomObject);
+                    apiNum++;
+                    if (apiNum == classroomFromDB.length) {
+                        callback(err, apiList);
+                    }
+                });
+            }
+        }
     });
 };
 
@@ -84,7 +106,7 @@ getAll = function (options, callback) {
     db.getAll("Classroom", rOptions, function(err, classroomsFromDB){
         if (err){
             callback(err);
-        } else if (!classroomsFromDB){
+        } else if (classroomsFromDB == null ||classroomsFromDB.length == 0){
             callback(null, null);
         } else {
             if (classroomsFromDB) {
@@ -111,6 +133,7 @@ deleteByID = function(classroomId, callback){
 };
 
 module.exports = Classroom;
+module.exports.findAll = findAll;
 module.exports.findOne = findOne;
 module.exports.findById = findById;
 module.exports.getAll = getAll;

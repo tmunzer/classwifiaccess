@@ -1,8 +1,7 @@
 var School = require('./../models/school');
-module.exports = function(router, isAuthenticated){
+module.exports = function(router, isAuthenticated, isAdmin){
     /* GET Home Page */
     router.post('/admin/changeSchool', isAuthenticated, function(req, res) {
-        if (req.session.isAdmin){
             if (req.body.hasOwnProperty("SchoolId")) {
                 console.log("==================");
                 console.log(req.session);
@@ -10,7 +9,6 @@ module.exports = function(router, isAuthenticated){
                 console.log("==================");
                 console.log(req.session);
             }
-        }
         res.redirect('back')
     });
 };

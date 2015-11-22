@@ -1,0 +1,26 @@
+extends layout_admin
+
+block content
+    div(style="float:left; width:100%; padding: 0px")
+        section(id="classroom")
+            if classroomList
+                table(class="square")
+                    tbody
+                        - var itemNum = 0
+                        while itemNum < classroomList.length
+                            tr
+                                td(style="width:50%;background-color:white;")
+                                    - var classroom = classroomList[itemNum++]
+                                    div
+                                        h4= classroom.classroomName
+                                        hr
+                                        label Device
+                                        span= ": " + classroom.deviceHostname
+                                td(style="width:50%;background-color:white;")
+                                    - var device = classroomList[itemNum++]
+                                    if classroom
+                                        div
+                                            h4= classroom.classroomName
+                                            hr
+                                            label Device
+                                            span= ": " + classroom.deviceHostname

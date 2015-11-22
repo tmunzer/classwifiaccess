@@ -23,7 +23,6 @@ function apiRequest(api, path, callback) {
             'Authorization': "Bearer " + api.accessToken
         }
     };
-    console.log(options);
     result.request.options = options;
     var req = https.request(options, function (res) {
         result.result.status = res.statusCode;
@@ -40,7 +39,15 @@ function apiRequest(api, path, callback) {
             var dataJSON = JSON.parse(data);
             console.log(dataJSON);
             result.data = dataJSON.data;
-            callback(result);
+            switch (result.result.status) {
+                case 200:
+                    callback(null, result);
+                    break;
+                default:
+                    callback(result, null);
+                    break;
+
+            }
         });
         req.on('error', function (err) {
             console.log("=====ERROR=====");
@@ -63,7 +70,10 @@ module.exports.getDevices = function (api, callback) {
     var path = '/xapi/v1/monitoring/devices?ownerId=#{ownerId}';
 
     // send the API request
-    apiRequest(api, path, function (result) {
+    apiRequest(api, path, function (err, result) {
+        if (err){
+            callback(err, null);
+        }
         if (result){
             var devicesFromAPI = result.data;
             var deviceList = [];
@@ -73,7 +83,7 @@ module.exports.getDevices = function (api, callback) {
             for (var i = 0; i < devicesFromAPI.length; i++) {
 
                 var device = devicesFromAPI[i];
-                console.log(device);
+                device.SchoolId = api.SchoolId;
                 Device.findOne({deviceId: device.deviceId}, null, function (err, deviceToDB) {
                     if (deviceToDB) {
                         var deviceSerialized = new Device.DeviceSerializer(this.device);
@@ -81,7 +91,7 @@ module.exports.getDevices = function (api, callback) {
                             deviceList.push(this.device);
                             processed++;
                             if (processed == devicesFromAPI.length) {
-                                callback(deviceList)
+                                callback(null, deviceList)
                             }
                         }.bind({device:this.device}));
                     } else {
@@ -97,14 +107,20 @@ module.exports.getDevices = function (api, callback) {
                 }.bind({device:device}));
             }
         } else {
-            callback([]);
+            callback(null, []);
         }
 
     })
 };
 
 module.exports.dev = function (apiId, path, callback) {
-    apiRequest(apiId, path, function (result) {
-        callback(result);
+    apiRequest(apiId, path, function (err, result) {
+        if (err){
+            callback(err, null);
+        } else if (result){
+            callback(null, result);
+        } else {
+            callback(null, null);
+        }
     })
 };

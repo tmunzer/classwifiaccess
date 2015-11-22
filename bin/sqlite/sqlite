@@ -47,9 +47,9 @@ var Sqlite = function(){
                 "classroomName VARCHAR(30), " +
                 "DeviceId INTEGER," +
                 "SchoolId INTEGER)");
-            db.run("CREATE TABLE Course (id integer primary key," +
-                "startTime DATETIME," +
-                "endTime DATETIME," +
+            db.run("CREATE TABLE Lesson (id integer primary key," +
+                "startDate DATETIME," +
+                "endDate DATETIME," +
                 "ClassroomId INTEGER," +
                 "UserID INTEGER," +
                 "SchoolId INTEGER)");

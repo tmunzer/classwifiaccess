@@ -1,21 +1,23 @@
 var db = require("./../app").db;
+var School = require('./school');
 
-function DeviceSerializer(row){
+function DeviceSerializer(row) {
     this.device = {};
-    this.device.deviceId= row.deviceId;
-    this.device.ownerId= row.ownerId;
-    this.device.macAddress= row.macAddress;
+    this.device.deviceId = row.deviceId;
+    this.device.ownerId = row.ownerId;
+    this.device.macAddress = row.macAddress;
     this.device.hostName = row.hostName;
-    this.device.serialId= row.serialId;
-    this.device.model= row.model;
-    this.device.ip= row.ip;
-    this.device.simType= row.simType;
-    this.device.locations= row.locations;
+    this.device.serialId = row.serialId;
+    this.device.model = row.model;
+    this.device.ip = row.ip;
+    this.device.simType = row.simType;
+    this.device.locations = row.locations;
+    this.device.SchoolId = row.SchoolId;
 }
 
-DeviceSerializer.prototype.insertDB = function(callback){
-    db.insertDB("Device", this.device, function(err){
-        if (err){
+DeviceSerializer.prototype.insertDB = function (callback) {
+    db.insertDB("Device", this.device, function (err) {
+        if (err) {
             callback(err);
         }
         console.log("Device InsertDB");
@@ -23,9 +25,9 @@ DeviceSerializer.prototype.insertDB = function(callback){
     });
 };
 
-DeviceSerializer.prototype.updateDB = function(rowId, callback){
-    db.updateDB("Device", rowId, this.device, function(err){
-        if (err){
+DeviceSerializer.prototype.updateDB = function (rowId, callback) {
+    db.updateDB("Device", rowId, this.device, function (err) {
+        if (err) {
             callback(err);
         }
         console.log("Device UpdateDB");
@@ -34,54 +36,103 @@ DeviceSerializer.prototype.updateDB = function(rowId, callback){
 };
 
 
-function Device(){
-    this.id=null;
-    this.deviceId= "";
-    this.ownerId= "";
-    this.macAddress= "";
+function Device() {
+    this.id = null;
+    this.deviceId = "";
+    this.ownerId = "";
+    this.macAddress = "";
     this.hostName = "";
-    this.serialId= "";
-    this.model= "";
-    this.ip= "";
-    this.simType= "";
-    this.locations= "";
+    this.serialId = "";
+    this.model = "";
+    this.ip = "";
+    this.simType = "";
+    this.locations = "";
+    this.SchoolId = "";
+    this.schoolName = "";
 }
 
+createDevice = function (deviceFromDB, callback) {
+    var device = new Device();
+    device.id = deviceFromDB.id;
+    device.deviceId = deviceFromDB.deviceId;
+    device.ownerId = deviceFromDB.ownerId;
+    device.macAddress = deviceFromDB.macAddress;
+    device.hostName = deviceFromDB.hostName;
+    device.serialId = deviceFromDB.serialId;
+    device.model = deviceFromDB.model;
+    device.ip = deviceFromDB.ip;
+    device.simType = deviceFromDB.simType;
+    device.locations = deviceFromDB.locations;
+    device.SchoolId = deviceFromDB.SchoolId;
+    School.findById(device.SchoolId, null, function (err, school) {
+        if (school) {
+            device.schoolName = school.schoolName;
+        }
+        callback(device);
+    });
+
+};
 
 findOne = function(fields, options, callback){
-    db.findOne("Device", fields, options, function(err, device){
+    db.findOne("Device", fields, options, function(err, deviceFromDB){
         if (err){
             callback(err);
+        } else if (!deviceFromDB) {
+            callback(null, null);
+        } else {
+            createDevice(deviceFromDB, function (device) {
+                callback(err, device);
+            });
         }
-        callback(err, device);
     });
 };
 
 findById = function(rowId, options, callback){
-    db.findById("Device", rowId, options, function(err, device){
+    db.findById("Device", rowId, options, function(err, deviceFromDB){
         if (err){
-            return err;
+            callback(err);
+        } else if (!deviceFromDB) {
+            callback(null, null);
+        } else {
+            createDevice(deviceFromDB, function (device) {
+                callback(err, device);
+            });
         }
-        callback(err, device);
     });
 };
 
+
+
 getAll = function(options, callback){
     var rOptions = options || {"orderBy":"hostName"};
-    db.getAll("Device", rOptions, function(err, devices){
+    db.getAll("Device", rOptions, function(err, deviceFromDB){
         if (err){
-            return err;
+            callback(err);
+        } else if (deviceFromDB == null || deviceFromDB.length == 0){
+            callback(null, null);
+        } else {
+            if (deviceFromDB) {
+                var insert = 0;
+                var devices = [];
+                for (var i = 0; i < deviceFromDB.length; i++) {
+                    createDevice(deviceFromDB[i], function (device) {
+                        devices.push(device);
+                        insert ++;
+                        if (insert == deviceFromDB.length) {
+                            callback(null, devices);
+                        }
+                    })
+                }
+            }
         }
-        callback(err, devices);
-    })
+    });
 };
 
-deleteByID = function(apiId, callback){
-    db.deleteById("Device", apiId, function(err, ret){
-        callback(err, ret);
+deleteByID = function(deviceId, callback){
+    db.deleteById("Device", deviceId, function(err, ret){
+        callback(ret, err);
     })
 };
-
 module.exports = Device;
 module.exports.findOne = findOne;
 module.exports.findById = findById;

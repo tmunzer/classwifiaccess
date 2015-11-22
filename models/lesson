@@ -1,0 +1,134 @@
+var db = require("./../app").db;
+var School = require("./school");
+var Classroom = require("./classroom");
+var User = require("./user");
+
+function LessonSeralizer(row) {
+    this.lesson = {};
+    this.lesson.startDate = row.startDate;
+    this.lesson.endDate = row.DeviceId;
+    this.lesson.ClassroomId = row.ClassroomId;
+    this.lesson.UserId = row.UserId;
+    this.lesson.SchoolId = row.SchoolId;
+}
+
+LessonSeralizer.prototype.updateDB = function (LessonId, callback) {
+    db.updateDB("Lesson", LessonId, this.lesson, function (err) {
+        if (err) {
+            callback(err);
+        }
+        console.log("Lesson UpdateDB");
+        callback(err);
+    });
+};
+
+LessonSeralizer.prototype.insertDB = function (callback) {
+    db.insertDB("Lesson", this.lesson, function (err) {
+        if (err) {
+            callback(err);
+        }
+        callback(err);
+    });
+};
+
+function Lesson() {
+    this.id = "";
+    this.startDate = "";
+    this.endDate = "";
+    this.ClassroomId = "";
+    this.classroomName = "";
+    this.UserId = "";
+    this.username = "";
+    this.SchoolId = "";
+    this.schoolName = "";
+}
+
+createLesson = function (lessonFromDB, callback) {
+    var lesson = new Lesson();
+    if (lessonFromDB){
+        lesson.id = lessonFromDB.id;
+        lesson.startDate = lessonFromDB.startDate;
+        lesson.endDate = lessonFromDB.endDate;
+        lesson.ClassroomId = lessonFromDB.ClassroomId;
+        Classroom.findById(lesson.DeviceId, null, function (err, classroom) {
+            if (classroom) {
+                lesson.ClassroomId = classroom.className;
+            }
+            lesson.userId = lessonFromDB.userId;
+            User.findById(lesson.userId, null, function (err, user){
+                if (user){
+                    lesson.username = user.username;
+                }
+                lesson.SchoolId = lessonFromDB.SchoolId;
+                School.findById(lesson.SchoolId, null, function (err, school) {
+                    if (school) {
+                        lesson.schoolName = school.schoolName;
+                    }
+                    callback(lesson);
+                });
+            });
+        });
+    }
+};
+
+findOne = function (fields, options, callback) {
+    db.findOne("Lesson", fields, options, function (err, lessonFromDB) {
+        if (err) {
+            callback(err);
+        }
+        createLesson(lessonFromDB, function(lesson){
+            callback(err, lesson);
+        });
+    });
+};
+
+findById = function (rowId, options, callback) {
+    db.findById("Lesson", rowId, options, function (err, lessonFromDB) {
+        if (err) {
+            return err;
+        }
+        createLesson(lessonFromDB, function(lesson){
+            callback(err, lesson);
+        });    });
+};
+
+getAll = function (options, callback) {
+    var rOptions = options || {"orderBy": "startDate"};
+    db.getAll("Lesson", rOptions, function(err, lessonsFromDB){
+        console.log(err);
+        console.log("==");
+        console.log(lessonsFromDB);
+        if (err){
+            callback(err);
+        } else if (lessonsFromDB.length == 0 || lessonsFromDB == null){
+            callback(null, null);
+        } else {
+            if (lessonsFromDB) {
+                var insert = 0;
+                var lessons = [];
+                for (var i = 0; i < lessonsFromDB.length; i++) {
+                    createLesson(lessonsFromDB[i], function (lesson) {
+                        lessons.push(lesson);
+                        insert ++;
+                        if (insert == lessonsFromDB.length) {
+                            callback(null, lessons);
+                        }
+                    })
+                }
+            }
+        }
+    });
+};
+
+deleteByID = function(lessonId, callback){
+    db.deleteById("Lesson", lessonId, function(err, ret){
+        callback(ret, err);
+    })
+};
+
+module.exports = Lesson;
+module.exports.findOne = findOne;
+module.exports.findById = findById;
+module.exports.getAll = getAll;
+module.exports.deleteById = deleteByID;
+module.exports.LessonSeralizer = LessonSeralizer;

@@ -15,14 +15,11 @@ var isAuthenticated = function (req, res, next) {
 var translate = require('./../translate/translate');
 var Api = require("./../models/api");
 
-var isAdmin = function(req, res, next){
-    if (!req.session.hasOwnProperty('isAdmin')){
-        req.session.isAdmin == undefined;
+var isAdmin = function (req, res, next) {
+    if (req.user.GroupId == 1) {
+        return next();
     }
-    if ((req.user && req.session.isAdmin == undefined)){
-        req.session.isAdmin = req.user.GroupId == 1;
-    }
-    next();
+    res.redirect("back");
 };
 
 var translationFile = function(req, res, next) {
@@ -50,41 +47,43 @@ var schoolId = function(req, res, next){
 
 //===============ROUTER=================
 module.exports = function(passport){
-    router.use(isAdmin);
     router.use(translationFile);
     router.use(schoolId);
 
     /* Login Router */
     require("./login")(router, passport);
 
-    /* Conf Router */
-    require("./conf")(router, isAuthenticated);
-
-    /* User Router */
-    require("./user")(router, isAuthenticated);
-
-    /* School Router */
-    require("./school")(router, isAuthenticated);
-
     /* Classroom Router */
     require("./classroom")(router, isAuthenticated);
 
-    /* API Router */
-    require("./api")(router, isAuthenticated);
-
-    /* Home Router */
-    require("./home")(router, isAuthenticated);
+    /* Lesson Router */
+    require("./lesson")(router, isAuthenticated);
 
     /* Device Router */
-    require("./device")(router, isAuthenticated);
+    require("./device")(router, isAuthenticated, isAdmin);
+
+    /* Conf Router */
+    require("./conf")(router, isAuthenticated, isAdmin);
+
+    /* User Router */
+    require("./conf_user")(router, isAuthenticated, isAdmin);
+
+    /* School Router */
+    require("./conf_school")(router, isAuthenticated, isAdmin);
+
+    /* Classroom Router */
+    require("./conf_classroom")(router, isAuthenticated, isAdmin);
+
+    /* API Router */
+    require("./conf_api")(router, isAuthenticated, isAdmin);
 
     /* Dev Router */
-    require("./dev")(router, isAuthenticated);
+    require("./dev")(router, isAuthenticated, isAdmin);
 
-    require("./admin")(router, isAuthenticated);
+    require("./admin")(router, isAuthenticated, isAdmin);
 
     router.get("/*", function(req, res, next){
-        res.redirect('/home');
+        res.redirect('/classroom');
     });
 
     return router;

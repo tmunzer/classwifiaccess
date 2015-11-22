@@ -1,4 +1,4 @@
-div td div {
+.square td div {
     box-shadow: 3px 3px 20px #BBB;
     border-radius:3px;
     float:left;
@@ -7,6 +7,15 @@ div td div {
     padding: 1em;
 }
 
-div td {
+.square td {
     vertical-align: top;
+}
+
+table {
+    width: 100%;
+}
+
+
+.tab-pane {
+    margin-top: 1em;
 }
