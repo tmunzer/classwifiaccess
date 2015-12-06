@@ -13,7 +13,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                 current_page: 'conf',
                 user_button: req.translationFile.user_button,
                 schoolToEdit: schoolToEdit,
-                school_page: req.translationFile.school_page,
+                school_page: req.translationFile.config_school_page,
                 buttons: req.translationFile.buttons
             });
 
@@ -31,7 +31,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                 current_page: 'conf',
                 user_button: req.translationFile.user_button,
                 schoolToEdit: schoolToEdit,
-                school_page: req.translationFile.school_page,
+                school_page: req.translationFile.config_school_page,
                 buttons: req.translationFile.buttons
             });
         });
@@ -56,7 +56,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
             current_page: 'conf',
             user_button: req.translationFile.user_button,
             schoolToEdit: new School(),
-            school_page: req.translationFile.school_page,
+            school_page: req.translationFile.config_school_page,
             buttons: req.translationFile.buttons
         });
     });

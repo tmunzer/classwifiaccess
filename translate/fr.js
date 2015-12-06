@@ -35,15 +35,15 @@ module.exports.config_page = {
 };
 //AP
 
-module.exports.classroom_page = {
+module.exports.config_classroom_page = {
     classroom:'Salle de Classe',
     classroomName:"Nome de la Salle de Classe",
     device:"Point d'Accès",
     school:"Ecole",
-    new_classroom_button:"Nouvelle Salle"
+    new_classroom_button:"Nouvelle Salle",
 };
 
-module.exports.user_page = {
+module.exports.config_user_page = {
     users:"Utilisateurs",
     user_account:"Compte Utilisateur",
     firstName:"Prénom",
@@ -61,7 +61,7 @@ module.exports.user_page = {
     new_user_button:"Nouvel Utilisateur"
 };
 
-module.exports.school_page = {
+module.exports.config_school_page = {
     school:"Ecole",
     schoolName:"Nom",
     new_school_button:"Nouvelle Ecole"
@@ -72,4 +72,16 @@ module.exports.buttons = {
     back_button:"Retour",
     save_button:"Enregistrer",
     cancel_button:"Annuler"
+};
+
+module.exports.classroom_page = {
+    enable : "Actif",
+    disable: "Inactif",
+    unknown: "Inconnu",
+    enableWifiForClassroom: "Activer le Wi-Fi pour la salle ",
+    wifiActivation: "Activation du Wi-Fi",
+    unlimited: "Jusqu'à désactivation manuelle",
+    for: "Pour ",
+    minutes: " minutes",
+    untilDate: "jusqu'au"
 };

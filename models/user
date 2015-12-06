@@ -3,8 +3,21 @@ var Group = require('./group');
 var School = require('./school');
 var UiLanguage = require('./uiLanguage');
 
+/////////////////////////////// Update the lastLogin entry ///////////////////////////////
+newLogin = function(userId, callback){
+    db.updateDB("User", userId, {lastLogin: new Date().getTime()}, function(err){
+        if (err){
+            callback(err);
+        }
+        console.log("User UpdateDB");
+        callback(err);
+    });
+};
+
+/////////////////////////////// Serializer and DB update/insert ///////////////////////////////
 function UserSerializer(row){
     this.user = {};
+    this.user.lastLogin=row.lastLogin;
     this.user.firstName=row.firstName;
     this.user.lastName=row.lastName;
     this.user.email=row.email;
@@ -19,6 +32,7 @@ function UserSerializer(row){
     this.user.LanguageId=row.LanguageId;
     this.user.SchoolId=row.SchoolId;
 }
+
 
 UserSerializer.prototype.updateDB = function(userId, callback){
     db.updateDB("User", userId, this.user, function(err){
@@ -39,15 +53,17 @@ UserSerializer.prototype.insertDB = function(callback){
     });
 };
 
+
+/////////////////////////////// Model and DB Get ///////////////////////////////
 function User(){
     this.id=null;
+    this.lastLogin="";
     this.firstName="";
     this.lastName="";
     this.email="";
     this.username="";
     this.password="";
     this.userEnable=true;
-    this.lastLogin="";
     this.GroupId="";
     this.groupName="";
     this.SchoolId="";
@@ -59,13 +75,13 @@ function User(){
 createUser = function(userFromDB, callback){
     var user = new User();
     user.id = userFromDB.id;
+    user.lastLogin = new Date(userFromDB.lastLogin);
     user.firstName = userFromDB.firstName;
     user.lastName = userFromDB.lastName;
     user.email = userFromDB.email;
     user.username = userFromDB.username;
     user.password = userFromDB.password;
     user.userEnable = userFromDB.userEnable;
-    user.lastLogin = userFromDB.lastLogin;
     user.GroupId = userFromDB.GroupId;
     Group.findById(user.GroupId, null, function(err, group){
         if (group){
@@ -149,6 +165,7 @@ deleteByID = function(userId, callback){
 };
 
 module.exports = User;
+module.exports.newLogin = newLogin;
 module.exports.findOne = findOne;
 module.exports.findById = findById;
 module.exports.getAll = getAll;

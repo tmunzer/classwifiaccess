@@ -1,7 +1,7 @@
 extends layout_admin
 
 block content
-    div
+    div(style="float:left")
         h2 Dev Interface
         h4 REST Request parameters
 
@@ -103,17 +103,25 @@ block script_footer
 
         var api_select = {
             1: 'custom',
-            2: 'stations list -- /xapi/v1/monitor/clients?{ownerId,startTime,endTime,page,pageSize}',
-            3: 'stations info -- /xapi/v1/monitor/clients/?{ownerId,clientId}',
-            4: 'device list -- /xapi/v1/monitoring/devices?{ownerId,showActiveClientCount,page,pageSize}',
-            5: 'device info -- /xapi/v1/monitoring/devices/?{ownerId,deviceId}'
+            2: 'Monitor -- stations list -- /xapi/v1/monitor/clients?{ownerId,startTime,endTime,page,pageSize}',
+            3: 'Monitor -- stations info -- /xapi/v1/monitor/clients/?{ownerId,clientId}',
+            4: 'Monitor -- device list -- /xapi/v1/monitor/devices?{ownerId,showActiveClientCount,page,pageSize}',
+            5: 'Monitor -- device info -- /xapi/v1/monitor/devices/?{ownerId,deviceId}',
+            6: 'Configuration -- location Folders -- /xapi/v1/configuration/apLocationFolders{?ownerId}',
+            7: 'Location -- /xapi/v1/location/clients{?ownerId,apMacs}',
+            8: 'Identity -- credentials -- /xapi/v1/identity/credentials{?credentialType,ownerId,memberOf,adUser,creator,loginName,firstName,lastName,phone,email,userGroup,page,pageSize}',
+            9: 'Identity -- groups -- /xapi/v1/identity/userGroups{?ownerId,memberOf,adUser}'
         }
         var api_uri = {
             1: '',
             2: "/xapi/v1/monitor/clients?{ownerId}",
             3: "/xapi/v1/monitor/clients/?{ownerId}",
-            4: "/xapi/v1/monitoring/devices?{ownerId}",
-            5: "/xapi/v1/monitoring/devices/?{ownerId}"
+            4: "/xapi/v1/monitor/devices?{ownerId}",
+            5: "/xapi/v1/monitor/devices/?{ownerId}",
+            6: "/xapi/v1/configuration/apLocationFolders?{ownerId}",
+            7: "/xapi/v1/location/clients?{ownerId}",
+            8: "/xapi/v1/identity/credentials?{ownerId}",
+            9: "/xapi/v1/identity/userGroups?{ownerId}"
         }
 
         var apiId = "";

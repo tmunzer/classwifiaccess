@@ -1,11 +1,8 @@
 var https = require('https');
-
 var apiDB = require('./../../models/api');
-var www = require('./../www');
 
-var Device = require("./../../models/device");
 
-function apiRequest(api, path, callback) {
+module.exports.apiRequest = function (api, path, callback) {
     var result = {};
     result.request = {};
     result.result = {};
@@ -19,7 +16,6 @@ function apiRequest(api, path, callback) {
         headers: {
             'X-AH-API-CLIENT-SECRET': apiDB.getSecret(),
             'X-AH-API-CLIENT-ID': apiDB.getClientId(),
-            'X-AH-API-CLIENT-REDIRECT-URI': apiDB.getRedirectUrl(),
             'Authorization': "Bearer " + api.accessToken
         }
     };
@@ -35,15 +31,18 @@ function apiRequest(api, path, callback) {
             data += chunk;
         });
         res.on('end', function () {
-            console.log(data);
-            var dataJSON = JSON.parse(data);
-            console.log(dataJSON);
-            result.data = dataJSON.data;
+            if (data!=''){
+                console.log(data);
+                var dataJSON = JSON.parse(data);
+                console.log(dataJSON);
+                result.data = dataJSON.data;
+            }
             switch (result.result.status) {
                 case 200:
                     callback(null, result);
                     break;
                 default:
+                    console.log("=====ERROR=====");
                     callback(result, null);
                     break;
 
@@ -63,64 +62,4 @@ function apiRequest(api, path, callback) {
     req.end();
 
 
-}
-
-module.exports.getDevices = function (api, callback) {
-
-    var path = '/xapi/v1/monitoring/devices?ownerId=#{ownerId}';
-
-    // send the API request
-    apiRequest(api, path, function (err, result) {
-        if (err){
-            callback(err, null);
-        }
-        if (result){
-            var devicesFromAPI = result.data;
-            var deviceList = [];
-            var processed = 0;
-
-            // for each device from the API response
-            for (var i = 0; i < devicesFromAPI.length; i++) {
-
-                var device = devicesFromAPI[i];
-                device.SchoolId = api.SchoolId;
-                Device.findOne({deviceId: device.deviceId}, null, function (err, deviceToDB) {
-                    if (deviceToDB) {
-                        var deviceSerialized = new Device.DeviceSerializer(this.device);
-                        deviceSerialized.updateDB(deviceToDB.id, function(err) {
-                            deviceList.push(this.device);
-                            processed++;
-                            if (processed == devicesFromAPI.length) {
-                                callback(null, deviceList)
-                            }
-                        }.bind({device:this.device}));
-                    } else {
-                        var deviceSerialized = new Device.DeviceSerializer(this.device);
-                        deviceSerialized.insertDB(function(err){
-                            deviceList.push(this.device);
-                            processed++;
-                            if (processed == devicesFromAPI.length) {
-                                callback(deviceList)
-                            }
-                        }.bind({device:this.device}));
-                    }
-                }.bind({device:device}));
-            }
-        } else {
-            callback(null, []);
-        }
-
-    })
-};
-
-module.exports.dev = function (apiId, path, callback) {
-    apiRequest(apiId, path, function (err, result) {
-        if (err){
-            callback(err, null);
-        } else if (result){
-            callback(null, result);
-        } else {
-            callback(null, null);
-        }
-    })
 };

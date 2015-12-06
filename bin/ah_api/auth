@@ -8,7 +8,8 @@ module.exports.getPermanentToken = function(authCode, redirectUrl, secret, clien
         method: 'POST',
         headers: {
             'X-AH-API-CLIENT-SECRET' : secret,
-            'X-AH-API-CLIENT-ID':clientId
+            'X-AH-API-CLIENT-ID':clientId,
+            'X-AH-API-CLIENT-REDIRECT-URI': redirectUrl
         }
     };
 

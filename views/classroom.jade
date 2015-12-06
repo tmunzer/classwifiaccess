@@ -1,6 +1,78 @@
 extends layout_admin
 
+mixin classroom_entry(classroom)
+    - var wifiEnable = "unknown"
+    - var wifiEnableLabel = "label-warning"
+    - var buttonColor = "gray"
+    - var buttonClass = "not-active"
+    case classroom.wifiEnabled
+        when true
+            - wifiEnable = classroom_page.enable
+            - wifiEnableLabel = "label-success"
+            - buttonColor = "green"
+            - buttonClass = ""
+        when false
+            - wifiEnable = classroom_page.disable
+            - wifiEnableLabel = "label-danger"
+            - buttonColor = "red"
+            - buttonClass = ""
+        default
+            - wifiEnable = classroom_page.unknown
+            - wifiEnableLabel = "label-warning"
+            - buttonColor = "gray"
+            - buttonClass = "not-active"
+    div
+        h4= classroom.classroomName
+            div.classroom_button
+                a(href="#" class=buttonClass style="margin:0em 1em; color="+buttonColor+";" onclick="wifiForClassroom('" + classroom.classroomName + "', '"+classroom.id+"')")
+                    i(class="fa fa-power-off" )
+                a(href="" class=buttonClass)
+                    i(class="fa fa-calendar" style="margin:0em 1em; color="+buttonColor+";")
+        hr.classroom
+        table(style="width: 100%")
+            tr
+                td Device:
+                td= classroom.deviceHostname
+            tr
+                td Wi-Fi:
+                td
+                    span(class="label "+wifiEnableLabel)= wifiEnable
+
+
+
+
+
 block content
+    div(class="modal fade" id="wifiForClassroom" tabindex="-1" role="dialog" aria-labelledby="wifiForClassroomLabel" aria-hidden="true")
+        div(class="modal-dialog")
+            form(id="wifiForClassroomForm", action='', method='POST')
+                div(class="modal-content")
+                    div(class="modal-header")
+                        h4(class="modal-title" id="wifiForClassroomLabel")
+                            span= classroom_page.enableWifiForClassroom
+                            span(id="enableWifiForClassroom")
+                    div(class="modal-body")
+                        label(for="group")= classroom_page.wifiActivation
+                        table
+                            tr
+                                td
+                                    input(type="radio" name="wifiActivation" id="unlimited" value="unlimited" checked)
+                                td
+                                    span= classroom_page.unlimited
+                            tr
+                                td
+                                    input(type="radio" name="wifiActivation" id="duration" value="duration")
+                                td
+                                    span= classroom_page.for
+                                    input(type="text" name="duration" size="4" placeholder="120" class="form-control" style="display:inline; width: auto; height: auto; padding: Opx 12px;")
+                                    span= classroom_page.minutes
+
+
+                    div(class="modal-footer")
+                        input(type="hidden" name="classroomId" id="classroomId" value="")
+                        button(type="button" class="btn btn-primary" data-dismiss="modal")= buttons.cancel_button
+                        button(class='btn btn-primary', type='submit')= buttons.save_button
+
     div(style="float:left; width:100%; padding: 0px")
         section(id="classroom")
             if classroomList
@@ -9,18 +81,22 @@ block content
                         - var itemNum = 0
                         while itemNum < classroomList.length
                             tr
+                            - var classroom = classroomList[itemNum++]
+                            td(style="width:50%;background-color:white;")
+                                +classroom_entry(classroom)
+                            - var classroom = classroomList[itemNum++]
+                            if classroom
                                 td(style="width:50%;background-color:white;")
-                                    - var classroom = classroomList[itemNum++]
-                                    div
-                                        h4= classroom.classroomName
-                                        hr
-                                        label Device
-                                        span= ": " + classroom.deviceHostname
-                                td(style="width:50%;background-color:white;")
-                                    - var device = classroomList[itemNum++]
-                                    if classroom
-                                        div
-                                            h4= classroom.classroomName
-                                            hr
-                                            label Device
-                                            span= ": " + classroom.deviceHostname
+                                    +classroom_entry(classroom)
+
+    script.
+        function wifiForClassroom(cName, cId) {
+            $('#enableWifiForClassroom').text(cName);
+            $('#wifiForClassroomForm').attr('action', '/classroom/activate?id=' + cId);
+            $('#classroomId').val(cId);
+            $('#wifiForClassroom').modal('show');
+        }
+        function api_conf(apiId) {
+            $('#apiConfig').attr('action', '/conf/api/update?id=' + apiId);
+            $('#linkApiToSchool').modal('show');
+        }

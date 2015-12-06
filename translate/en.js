@@ -7,7 +7,7 @@ module.exports.login_page = {
     error_login_password: "Invalid username or password."
 };
 
-module.exports. user_button = {
+module.exports.user_button = {
     logout:"Logout",
     account: "account",
     change_password: "Change Password"
@@ -15,7 +15,7 @@ module.exports. user_button = {
 
 // Config page
 //API
-module.exports. config_page = {
+module.exports.config_page = {
     api_configuration:"API Configuration",
     register:"Register APP",
     user_mgmt:"Users Management",
@@ -35,7 +35,7 @@ module.exports. config_page = {
 };
 //AP
 
-module.exports.classroom_page = {
+module.exports.config_classroom_page = {
     classroom:'Classroom',
     classroomName:"Classroom Name",
     device:"Access Point",
@@ -43,7 +43,7 @@ module.exports.classroom_page = {
     new_classroom_button:"New Classroom"
 };
 
-module.exports.user_page = {
+module.exports.config_user_page = {
     users:"Users",
     user_account:"User Account",
     firstName:"First Name",
@@ -63,7 +63,7 @@ module.exports.user_page = {
 };
 
 
-module.exports.school_page = {
+module.exports.config_school_page = {
     school:"School",
     schoolName:"Name",
     new_school_button:"New School"
@@ -74,4 +74,14 @@ module.exports.buttons = {
     back_button:"Back",
     save_button:"Save",
     cancel_button:"Cancel"
+};
+
+module.exports.classroom_page = {
+    enable : "Enable",
+    disable: "Disable",
+    unknown: "Unknown",
+    activate_wifi: "Wi-Fi activation",
+    duration: "durée",
+    forTime: "For X minutes",
+    untilDate: "until"
 };

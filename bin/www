@@ -7,35 +7,35 @@
 var app = require('../app');
 
 var debug = require('debug')('SchoolControl:server');
+
+//===============HTTP SERVER=================
+
 var http = require('http');
 
+var httpPort = normalizePort(process.env.PORT || '3080');
+var httpServer = http.createServer(app);
 
-/**
- * Get port from environment and store in Express.
- */
+httpServer.listen(httpPort);
+httpServer.on('error', onError);
+httpServer.on('listening', onListening);
 
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+//===============HTTPS SERVER=================
 
-/**
- * Create HTTP server.
- */
+var https = require('https');
+var fs = require('fs');
 
-var server = http.createServer(app);
+var https_options = {
+  key: fs.readFileSync('./../cert/server.key'),
+  cert: fs.readFileSync('./../cert/server.pem')
+};
 
-/**
- * Listen on provided port, on all network interfaces.
- */
+var httpsPort = normalizePort(process.env.PORT || '3443');
+var httpsServer = https.createServer(https_options, app);
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+httpsServer.listen(httpsPort);
+httpsServer.on('error', onError);
+httpsServer.on('listening', onListening);
 
-//===============SOCKET.IO=================
-
-var Messenger = require("./messenger");
-var messenger = Messenger(server);
-module.exports.messenger = messenger;
 /**
  * Normalize a port into a number, string, or false.
  */
@@ -89,7 +89,7 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
+  var addr = this.address();
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;

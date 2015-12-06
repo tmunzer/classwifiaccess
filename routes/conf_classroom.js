@@ -16,7 +16,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                 current_page: 'conf',
                 user_button: req.translationFile.user_button,
                 classroomToEdit: classroomToEdit,
-                classroom_page: req.translationFile.classroom_page,
+                classroom_page: req.translationFile.config_classroom_page,
                 buttons: req.translationFile.buttons
             });
         });
@@ -37,7 +37,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                         classroomToEdit: classroomToEdit,
                         schoolList: schoolList,
                         deviceList: deviceList,
-                        classroom_page: req.translationFile.classroom_page,
+                        classroom_page: req.translationFile.config_classroom_page,
                         buttons: req.translationFile.buttons
                     });
                 });
@@ -68,7 +68,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                     classroomToEdit: new Classroom(),
                     schoolList: schoolList,
                     deviceList: deviceList,
-                    classroom_page: req.translationFile.classroom_page,
+                    classroom_page: req.translationFile.config_classroom_page,
                     buttons: req.translationFile.buttons
                 });
             });

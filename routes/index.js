@@ -82,10 +82,9 @@ module.exports = function(passport){
 
     require("./admin")(router, isAuthenticated, isAdmin);
 
-    router.get("/*", function(req, res, next){
-        res.redirect('/classroom');
+    router.get("*", function(req, res, next){
+        res.redirect("/classroom/");
     });
-
     return router;
 
 };

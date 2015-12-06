@@ -10,7 +10,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         var userIdToEdit = req.query.id;
         // check if requested user to display is the same as the current user
         // or if current user is an admin
-        if ((req.user.id == userIdToEdit) || (req.session.isAdmin)) {
+        if ((req.user.id == userIdToEdit) || (isAdmin)) {
             // get the user to edit in the DB
             User.findById(userIdToEdit, null, function (err, userToEdit) {
                 // render the page
@@ -19,7 +19,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                     current_page: 'conf',
                     userToEdit: userToEdit,
                     user_button: req.translationFile.user_button,
-                    user_page: req.translationFile.user_page,
+                    user_page: req.translationFile.config_user_page,
                     buttons: req.translationFile.buttons
                 });
 
@@ -34,7 +34,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         var userIdToEdit = req.query.id;
         // check if requested user to display is the same as the current user
         // or if current user is an admin
-        if ((req.user.id == userIdToEdit) || (req.session.isAdmin)) {
+        if ((req.user.id == userIdToEdit) || (isAdmin)) {
             // get the user to edit in the DB
             User.findById(userIdToEdit, null, function (err, userToEdit) {
                 // Find the language for this user
@@ -53,7 +53,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                                 schools: schools,
                                 languages: languages,
                                 user_button: req.translationFile.user_button,
-                                user_page: req.translationFile.user_page,
+                                user_page: req.translationFile.config_user_page,
                                 buttons: req.translationFile.buttons
                             });
                         });
@@ -69,7 +69,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         var userIdToEdit = req.query.id;
         // check if requested user to display is the same as the current user
         // or if current user is an admin
-        if ((req.user.id == userIdToEdit) || (req.session.isAdmin)) {
+        if ((req.user.id == userIdToEdit) || (isAdmin)) {
             // serialize the user
             var UserSerializer = new User.UserSerializer(req.body);
             // update the user
@@ -99,7 +99,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                         schools: schools,
                         languages: languages,
                         user_button: req.translationFile.user_button,
-                        user_page: req.translationFile.user_page,
+                        user_page: req.translationFile.config_user_page,
                         buttons: req.translationFile.buttons
                     });
                 });

@@ -1,4 +1,4 @@
-var apiReq = require("./../bin/ah_api/req");
+var apiDev = require("./../bin/ah_api/req_dev").dev;
 var Api = require("./../models/api");
 var School = require("./../models/school");
 
@@ -30,14 +30,14 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                 School.getAll(null, function (err, schoolList) {
                     Api.findById(api_req, null, function (err, api) {
                         if (api) {
-                            apiReq.dev(api, api_uri, function (err, result) {
+                            apiDev(api, api_uri, function (err, result) {
                                 if (err) {
                                     res.render("apiError", {
                                         current_page: 'device',
                                         err: err,
                                         user: req.user,
                                         session: req.session,
-                                        schoolList: schools,
+                                        schoolList: schoolList
                                     });
                                 } else {
                                     console.log(result);

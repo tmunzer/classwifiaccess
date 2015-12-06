@@ -22,6 +22,8 @@ block content
                     each item in deviceList
                         if classroomToEdit.DeviceId == item.id
                             option(selected="selected" value=item.id data-schoolid=item.SchoolId)= item.hostName
+                        else if classroomToEdit.SchoolId != item.SchoolId
+                            option(hidden="hidden" value=item.id data-schoolid=item.SchoolId)= item.hostName
                         else
                             option(value=item.id data-schoolid=item.SchoolId)= item.hostName
                 hr
@@ -67,7 +69,6 @@ block content
         }
 
         $(document).ready(function () {
-            changeSchool();
             $("#SchoolId").change(function(){
                 changeSchool();
             });

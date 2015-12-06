@@ -25,24 +25,21 @@ html
         script(language="JavaScript" type="text/javascript" src='/javascripts/jquery-2.1.1.min.js')
         script(language="JavaScript" type="text/javascript" src='/javascripts/bootstrap.min.js')
         script(language="JavaScript" type="text/javascript" src='/javascripts/FaviconAwesome.js')
-        script(src="/socket.io/socket.io.js")
         block script_header
 
         link(rel='stylesheet' href='/stylesheets/bootstrap.min.css')
         link(rel='stylesheet' href='/stylesheets/font-awesome.min.css')
         link(rel='stylesheet' href='/stylesheets/schoolcontrol.css')
     body(style="width:80%; margin:auto")
-    script.
-        var socket = io();
-    div.container
+    div.container(style="float:left;")
         block nav
             .container-narrow
                 .masthead
-                    h3(class="muted nav pull-left") SchoolControl
+                    h3(class="muted nav pull-left" style="margin-top:0; padding-top: 10px;border-top: 3px solid #337ab7;") SchoolControl
                     div
                         ul(class="nav nav-pills pull-right")
                             li(style = classroom)
-                                a(href="/")
+                                a(href="/classroom/")
                                     i(class="fa fa-graduation-cap fa-lg")
                             li(style = lesson)
                                 a(href="/lesson/")
@@ -68,7 +65,7 @@ html
                                         a(href="/logout/")= user_button.logout
                             li
                                 div(class="nav navbar-nav", style="line-height:50px; vertical-align:middle")= user.username
-        hr(style="width:100%")
+        hr(style="width:100%; float: left; margin-top: 0;")
         block admin
         block content
         block footer

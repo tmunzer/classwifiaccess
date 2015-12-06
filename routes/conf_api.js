@@ -10,6 +10,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
             var api = new Api();
             api.registerApp(authCode, function (apiDataString) {
                 if (apiDataString) {
+                    console.log(apiDataString);
                     var apiDataJSON = JSON.parse(apiDataString);
                     if (apiDataJSON.hasOwnProperty("data")) {
                         for (var owner in apiDataJSON.data) {

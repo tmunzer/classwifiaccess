@@ -23,7 +23,15 @@ module.exports = function(passport){
                         // User and password both match, return user from done method
                         // which will be treated like success
                         console.log(user.username + " is now logged in");
-                        return done(null, user);
+                        User.newLogin(user.id, function (err) {
+                            if (err) {
+                                console.log(err);
+                                return done(err);
+                            }
+                            else {
+                                return done(null, user);
+                            }
+                        })
                     }
                 );
 

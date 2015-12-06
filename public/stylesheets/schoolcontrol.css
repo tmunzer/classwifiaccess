@@ -1,3 +1,5 @@
+
+
 .square td div {
     box-shadow: 3px 3px 20px #BBB;
     border-radius:3px;
@@ -18,4 +20,23 @@ table {
 
 .tab-pane {
     margin-top: 1em;
+}
+
+hr.classroom {
+    margin: 0.5em 0em;
+}
+
+div.classroom_button {
+    border:none !important;
+    box-shadow:0px 0px 0px !important;
+    margin: 0px !important;
+    float:right !important;
+    text-align:end !important;
+    padding: 0px !important;
+}
+
+.not-active {
+    pointer-events: none;
+    cursor: default;
+    color: gray;
 }

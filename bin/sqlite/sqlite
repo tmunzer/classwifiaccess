@@ -70,7 +70,14 @@ var Sqlite = function(){
     });
 };
 
-
+Sqlite.prototype.customSelect = function(table, filter_string, callback){
+    this.db.all('SELECT * FROM ' + table + " WHERE " + filter_string, function(err, ret){
+        if (err){
+            callback(err);
+        }
+        callback(err, ret);
+    });
+};
 
 Sqlite.prototype.updateDB = function(table, rowId, entries, callback){
     var updateString = "";

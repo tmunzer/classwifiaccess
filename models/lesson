@@ -6,7 +6,7 @@ var User = require("./user");
 function LessonSeralizer(row) {
     this.lesson = {};
     this.lesson.startDate = row.startDate;
-    this.lesson.endDate = row.DeviceId;
+    this.lesson.endDate = row.endDate;
     this.lesson.ClassroomId = row.ClassroomId;
     this.lesson.UserId = row.UserId;
     this.lesson.SchoolId = row.SchoolId;
@@ -70,6 +70,29 @@ createLesson = function (lessonFromDB, callback) {
         });
     }
 };
+
+findAll = function(fields, options, callback){
+    db.findAll("Classroom", fields, options, function(err, classroomFromDB){
+        if (err) {
+            callback(err);
+        } else if (classroomFromDB.length == 0) {
+            callback(null, null);
+        } else {
+            var apiList = [];
+            var apiNum = 0;
+            for (var classroom in classroomFromDB){
+                createClassroom(classroomFromDB[classroom], function (classroomObject) {
+                    apiList.push(classroomObject);
+                    apiNum++;
+                    if (apiNum == classroomFromDB.length) {
+                        callback(err, apiList);
+                    }
+                });
+            }
+        }
+    });
+};
+
 
 findOne = function (fields, options, callback) {
     db.findOne("Lesson", fields, options, function (err, lessonFromDB) {
