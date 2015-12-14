@@ -25,12 +25,15 @@ html
         script(language="JavaScript" type="text/javascript" src='/javascripts/jquery-2.1.1.min.js')
         script(language="JavaScript" type="text/javascript" src='/javascripts/bootstrap.min.js')
         script(language="JavaScript" type="text/javascript" src='/javascripts/FaviconAwesome.js')
+        script(language="JavaScript" type="text/javascript" src='/javascripts/moment.min.js')
+        script(language="JavaScript" type="text/javascript" src='/javascripts/bootstrap-datetimepicker.min.js')
         block script_header
 
         link(rel='stylesheet' href='/stylesheets/bootstrap.min.css')
         link(rel='stylesheet' href='/stylesheets/font-awesome.min.css')
+        link(rel='stylesheet' href='/stylesheets/bootstrap-datetimepicker.min.css')
         link(rel='stylesheet' href='/stylesheets/schoolcontrol.css')
-    body(style="width:80%; margin:auto")
+    body(style="padding-left:10%; padding-right:10%; margin:auto")
     div.container(style="float:left;")
         block nav
             .container-narrow
@@ -67,7 +70,8 @@ html
                                 div(class="nav navbar-nav", style="line-height:50px; vertical-align:middle")= user.username
         hr(style="width:100%; float: left; margin-top: 0;")
         block admin
-        block content
+        div(style="width:100%; float: left")
+            block content
         block footer
             #footer.footer(style="bottom:0px; position:fixed; background-color:white; border-top:0.1em solid #eee")
                 div.container

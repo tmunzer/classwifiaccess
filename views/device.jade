@@ -1,5 +1,29 @@
 extends layout_admin
 
+mixin device_status(device)
+    div
+        h4= device.hostName
+        case device.connected
+            when true
+                label(class="label label-success") Connected
+            when false
+                span(class="label label-danger") Disconnected
+        br
+        label Connected Clients
+        span(class="badge")= " " + device.activeClients
+        hr
+        label MAC Address:
+        span= " " + device.macAddress
+        br
+        label Serial Number:
+        span= " " + device.serialId
+        br
+        label IP Address:
+        span= " " + device.ip
+        hr
+        label Location:
+        span= " " + device.locations
+
 block content
     div(style="float:left; width:100%; padding: 0px")
         section(id="device")
@@ -11,53 +35,11 @@ block content
                             tr
                                 td(style="width:50%;background-color:white;")
                                     - var device = deviceList[itemNum++]
-                                    div
-                                        h4= device.hostName
-                                        case device.connected
-                                           when true
-                                               label(class="label label-success") Connected
-                                           when false
-                                               span(class="label label-danger") Disconnected
-                                        br
-                                        label Connected Clients
-                                        span(class="badge")= " " + device.activeClients
-                                        hr
-                                        label MAC Address:
-                                        span= " " + device.macAddress
-                                        br
-                                        label Serial Number:
-                                        span= " " + device.serialId
-                                        br
-                                        label IP Address:
-                                        span= " " + device.ip
-                                        hr
-                                        label Location:
-                                        span= " " + device.locations
+                                    + device_status(device)
 
                                 td(style="width:50%;background-color:white;")
                                     - var device = deviceList[itemNum++]
                                     if device
-                                        div
-                                            h4= device.hostName
-                                            case device.connected
-                                                when true
-                                                    label(class="label label-success") Connected
-                                                when false
-                                                    span(class="label label-danger") Disconnected
-                                            br
-                                            label Connected Clients
-                                            span(class="badge")= " " + device.activeClients
-                                            hr
-                                            label MAC Address:
-                                            span= " " + device.macAddress
-                                            br
-                                            label Serial Number:
-                                            span= " " + device.serialId
-                                            br
-                                            label IP Address:
-                                            span= " " + device.ip
-                                            hr
-                                            label Location:
-                                            span= " " + device.locations
+                                        + device_status(device)
 
 

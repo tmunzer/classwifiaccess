@@ -1,6 +1,5 @@
 var db = require("./../app").db;
 var School = require("./school");
-var Classroom = require("./classroom");
 var User = require("./user");
 
 function LessonSeralizer(row) {
@@ -17,7 +16,6 @@ LessonSeralizer.prototype.updateDB = function (LessonId, callback) {
         if (err) {
             callback(err);
         }
-        console.log("Lesson UpdateDB");
         callback(err);
     });
 };
@@ -35,6 +33,7 @@ function Lesson() {
     this.id = "";
     this.startDate = "";
     this.endDate = "";
+    this.lessonStatus = "";
     this.ClassroomId = "";
     this.classroomName = "";
     this.UserId = "";
@@ -43,27 +42,96 @@ function Lesson() {
     this.schoolName = "";
 }
 
+
+sortLesson = function (lessonA, lessonB) {
+    var a = lessonA.startDateTs;
+    var b = lessonB.startDateTs;
+    if (a > b) {
+        return -1;
+    } else if (a < b) {
+        return 1;
+    } else {
+        return 0;
+    }
+};
+
+function getClassroomName(cId, callback){
+    var Classroom = require("./classroom");
+    var classroomName = "";
+    if (cId > 0) {
+        Classroom.findById(cId, null, function (err, classroom) {
+            if (err){
+                classroomName ="";
+            } else if (classroom){
+                classroomName = classroom.classroomName;
+            }
+            callback(classroomName);
+        });
+    } else {
+        callback('');
+    }
+}
+
+function getUserUsername(uId, callback){
+    var username = "";
+    if (uId > 0){
+        User.findById(uId, null, function (err, user){
+            if (user){
+                username = user.username;
+            }
+            callback(username)
+        });
+    } else {
+        callback(username);
+    }
+}
+
+function getSchoolName(sId, callback){
+    var schoolName = "";
+    if (sId > 0){
+        School.findById(sId, null, function (err, school){
+            if (school){
+                schoolName = school.schoolName;
+            }
+            callback(schoolName)
+        });
+    } else {
+        callback(schoolName);
+    }
+}
+
 createLesson = function (lessonFromDB, callback) {
     var lesson = new Lesson();
-    if (lessonFromDB){
+    var now = new Date().getTime();
+    if (lessonFromDB) {
         lesson.id = lessonFromDB.id;
-        lesson.startDate = lessonFromDB.startDate;
-        lesson.endDate = lessonFromDB.endDate;
-        lesson.ClassroomId = lessonFromDB.ClassroomId;
-        Classroom.findById(lesson.DeviceId, null, function (err, classroom) {
-            if (classroom) {
-                lesson.ClassroomId = classroom.className;
+        lesson.startDateTs = lessonFromDB.startDate;
+        lesson.startDate = new Date(lessonFromDB.startDate);
+        lesson.endDateTs = lessonFromDB.endDate;
+        if (lesson.startDateTs < now){
+            if (lesson.endDateTs > now || lesson.endDateTs == 0) {
+                lesson.lessonStatus = "present";
+            } else {
+                lesson.lessonStatus = "past";
             }
-            lesson.userId = lessonFromDB.userId;
-            User.findById(lesson.userId, null, function (err, user){
-                if (user){
-                    lesson.username = user.username;
-                }
-                lesson.SchoolId = lessonFromDB.SchoolId;
-                School.findById(lesson.SchoolId, null, function (err, school) {
-                    if (school) {
-                        lesson.schoolName = school.schoolName;
-                    }
+        } else {
+            lesson.lessonStatus = "future";
+        }
+        if (lesson.endDateTs == 0){
+            lesson.endDate = "N/A";
+        } else {
+            lesson.endDate = new Date(lessonFromDB.endDate);
+        }
+        lesson.ClassroomId = lessonFromDB.ClassroomId;
+        lesson.UserId = lessonFromDB.UserId;
+        lesson.SchoolId = lessonFromDB.SchoolId;
+        getClassroomName(lesson.ClassroomId, function(classroomName){
+            lesson.classroomName = classroomName;
+            getUserUsername(lesson.UserId, function(username){
+                lesson.username = username;
+                getSchoolName(lesson.SchoolId, function(schoolName){
+                    lesson.schoolName = schoolName;
+                    console.log(lesson);
                     callback(lesson);
                 });
             });
@@ -71,21 +139,23 @@ createLesson = function (lessonFromDB, callback) {
     }
 };
 
-findAll = function(fields, options, callback){
-    db.findAll("Classroom", fields, options, function(err, classroomFromDB){
+
+findAll = function (fields, options, callback) {
+    db.findAll("Lesson", fields, options, function (err, lessonFromDB) {
         if (err) {
             callback(err);
-        } else if (classroomFromDB.length == 0) {
+        } else if (lessonFromDB.length == 0) {
             callback(null, null);
         } else {
-            var apiList = [];
-            var apiNum = 0;
-            for (var classroom in classroomFromDB){
-                createClassroom(classroomFromDB[classroom], function (classroomObject) {
-                    apiList.push(classroomObject);
-                    apiNum++;
-                    if (apiNum == classroomFromDB.length) {
-                        callback(err, apiList);
+            var lessonList = [];
+            var lessonNum = 0;
+            for (var classroom in lessonFromDB) {
+                createLesson(lessonFromDB[classroom], function (lessonObject) {
+                    lessonList.push(lessonObject);
+                    lessonNum++;
+                    if (lessonNum == lessonFromDB.length) {
+                        lessonList.sort(sortLesson);
+                        callback(err, lessonList);
                     }
                 });
             }
@@ -93,13 +163,34 @@ findAll = function(fields, options, callback){
     });
 };
 
+findActive = function (cId, sId, callback) {
+    var currentDate = new Date().getTime();
+    if (cId > 0) {
+        db.customSelect("Lesson",
+            " ClassroomId = " + cId +
+            " AND SchoolId = " + sId +
+            " AND startDate < " + currentDate +
+            " AND " +
+            " (endDate > " + currentDate +
+            " OR endDate = 0)",
+            function (err, ret) {
+                if (err) {
+                    callback(err);
+                } else {
+                    callback(null, ret);
+                }
+            });
+    } else {
+        callback('');
+    }
+};
 
 findOne = function (fields, options, callback) {
     db.findOne("Lesson", fields, options, function (err, lessonFromDB) {
         if (err) {
             callback(err);
         }
-        createLesson(lessonFromDB, function(lesson){
+        createLesson(lessonFromDB, function (lesson) {
             callback(err, lesson);
         });
     });
@@ -110,31 +201,31 @@ findById = function (rowId, options, callback) {
         if (err) {
             return err;
         }
-        createLesson(lessonFromDB, function(lesson){
+        createLesson(lessonFromDB, function (lesson) {
             callback(err, lesson);
-        });    });
+        });
+    });
 };
+
 
 getAll = function (options, callback) {
     var rOptions = options || {"orderBy": "startDate"};
-    db.getAll("Lesson", rOptions, function(err, lessonsFromDB){
-        console.log(err);
-        console.log("==");
-        console.log(lessonsFromDB);
-        if (err){
+    db.getAll("Lesson", rOptions, function (err, lessonsFromDB) {
+        if (err) {
             callback(err);
-        } else if (lessonsFromDB.length == 0 || lessonsFromDB == null){
+        } else if (lessonsFromDB.length == 0 || lessonsFromDB == null) {
             callback(null, null);
         } else {
             if (lessonsFromDB) {
                 var insert = 0;
-                var lessons = [];
+                var lessonList = [];
                 for (var i = 0; i < lessonsFromDB.length; i++) {
                     createLesson(lessonsFromDB[i], function (lesson) {
-                        lessons.push(lesson);
-                        insert ++;
+                        lessonList.push(lesson);
+                        insert++;
                         if (insert == lessonsFromDB.length) {
-                            callback(null, lessons);
+                            lessonList.sort(sortLesson);
+                            callback(null, lessonList);
                         }
                     })
                 }
@@ -143,15 +234,17 @@ getAll = function (options, callback) {
     });
 };
 
-deleteByID = function(lessonId, callback){
-    db.deleteById("Lesson", lessonId, function(err, ret){
+deleteByID = function (lessonId, callback) {
+    db.deleteById("Lesson", lessonId, function (err, ret) {
         callback(ret, err);
     })
 };
 
 module.exports = Lesson;
+module.exports.findAll = findAll;
 module.exports.findOne = findOne;
 module.exports.findById = findById;
+module.exports.findActive = findActive;
 module.exports.getAll = getAll;
 module.exports.deleteById = deleteByID;
 module.exports.LessonSeralizer = LessonSeralizer;

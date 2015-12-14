@@ -1,0 +1,90 @@
+extends layout_admin
+
+
+block content
+    div(style="width:50%; margin:auto")
+        form(action="/lesson/activate/" method="POST")
+            if currentClassroom
+                h4= activation_page.classroomTitle + currentClassroom.classroomName
+                input(type="hidden" name="ClassroomId" value=currentClassroom.id)
+            else
+                h4= activation_page.genericTitle
+                label(for="ClassroomId")= activation_page.classroom
+                select(class="form-control" name="ClassroomId" id="ClassroomId")
+                    if classroomList
+                        each item in classroomList
+                            option(value=item.id)= item.classroomName
+
+            hr
+            if activation != 'now'
+                label(for="startDate")= activation_page.startDate
+                div(class="form-group")
+                    div(class='input-group date')
+                        input(type='text' class="form-control" id='startDatePicker')
+                        span(class="input-group-addon")
+                            span(class="glyphicon glyphicon-calendar")
+                hr
+            label(for="endDate")= activation_page.endDate
+            table
+                tr
+                    td
+                        input(type="radio" name="wifiActivation" id="unlimited" value="unlimited" checked)
+                    td
+                        span= activation_page.unlimited
+                tr
+                    td
+                        input(type="radio" name="wifiActivation" id="duration" value="duration")
+                    td
+                        span= activation_page.for
+                        input(type="text" name="duration" size="4" value="120" class="form-control" style="display:inline; width: auto; height: auto; padding: Opx 12px;")
+                        span= activation_page.minutes
+                tr
+                    td
+                        input(type="radio" name="wifiActivation" id="fromTo" value="until")
+                    td
+                        span= activation_page.untilDate
+                        div(class="form-group")
+                            div(class='input-group date')
+                                input(type='text' class="form-control" id='endDatePicker')
+                                span(class="input-group-addon")
+                                    span(class="glyphicon glyphicon-calendar")
+            hr
+            if currentClassroom
+                a(href="/lesson/?ClassroomId="+currentClassroom.id, class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
+            else
+                a(href="/lesson/", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
+            if classroomList || currentClassroom
+                button(class='btn btn-primary', type='submit', style="margin:0.2em 1em 2em 1em")= buttons.save_button
+            else
+                button(class='btn btn-primary', type='submit', style="margin:0.2em 1em 2em 1em" disabled="disabled")= buttons.save_button
+
+    case activation
+        when "now"
+            script.
+                $(function () {
+                    $('#endDatePicker').datetimepicker({
+                        useCurrent: true,
+                        minDate: new Date(),
+                        collapse: false
+                    });
+                });
+        default
+            script.
+                $(function () {
+                    $('#startDatePicker').datetimepicker({
+                        minDate: new Date(),
+                        collapse: false,
+                        sideBySide: true
+                    });
+                    $('#endDatePicker').datetimepicker({
+                        useCurrent: false,
+                        sideBySide: false
+                    });
+
+                    $("#startDatePicker").on("dp.change", function (e) {
+                        $('#endDatePicker').data("DateTimePicker").minDate(e.date);
+                    });
+                    $("#endDatePicker").on("dp.change", function (e) {
+                        $('#startDatePicker').data("DateTimePicker").maxDate(e.date);
+                    });
+                });

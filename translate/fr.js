@@ -18,14 +18,14 @@ module.exports.user_button = {
 module.exports.config_page = {
     api_configuration:"Configuration de l'API",
     register:"Enregistrer l'API",
-    user_mgmt:"Gestion des Utilisateurs",
-    classroom_mgmt:"Gestion des Classes",
-    school_mgmt:"Gestion des Ecoles",
+    user_mgmt:"Gestion des utilisateurs",
+    classroom_mgmt:"Gestion des classes",
+    school_mgmt:"Gestion des écoles",
 //Users
     delete_api_title:"Voulez vous supprimer l'accès à cet API?",
-    delete_user_title:"Voulez vous supprimer cet Utilisateur?",
-    delete_class_title:"Voulez vous supprimer cette Classe?",
-    delete_school_title:"Voulez vous supprimer cette Ecole?",
+    delete_user_title:"Voulez vous supprimer cet utilisateur?",
+    delete_class_title:"Voulez vous supprimer cette classe?",
+    delete_school_title:"Voulez vous supprimer cette école?",
     api_none:"Aucune",
     link_api_conf:"Paramètre de l'API",
     link_api_text:"Lier l'API à l'école ",
@@ -36,42 +36,44 @@ module.exports.config_page = {
 //AP
 
 module.exports.config_classroom_page = {
-    classroom:'Salle de Classe',
-    classroomName:"Nome de la Salle de Classe",
-    device:"Point d'Accès",
+    classroom:'Salle de classe',
+    classroomName:"Nome de la salle de classe",
+    device:"Point d'accès",
     school:"Ecole",
-    new_classroom_button:"Nouvelle Salle",
+    new_classroom_button:"Nouvelle salle"
 };
 
 module.exports.config_user_page = {
     users:"Utilisateurs",
-    user_account:"Compte Utilisateur",
+    user_account:"Compte utilisateur",
     firstName:"Prénom",
     lastName:"Nom",
-    username:"Nom Utilisateur",
-    email:"Adresse E-mail",
-    enable:"Utilisateur Activé",
-    lastLogin:"Dernière Connexion",
+    username:"Nom utilisateur",
+    email:"Adresse e-mail",
+    enable:"Utilisateur activé",
+    lastLogin:"Dernière connexion",
     school:"Ecole",
     group:"Groupe",
     language:"Langue",
-    password:"Mot De Passe",
-    confirm_password:"Confirmer le Mot de Passe",
+    password:"Mot de passe",
+    confirm_password:"Confirmer le mot de passe",
     password_placeholder:"Non modifié",
-    new_user_button:"Nouvel Utilisateur"
+    new_user_button:"Nouvel utilisateur"
 };
 
 module.exports.config_school_page = {
     school:"Ecole",
     schoolName:"Nom",
-    new_school_button:"Nouvelle Ecole"
+    new_school_button:"Nouvelle école"
 };
 
 module.exports.buttons = {
     edit_button:"Modifier",
     back_button:"Retour",
     save_button:"Enregistrer",
-    cancel_button:"Annuler"
+    cancel_button:"Annuler",
+    activate_button:"Activer",
+    deactivate_button:"Désactiver"
 };
 
 module.exports.classroom_page = {
@@ -79,9 +81,40 @@ module.exports.classroom_page = {
     disable: "Inactif",
     unknown: "Inconnu",
     enableWifiForClassroom: "Activer le Wi-Fi pour la salle ",
+    disableWifiForClassroom: "Désactiver le Wi-Fi pour la salle ",
     wifiActivation: "Activation du Wi-Fi",
+    wifiDeactivation: "Voulez-vous désactiver le Wi-Fi?",
     unlimited: "Jusqu'à désactivation manuelle",
     for: "Pour ",
     minutes: " minutes",
-    untilDate: "jusqu'au"
+    untilDate: "jusqu'à "
+};
+
+module.exports.lesson_page = {
+    genericTitle: "Activations du Wi-Fi",
+    classroomTitle: "Activations du Wi-Fi pour la classe ",
+    school : "Ecole",
+    classroom : "Salle de classe",
+    startDate : "Date de début",
+    endDate : "Date de fin",
+    status: "Status",
+    teacher: "Profresseur",
+    action: "Action",
+    finished : "Terminé",
+    inProgress : "En cours",
+    notStarted : "Non commencé",
+    activateNow: "Activer le Wi-Fi maintenant",
+    activateLater: "Planifier une activation du Wi-Fi"
+};
+
+module.exports.activation_page = {
+    genericTitle: "Activation du Wi-Fi",
+    classroomTitle: "Activation du Wi-Fi pour la classe ",
+    classroom: "Salle",
+    startDate : "Date d'activation",
+    endDate : "Désactivation ",
+    unlimited: "Désactivation manuelle",
+    for: "Après ",
+    minutes: " minutes",
+    untilDate: "Le "
 };

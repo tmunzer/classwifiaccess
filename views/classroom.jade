@@ -5,52 +5,69 @@ mixin classroom_entry(classroom)
     - var wifiEnableLabel = "label-warning"
     - var buttonColor = "gray"
     - var buttonClass = "not-active"
+    - var buttonAction = ""
+    - var spanDevice = ""
+    - var divDeviceClass = ""
     case classroom.wifiEnabled
         when true
             - wifiEnable = classroom_page.enable
             - wifiEnableLabel = "label-success"
             - buttonColor = "green"
             - buttonClass = ""
+            - buttonAction = "disableWifiForClassroom('" + classroom.classroomName + "', '"+classroom.id+"')"
         when false
             - wifiEnable = classroom_page.disable
             - wifiEnableLabel = "label-danger"
             - buttonColor = "red"
             - buttonClass = ""
+            - buttonAction = "enableWifiForClassroom('" + classroom.classroomName + "', '"+classroom.id+"')"
         default
             - wifiEnable = classroom_page.unknown
             - wifiEnableLabel = "label-warning"
             - buttonColor = "gray"
             - buttonClass = "not-active"
+            - buttonAction = ""
+    if classroom.DeviceId > 0
+        case classroom.deviceConnected
+            when "true"
+                - divDeviceClass = "alert alert-success"
+                - spanDevice = "Device " + classroom.deviceHostname + " is connected"
+            when "false"
+                - buttonClass = "not-active"
+                - buttonAction = ""
+                - divDeviceClass = "alert alert-danger"
+                - spanDevice = "Device " + classroom.deviceHostname + " is not connected"
+    else
+        - divDeviceClass = "alert alert-danger"
+        - spanDevice = "No device configured for this classroom"
+
     div
         h4= classroom.classroomName
             div.classroom_button
-                a(href="#" class=buttonClass style="margin:0em 1em; color="+buttonColor+";" onclick="wifiForClassroom('" + classroom.classroomName + "', '"+classroom.id+"')")
+                a(href="#" class=buttonClass style="margin:0em 1em; color="+buttonColor+";" onclick=buttonAction)
                     i(class="fa fa-power-off" )
-                a(href="" class=buttonClass)
+                a(href="/lesson/?ClassroomId="+classroom.id)
                     i(class="fa fa-calendar" style="margin:0em 1em; color="+buttonColor+";")
         hr.classroom
-        table(style="width: 100%")
-            tr
-                td Device:
-                td= classroom.deviceHostname
-            tr
-                td Wi-Fi:
-                td
-                    span(class="label "+wifiEnableLabel)= wifiEnable
+        span= "Wi-Fi: "
+        span(class="label " + wifiEnableLabel)= wifiEnable
+        hr.classroom
+        div(class=divDeviceClass style="margin: 0; padding: 6px; width: 100%; box-shadow: none; font-size: 0.8em")
+            span= spanDevice
 
 
 
 
 
 block content
-    div(class="modal fade" id="wifiForClassroom" tabindex="-1" role="dialog" aria-labelledby="wifiForClassroomLabel" aria-hidden="true")
+    div(class="modal fade" id="enableWifiForClassroom" tabindex="-1" role="dialog" aria-labelledby="enableWifiForClassroomLabel" aria-hidden="true")
         div(class="modal-dialog")
-            form(id="wifiForClassroomForm", action='', method='POST')
+            form(id="enableWifiForClassroomForm" action='' method='POST')
                 div(class="modal-content")
                     div(class="modal-header")
-                        h4(class="modal-title" id="wifiForClassroomLabel")
+                        h4(class="modal-title" id="enableWifiForClassroomLabel")
                             span= classroom_page.enableWifiForClassroom
-                            span(id="enableWifiForClassroom")
+                            span(id="enableClassroom")
                     div(class="modal-body")
                         label(for="group")= classroom_page.wifiActivation
                         table
@@ -64,14 +81,34 @@ block content
                                     input(type="radio" name="wifiActivation" id="duration" value="duration")
                                 td
                                     span= classroom_page.for
-                                    input(type="text" name="duration" size="4" placeholder="120" class="form-control" style="display:inline; width: auto; height: auto; padding: Opx 12px;")
+                                    input(type="text" name="duration" size="4" value="120" class="form-control" style="display:inline; width: auto; height: auto; padding: Opx 12px;")
                                     span= classroom_page.minutes
-
-
+                            tr
+                                td
+                                    input(type="radio" name="wifiActivation" id="fromTo" value="until")
+                                td
+                                    span= classroom_page.untilDate
+                                    input(type='text' class="form-control" name='activateUntil' id='activateUntil' style="display:inline; width: auto; height: auto; padding: Opx 12px;")
                     div(class="modal-footer")
-                        input(type="hidden" name="classroomId" id="classroomId" value="")
-                        button(type="button" class="btn btn-primary" data-dismiss="modal")= buttons.cancel_button
-                        button(class='btn btn-primary', type='submit')= buttons.save_button
+                        input(type="hidden" name="classroomId" id="enableClassroomId" value="")
+                        button(type="button" class="btn btn-danger" data-dismiss="modal")= buttons.cancel_button
+                        button(class='btn btn-primary', type='submit')= buttons.activate_button
+
+    div(class="modal fade" id="disableWifiForClassroom" tabindex="-1" role="dialog" aria-labelledby="disableWifiForClassroomLabel" aria-hidden="true")
+        div(class="modal-dialog")
+            form(id="disableWifiForClassroomForm", action='', method='POST')
+                div(class="modal-content")
+                    div(class="modal-header")
+                        h4(class="modal-title" id="disableWifiForClassroomLabel")
+                            span= classroom_page.disableWifiForClassroom
+                            span(id="disableClassroom")
+                    div(class="modal-body")
+                        label(for="group")= classroom_page.wifiDeactivation
+                    div(class="modal-footer")
+                        input(type="hidden" name="classroomId" id="disableClassroomId" value="")
+                        button(type="button" class="btn btn-danger" data-dismiss="modal")= buttons.cancel_button
+                        button(class='btn btn-primary', type='submit')= buttons.deactivate_button
+
 
     div(style="float:left; width:100%; padding: 0px")
         section(id="classroom")
@@ -90,13 +127,26 @@ block content
                                     +classroom_entry(classroom)
 
     script.
-        function wifiForClassroom(cName, cId) {
-            $('#enableWifiForClassroom').text(cName);
-            $('#wifiForClassroomForm').attr('action', '/classroom/activate?id=' + cId);
-            $('#classroomId').val(cId);
-            $('#wifiForClassroom').modal('show');
+        function enableWifiForClassroom(cName, cId) {
+            $('#enableClassroom').text(cName);
+            $('#enableWifiForClassroomForm').attr('action', '/classroom/enable?id=' + cId);
+            $('#enableClassroomId').val(cId);
+            $('#enableWifiForClassroom').modal('show');
+        }
+        function disableWifiForClassroom(cName, cId) {
+            $('#disableClassroom').text(cName);
+            $('#disableWifiForClassroomForm').attr('action', '/classroom/disable?id=' + cId);
+            $('#disableClassroomId').val(cId);
+            $('#disableWifiForClassroom').modal('show');
         }
         function api_conf(apiId) {
             $('#apiConfig').attr('action', '/conf/api/update?id=' + apiId);
             $('#linkApiToSchool').modal('show');
         }
+        $(function () {
+            $('#activateUntil').datetimepicker({
+                useCurrent: true,
+                minDate: new Date(),
+                collapse: false
+            });
+        });

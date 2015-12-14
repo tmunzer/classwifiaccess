@@ -1,23 +1,57 @@
 extends layout_admin
+
+mixin lesson_status(lesson)
+    - var statusAttributes = ""
+    - var statusText = ""
+    case lesson.lessonStatus
+        when 'past'
+            - statusAttributes = "label label-danger"
+            - statusText = lesson_page.finished
+        when "present"
+            - statusAttributes = "label label-success"
+            - statusText = lesson_page.inProgress
+        when "future"
+            - statusAttributes = "label label-primary"
+            - statusText = lesson_page.notStarted
+
+    tr
+        td= lesson.classroomName
+        td= lesson.startDate
+        td= lesson.endDate
+        td
+            span(class=statusAttributes)= statusText
+        td= lesson.username
+        td
+
 block content
     div(style="float:left; width:100%; padding: 0px")
+        if currentClassroom
+            h4= lesson_page.classroomTitle + currentClassroom.classroomName
+        else
+            h4= lesson_page.genericTitle
+        div(style="display: inline-flex;float: left;")
+            form(action="/lesson/activate/" method="GET")
+                if currentClassroom
+                    input(type='hidden' name="ClassroomId" value=currentClassroom.id)
+                input(type='hidden' name='when' value="now")
+                button(class='btn btn-primary' type="submit" style="margin:0.2em 1em 2em 1em")= lesson_page.activateNow
+            form(action="/lesson/activate/" method="GET")
+                if currentClassroom
+                    input(type='hidden' name="ClassroomId" value=currentClassroom.id)
+                input(type='hidden' name='when' value="later")
+                button(class='btn btn-primary' type="submit" style="margin:0.2em 1em 2em 1em")= lesson_page.activateLater
         section(id="classroom")
             if lessonList
                 table(class="table")
                     thead
                         tr
-                            th School Name
-                            th Class Name
-                            th start date
-                            th end date
-                            th teacher
-                            th action
+                            th= lesson_page.classroom
+                            th= lesson_page.startDate
+                            th= lesson_page.endDate
+                            th= lesson_page.status
+                            th= lesson_page.teacher
+                            th= lesson_page.action
                     tbody
                         for item in lessonList
-                            tr
-                                td= schoolName
-                                td= classroomName
-                                td= startDate
-                                td= endDate
-                                td= username
-                                td
+                            +lesson_status(item)
+

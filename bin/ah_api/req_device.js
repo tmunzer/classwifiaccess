@@ -9,9 +9,9 @@ module.exports.getDevices = function (api, callback) {
     // send the API request
     apiRequest(api, path, function (err, result) {
         if (err){
-            callback(err, null);
+            callback(err, result);
         }
-        if (result){
+        else if (result){
             var devicesFromAPI = result.data;
             var deviceList = [];
             var processed = 0;
@@ -21,7 +21,7 @@ module.exports.getDevices = function (api, callback) {
 
                 var device = devicesFromAPI[i];
                 device.SchoolId = api.SchoolId;
-                Device.findOne({deviceId: device.deviceId}, null, function (err, deviceToDB) {
+                Device.findOne({serialId: device.serialId, SchoolId: api.SchoolId}, null, function (err, deviceToDB) {
                     if (deviceToDB) {
                         var deviceSerialized = new Device.DeviceSerializer(this.device);
                         deviceSerialized.updateDB(deviceToDB.id, function(err) {

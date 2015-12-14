@@ -16,6 +16,7 @@ module.exports.apiRequest = function (api, path, callback) {
         headers: {
             'X-AH-API-CLIENT-SECRET': apiDB.getSecret(),
             'X-AH-API-CLIENT-ID': apiDB.getClientId(),
+            'X-AH-API-CLIENT-REDIRECT-URI': apiDB.getRedirectUrl(),
             'Authorization': "Bearer " + api.accessToken
         }
     };
@@ -34,22 +35,22 @@ module.exports.apiRequest = function (api, path, callback) {
             if (data!=''){
                 console.log(data);
                 var dataJSON = JSON.parse(data);
-                console.log(dataJSON);
                 result.data = dataJSON.data;
+                result.error = dataJSON.error;
             }
             switch (result.result.status) {
                 case 200:
                     callback(null, result);
                     break;
                 default:
-                    console.log("=====ERROR=====");
-                    callback(result, null);
+                    console.log("=====ERROR1=====");
+                    callback(result.error, result);
                     break;
 
             }
         });
         req.on('error', function (err) {
-            console.log("=====ERROR=====");
+            console.log("=====ERROR2=====");
             console.log(err);
         });
     });

@@ -13,6 +13,7 @@ function DeviceSerializer(row) {
     this.device.simType = row.simType;
     this.device.locations = row.locations;
     this.device.SchoolId = row.SchoolId;
+    this.device.connected = row.connected;
 }
 
 DeviceSerializer.prototype.insertDB = function (callback) {
@@ -49,6 +50,7 @@ function Device() {
     this.locations = "";
     this.SchoolId = "";
     this.schoolName = "";
+    this.connected = "";
 }
 
 createDevice = function (deviceFromDB, callback) {
@@ -63,6 +65,7 @@ createDevice = function (deviceFromDB, callback) {
     device.ip = deviceFromDB.ip;
     device.simType = deviceFromDB.simType;
     device.locations = deviceFromDB.locations;
+    device.connected = deviceFromDB.connected;
     device.SchoolId = deviceFromDB.SchoolId;
     School.findById(device.SchoolId, null, function (err, school) {
         if (school) {

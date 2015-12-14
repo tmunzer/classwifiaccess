@@ -3,6 +3,18 @@ var apiReq = require('./../bin/ah_api/req_device');
 var Api = require("./../models/api");
 var School = require("./../models/school");
 
+sortDevices = function (deviceA, deviceB) {
+    var a = deviceA.hostName.toLowerCase();
+    var b = deviceB.hostName.toLowerCase();
+    if (a < b) {
+        return -1;
+    } else if (a > b) {
+        return 1;
+    } else {
+        return 0;
+    }
+};
+
 module.exports = function (router, isAuthenticated, isAdmin) {
     /* GET Home Page */
     router.get('/device/', isAuthenticated, isAdmin, function (req, res, next) {
@@ -14,17 +26,21 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                     for (var i = 0; i < apiList.length; i++) {
                         apiReq.getDevices(apiList[i], function (err, devices) {
                             if (err) {
+                                console.log("==--))");
+                                console.log(err);
                                 res.render("apiError", {
                                     current_page:'device',
                                     err: err,
                                     user: req.user,
                                     session: req.session,
-                                    schoolList: schoolList
+                                    schoolList: schoolList,
+                                    user_button: req.translationFile.user_button
                                 });
                             } else {
                                 deviceList = deviceList.concat(devices);
                                 apiNum++;
                                 if (apiNum == apiList.length) {
+                                    deviceList.sort(sortDevices);
                                     res.render('device', {
                                         current_page: 'device',
                                         deviceList: deviceList,

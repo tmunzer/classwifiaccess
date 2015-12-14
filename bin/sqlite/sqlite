@@ -33,16 +33,17 @@ var Sqlite = function(){
             db.run("CREATE TABLE UserGroup (id integer primary key," +
                 "groupName VARCHAR(30))");
             db.run("CREATE TABLE Device (id integer primary key," +
-                "deviceId VARCHAR(15)," +
+                "deviceId VARCHAR(15) NOT NULL UNIQUE," +
                 "ownerId INTEGER, " +
                 "macAddress VARCHAR(16), " +
                 "hostname VARCHAR(60), " +
-                "serialId VARCHAR(14), " +
+                "serialId VARCHAR(14) NOT NULL UNIQUE, " +
                 "model VARCHAR(10), " +
                 "ip VARCHAR(12), " +
                 "simType VARCHAR(10), " +
                 "location VARCHAR(60)," +
-                "SchoolId INTEGER)");
+                "SchoolId INTEGER, " +
+                "connected BOOL)");
             db.run("CREATE TABLE Classroom (id integer primary key," +
                 "classroomName VARCHAR(30), " +
                 "DeviceId INTEGER," +
@@ -51,7 +52,7 @@ var Sqlite = function(){
                 "startDate DATETIME," +
                 "endDate DATETIME," +
                 "ClassroomId INTEGER," +
-                "UserID INTEGER," +
+                "UserId INTEGER," +
                 "SchoolId INTEGER)");
             db.run("CREATE TABLE UILanguage (id integer primary key," +
                 "language VARCHAR(20)," +
@@ -235,7 +236,9 @@ Sqlite.prototype.findById = function(table, rowId, options, callback){
          orderBy: how to sort the result
      */
     var rOptions = processOptions(options);
-    this.db.get("SELECT " + rOptions.columns + " FROM " + table + " WHERE id = ?", rowId, function(err, ret){
+    var getString = "SELECT " + rOptions.columns + " FROM " + table + " WHERE id = " + rowId;
+    console.log(getString);
+    this.db.get(getString, function(err, ret){
         if (err){
             throw err;
         }
