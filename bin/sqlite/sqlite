@@ -188,7 +188,7 @@ Sqlite.prototype.findOne = function(table, fields, options, callback){
     searchString = "(" + searchString + ")";
     var rOptions = processOptions(options);
     var selectString = "SELECT " + rOptions.columns + " FROM " + table + " WHERE "+ searchString;
-    console.log(selectString);
+    //console.log(selectString);
     this.db.get(selectString, function(err, ret){
         if (err){
             callback(err);
@@ -218,7 +218,7 @@ Sqlite.prototype.findAll = function(table, fields, options, callback){
     searchString = "(" + searchString + ")";
     var rOptions = processOptions(options);
     var selectString = "SELECT " + rOptions.columns + " FROM " + table + " WHERE "+ searchString;
-    console.log(selectString);
+    //console.log(selectString);
     this.db.all(selectString, function(err, ret){
         if (err){
             callback(err);
@@ -237,7 +237,7 @@ Sqlite.prototype.findById = function(table, rowId, options, callback){
      */
     var rOptions = processOptions(options);
     var getString = "SELECT " + rOptions.columns + " FROM " + table + " WHERE id = " + rowId;
-    console.log(getString);
+    //console.log(getString);
     this.db.get(getString, function(err, ret){
         if (err){
             throw err;
@@ -256,7 +256,7 @@ Sqlite.prototype.getAll = function(table, options, callback){
  */
     var rOptions = processOptions(options);
     var allString = "SELECT " + rOptions.columns + " FROM " + table + rOptions.orderBy;
-    console.log(allString);
+    //console.log(allString);
     this.db.all(allString, function(err, ret){
         if (err){
             throw err;

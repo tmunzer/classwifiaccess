@@ -16,6 +16,7 @@ LessonSeralizer.prototype.updateDB = function (LessonId, callback) {
         if (err) {
             callback(err);
         }
+        console.log("Lesson UpdateDB");
         callback(err);
     });
 };
@@ -25,6 +26,7 @@ LessonSeralizer.prototype.insertDB = function (callback) {
         if (err) {
             callback(err);
         }
+        console.log("Lesson InsertDB");
         callback(err);
     });
 };
@@ -40,6 +42,8 @@ function Lesson() {
     this.username = "";
     this.SchoolId = "";
     this.schoolName = "";
+    this.endDateTs = "";
+    this.startDateTs = "";
 }
 
 
@@ -108,7 +112,7 @@ createLesson = function (lessonFromDB, callback) {
         lesson.startDateTs = lessonFromDB.startDate;
         lesson.startDate = new Date(lessonFromDB.startDate);
         lesson.endDateTs = lessonFromDB.endDate;
-        if (lesson.startDateTs < now){
+        if (lesson.startDateTs <= now){
             if (lesson.endDateTs > now || lesson.endDateTs == 0) {
                 lesson.lessonStatus = "present";
             } else {
@@ -131,7 +135,6 @@ createLesson = function (lessonFromDB, callback) {
                 lesson.username = username;
                 getSchoolName(lesson.SchoolId, function(schoolName){
                     lesson.schoolName = schoolName;
-                    console.log(lesson);
                     callback(lesson);
                 });
             });

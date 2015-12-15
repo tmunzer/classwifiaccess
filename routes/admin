@@ -3,11 +3,7 @@ module.exports = function(router, isAuthenticated, isAdmin){
     /* GET Home Page */
     router.post('/admin/changeSchool', isAuthenticated, function(req, res) {
             if (req.body.hasOwnProperty("SchoolId")) {
-                console.log("==================");
-                console.log(req.session);
                 req.session.SchoolId = req.body.SchoolId;
-                console.log("==================");
-                console.log(req.session);
             }
         res.redirect('back')
     });

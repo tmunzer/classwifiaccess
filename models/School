@@ -21,6 +21,7 @@ SchoolSerializer.prototype.insertDB = function(callback){
         if (err){
             callback(err);
         }
+        console.log("School InsertDB");
         callback(err);
     });
 };

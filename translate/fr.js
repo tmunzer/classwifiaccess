@@ -29,8 +29,6 @@ module.exports.config_page = {
     api_none:"Aucune",
     link_api_conf:"Paramètre de l'API",
     link_api_text:"Lier l'API à l'école ",
-    cancel:"Annuler",
-    remove:"Supprimer",
     school:"Ecole"
 };
 //AP
@@ -73,7 +71,8 @@ module.exports.buttons = {
     save_button:"Enregistrer",
     cancel_button:"Annuler",
     activate_button:"Activer",
-    deactivate_button:"Désactiver"
+    deactivate_button:"Désactiver",
+    remove_button: "Supprimer"
 };
 
 module.exports.classroom_page = {
@@ -81,8 +80,8 @@ module.exports.classroom_page = {
     disable: "Inactif",
     unknown: "Inconnu",
     enableWifiForClassroom: "Activer le Wi-Fi pour la salle ",
-    disableWifiForClassroom: "Désactiver le Wi-Fi pour la salle ",
     wifiActivation: "Activation du Wi-Fi",
+    disableWifiForClassroom: "Désactiver le Wi-Fi pour la salle ",
     wifiDeactivation: "Voulez-vous désactiver le Wi-Fi?",
     unlimited: "Jusqu'à désactivation manuelle",
     for: "Pour ",
@@ -104,7 +103,10 @@ module.exports.lesson_page = {
     inProgress : "En cours",
     notStarted : "Non commencé",
     activateNow: "Activer le Wi-Fi maintenant",
-    activateLater: "Planifier une activation du Wi-Fi"
+    activateLater: "Planifier une activation du Wi-Fi",
+    delete_lesson_title:"Voulez vous supprimer cette activation du Wi-Fi?",
+    disableWifiForClassroom: "Désactiver le Wi-Fi pour la salle ",
+    wifiDeactivation: "Voulez-vous désactiver le Wi-Fi?",
 };
 
 module.exports.activation_page = {

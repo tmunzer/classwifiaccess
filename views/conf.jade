@@ -11,8 +11,8 @@ block content
             div(class="modal-body")
                span(id="oText")
             div(class="modal-footer")
-               button(type="button" class="btn btn-primary" data-dismiss="modal")= config_page.cancel
-               a(type="button" id="oRemove" href="" class="btn btn-danger")= config_page.remove
+               button(type="button" class="btn btn-primary" data-dismiss="modal")= buttons.cancel_button
+               a(type="button" id="oRemove" href="" class="btn btn-danger")= buttons.remove_button
    div(class="modal fade" id="linkApiToSchool" tabindex="-1" role="dialog" aria-labelledby="linkApiToSchoolLabel" aria-hidden="true")
       div(class="modal-dialog")
          form(id="apiConfig", action='', method='POST')
@@ -25,7 +25,7 @@ block content
                      each item in schoolList
                         option(value=item.id)= item.schoolName
                div(class="modal-footer")
-                  button(type="button" class="btn btn-primary" data-dismiss="modal")= config_page.cancel
+                  button(type="button" class="btn btn-primary" data-dismiss="modal")= buttons.cancel_button
                   button(class='btn btn-primary', type='submit')= buttons.save_button
 
    section(class='sb-site-content')

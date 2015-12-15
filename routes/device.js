@@ -26,8 +26,6 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                     for (var i = 0; i < apiList.length; i++) {
                         apiReq.getDevices(apiList[i], function (err, devices) {
                             if (err) {
-                                console.log("==--))");
-                                console.log(err);
                                 res.render("apiError", {
                                     current_page:'device',
                                     err: err,

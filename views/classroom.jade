@@ -7,6 +7,7 @@ mixin classroom_entry(classroom)
     - var buttonClass = "not-active"
     - var buttonAction = ""
     - var spanDevice = ""
+    - var warning = ""
     - var divDeviceClass = ""
     case classroom.wifiEnabled
         when true
@@ -36,10 +37,12 @@ mixin classroom_entry(classroom)
                 - buttonClass = "not-active"
                 - buttonAction = ""
                 - divDeviceClass = "alert alert-danger"
-                - spanDevice = "Device " + classroom.deviceHostname + " is not connected"
+                - warning = "fa fa-exclamation-triangle fa-lg"
+                - spanDevice = " Device " + classroom.deviceHostname + " is not connected"
     else
         - divDeviceClass = "alert alert-danger"
-        - spanDevice = "No device configured for this classroom"
+        - warning = "fa fa-exclamation-triangle fa-lg"
+        - spanDevice = " No device configured for this classroom"
 
     div
         h4= classroom.classroomName
@@ -53,6 +56,7 @@ mixin classroom_entry(classroom)
         span(class="label " + wifiEnableLabel)= wifiEnable
         hr.classroom
         div(class=divDeviceClass style="margin: 0; padding: 6px; width: 100%; box-shadow: none; font-size: 0.8em")
+            i(class=warning)
             span= spanDevice
 
 
@@ -70,27 +74,29 @@ block content
                             span(id="enableClassroom")
                     div(class="modal-body")
                         label(for="group")= classroom_page.wifiActivation
-                        table
-                            tr
-                                td
-                                    input(type="radio" name="wifiActivation" id="unlimited" value="unlimited" checked)
-                                td
-                                    span= classroom_page.unlimited
-                            tr
-                                td
-                                    input(type="radio" name="wifiActivation" id="duration" value="duration")
-                                td
-                                    span= classroom_page.for
-                                    input(type="text" name="duration" size="4" value="120" class="form-control" style="display:inline; width: auto; height: auto; padding: Opx 12px;")
-                                    span= classroom_page.minutes
-                            tr
-                                td
-                                    input(type="radio" name="wifiActivation" id="fromTo" value="until")
-                                td
-                                    span= classroom_page.untilDate
-                                    input(type='text' class="form-control" name='activateUntil' id='activateUntil' style="display:inline; width: auto; height: auto; padding: Opx 12px;")
+                        div(class="row" style="margin:5%" class='row_activation' data-name="unlimited")
+                            div(class="input-group")
+                                span(class="input-group-addon" )
+                                    input(type="radio" aria-label="unlimited" name="wifiActivation" id="unlimited" value="unlimited" checked="checked")
+                                span(aria-label="unlimited" class="input-group-addon" style="width:100%;text-align: left;border:1px solid #ccc")= classroom_page.unlimited
+                        div(class="row" style="margin:5%" class='row_activation' data-name="duration")
+                            div(class="input-group")
+                                span(class="input-group-addon")
+                                    input(type="radio" aria-label="duration" name="wifiActivation" id="duration" value="duration")
+                                span(class="input-group-addon" aria-label="duration")= classroom_page.for
+                                input(type="text" name="duration" value="120" size='4' class="form-control" style="display:inline; width: auto; height: auto; padding: Opx 12px;")
+                                span(class="input-group-addon" aria-label="duration" style="width: 100%;text-align: left;border:1px solid #ccc")= classroom_page.minutes
+                        div(class="row" style="margin:5%" class='row_activation' data-name="until")
+                            div(class="input-group")
+                                span(class="input-group-addon")
+                                    input(type="radio" aria-label="until" name="wifiActivation" id="until" value="until")
+                                span(class="input-group-addon" aria-label='until')= classroom_page.untilDate
+                                input(type='text' class="form-control" name="endDate" id='endDatePicker')
+                                span(class="input-group-addon")
+                                    span(class="glyphicon glyphicon-calendar")
+
                     div(class="modal-footer")
-                        input(type="hidden" name="classroomId" id="enableClassroomId" value="")
+                        input(type="hidden" name="ClassroomId" id="enableClassroomId" value="")
                         button(type="button" class="btn btn-danger" data-dismiss="modal")= buttons.cancel_button
                         button(class='btn btn-primary', type='submit')= buttons.activate_button
 
@@ -105,7 +111,7 @@ block content
                     div(class="modal-body")
                         label(for="group")= classroom_page.wifiDeactivation
                     div(class="modal-footer")
-                        input(type="hidden" name="classroomId" id="disableClassroomId" value="")
+                        input(type="hidden" name="ClassroomId" id="disableClassroomId" value="")
                         button(type="button" class="btn btn-danger" data-dismiss="modal")= buttons.cancel_button
                         button(class='btn btn-primary', type='submit')= buttons.deactivate_button
 
@@ -129,13 +135,13 @@ block content
     script.
         function enableWifiForClassroom(cName, cId) {
             $('#enableClassroom').text(cName);
-            $('#enableWifiForClassroomForm').attr('action', '/classroom/enable?id=' + cId);
+            $('#enableWifiForClassroomForm').attr('action', '/lesson/enable/?ClassroomId=' + cId);
             $('#enableClassroomId').val(cId);
             $('#enableWifiForClassroom').modal('show');
         }
         function disableWifiForClassroom(cName, cId) {
             $('#disableClassroom').text(cName);
-            $('#disableWifiForClassroomForm').attr('action', '/classroom/disable?id=' + cId);
+            $('#disableWifiForClassroomForm').attr('action', '/lesson/disable/?ClassroomId=' + cId);
             $('#disableClassroomId').val(cId);
             $('#disableWifiForClassroom').modal('show');
         }
@@ -144,9 +150,14 @@ block content
             $('#linkApiToSchool').modal('show');
         }
         $(function () {
-            $('#activateUntil').datetimepicker({
+            $('#endDatePicker').datetimepicker({
                 useCurrent: true,
                 minDate: new Date(),
-                collapse: false
+                collapse: false,
+                sideBySide: true,
+                format: "MM/DD/YYYY HH:mm"
             });
+            $('.row_activation').click(function(){
+                $("#"+$(this).data('name')).prop("checked", true);
+            })
         });

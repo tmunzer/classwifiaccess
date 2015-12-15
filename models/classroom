@@ -25,6 +25,7 @@ ClassroomSeralizer.prototype.insertDB = function (callback) {
         if (err) {
             callback(err);
         }
+        console.log("Classroom InsertDB");
         callback(err);
     });
 };
@@ -71,7 +72,6 @@ function getWifiState(classroom, callback) {
             if (err) {
                 callback(err);
             }
-            console.log(ret);
             if (ret.length > 0) {
                 callback(true);
             } else {
