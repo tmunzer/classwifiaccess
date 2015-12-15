@@ -4,8 +4,16 @@ var User = require("./user");
 
 function LessonSeralizer(row) {
     this.lesson = {};
-    this.lesson.startDate = row.startDate;
-    this.lesson.endDate = row.endDate;
+    if (row.hasOwnProperty("startDateTs")){
+        this.lesson.startDate = row.startDateTs;
+    } else {
+        this.lesson.startDate = row.startDate;
+    }
+    if (row.hasOwnProperty("startDateTs")){
+        this.lesson.endDate = row.endDateTs;
+    } else {
+        this.lesson.endDate = row.endDate;
+    }
     this.lesson.ClassroomId = row.ClassroomId;
     this.lesson.UserId = row.UserId;
     this.lesson.SchoolId = row.SchoolId;

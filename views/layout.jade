@@ -34,7 +34,7 @@ html
         link(rel='stylesheet' href='/stylesheets/bootstrap-datetimepicker.min.css')
         link(rel='stylesheet' href='/stylesheets/schoolcontrol.css')
     body(style="padding-left:10%; padding-right:10%; margin:auto")
-    div.container(style="float:left;")
+    div.container(style="float:left; margin-bottom: 20px")
         block nav
             .container-narrow
                 .masthead
@@ -45,7 +45,7 @@ html
                                 a(href="/classroom/")
                                     i(class="fa fa-graduation-cap fa-lg")
                             li(style = lesson)
-                                a(href="/lesson/")
+                                a(href="/classroom/0/lesson/")
                                     i(class="fa fa-clock-o fa-lg")
                             if user.GroupId == 1
                                 li(style=device)

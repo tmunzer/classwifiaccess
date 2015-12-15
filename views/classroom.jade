@@ -49,7 +49,7 @@ mixin classroom_entry(classroom)
             div.classroom_button
                 a(href="#" class=buttonClass style="margin:0em 1em; color="+buttonColor+";" onclick=buttonAction)
                     i(class="fa fa-power-off" )
-                a(href="/lesson/?ClassroomId="+classroom.id)
+                a(href="/classroom/"+classroom.id+"/lesson/")
                     i(class="fa fa-calendar" style="margin:0em 1em; color="+buttonColor+";")
         hr.classroom
         span= "Wi-Fi: "

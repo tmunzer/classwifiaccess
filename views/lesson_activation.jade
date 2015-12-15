@@ -1,11 +1,13 @@
 extends layout_admin
 
 block content
+    - var action = "/classroom/" + displayedClassroom + "/lesson/new/"
     - var activationDate = ""
     - var manualDeactivation = true
     - var deactivationAt = ""
     - var deactivationAtDate = ""
     if currentLesson != null
+        - action = "/classroom/" + displayedClassroom + "/lesson/edit/?LessonId=" + currentLesson.id
         - activationDate = currentLesson.startDate
         if currentLesson.endDateTs != 0
             - manualDeactivation = false
@@ -13,7 +15,7 @@ block content
 
 
     div(style="width:50%; margin:auto")
-        form(action="/lesson/new/" method="POST" class="form-horizontal")
+        form(action=action method="POST" class="form-horizontal")
             if currentClassroom
                 h4= activation_page.classroomTitle + currentClassroom.classroomName
                 input(type="hidden" name="ClassroomId" value=currentClassroom.id)
@@ -65,9 +67,7 @@ block content
 
             hr
             if currentClassroom
-                a(href="/lesson/?ClassroomId="+currentClassroom.id, class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
-            else
-                a(href="/lesson/", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
+                a(href="/classroom/" + displayedClassroom + "/lesson/", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
             if classroomList || currentClassroom
                 button(class='btn btn-primary', type='submit', style="margin:0.2em 1em 2em 1em")= buttons.save_button
             else

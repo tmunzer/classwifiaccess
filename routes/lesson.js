@@ -5,28 +5,38 @@ var School = require("./../models/school");
 var Classroom = require("./../models/classroom");
 
 
-function renderLessons(req, res, filterString, currentClassroom) {
+function renderLessons(req, res, displayedClassroom, currentClassroom) {
+    var filterString = {SchoolId: req.session.SchoolId};
+    if (displayedClassroom > 0) {
+        filterString = {SchoolId: req.session.SchoolId, ClassroomId: displayedClassroom};
+    }
     School.getAll(null, function (err, schoolList) {
         Lesson.findAll(filterString, null, function (err, lessonList) {
-            res.render('lesson', {
-                user: req.user,
-                current_page: 'lesson',
-                lessonList: lessonList,
-                schoolList: schoolList,
-                session: req.session,
-                currentClassroom: currentClassroom,
-                lesson_page: req.translationFile.lesson_page,
-                user_button: req.translationFile.user_button,
-                buttons: req.translationFile.buttons
-            });
+            if (err) {
+                res.render("error");
+            } else {
+                res.render('lesson', {
+                    user: req.user,
+                    current_page: 'lesson',
+                    displayedClassroom: displayedClassroom,
+                    lessonList: lessonList,
+                    schoolList: schoolList,
+                    session: req.session,
+                    currentClassroom: currentClassroom,
+                    lesson_page: req.translationFile.lesson_page,
+                    user_button: req.translationFile.user_button,
+                    buttons: req.translationFile.buttons
+                });
+            }
         });
     });
-}
+};
 
-function renderActivation(req, res, activation, classroomList, currentClassroom, currentLesson){
+function renderActivation(req, res, displayedClassroom, activation, classroomList, currentClassroom, currentLesson) {
     res.render("lesson_activation", {
         user: req.user,
         current_page: "lesson",
+        displayedClassroom: displayedClassroom,
         activation: activation,
         classroomList: classroomList,
         currentClassroom: currentClassroom,
@@ -35,141 +45,166 @@ function renderActivation(req, res, activation, classroomList, currentClassroom,
         user_button: req.translationFile.user_button,
         buttons: req.translationFile.buttons
     })
-}
+};
 
 
-function newActivaton(req, res, redirectUrl){
-    console.log(req.body);
+function saveLesson(req, LessonId, callback) {
     var lesson = new Lesson();
     lesson.ClassroomId = req.body.ClassroomId;
     lesson.UserId = req.user.id;
     lesson.SchoolId = req.session.SchoolId;
-    if (req.body.hasOwnProperty("startDate")){
-        lesson.startDate = new Date(req.body.startDate).getTime();
+    if (req.body.hasOwnProperty("startDate")) {
+        lesson.startDateTs = new Date(req.body.startDate).getTime();
     } else {
-        lesson.startDate = new Date().getTime();
+        lesson.startDateTs = new Date().getTime();
     }
-    switch(req.body.wifiActivation){
+    switch (req.body.wifiActivation) {
         case "unlimited":
-            lesson.endDate = 0;
+            lesson.endDateTs = 0;
             break;
         case "duration":
-            lesson.endDate = new Date(lesson.startDate + (req.body.duration * 60 * 1000)).getTime();
+            lesson.endDateTs = new Date(lesson.startDateTs + (req.body.duration * 60 * 1000)).getTime();
             break;
         case "until":
-            lesson.endDate = new Date(req.body.endDate).getTime();
+            lesson.endDateTs = new Date(req.body.endDate).getTime();
             break;
     }
     var lessonToDb = new Lesson.LessonSeralizer(lesson);
-    lessonToDb.insertDB(function(err){
-        if (err){
-            res.render("error");
-        } else {
-            res.redirect(redirectUrl);
-        }
-    })
-}
+    if (LessonId != null) {
+        lessonToDb.updateDB(LessonId, function (err) {
+            callback(err);
+        });
+    } else {
+        lessonToDb.insertDB(function (err) {
+            callback(err);
+        });
+    }
+};
 
 module.exports = function (router, isAuthenticated) {
     /* GET Home Page */
-    router.get('/lesson/', isAuthenticated, function (req, res) {
+    router.get('/classroom/:ClassroomId/lesson/', isAuthenticated, function (req, res) {
         var filterString = {};
-        if (req.query.hasOwnProperty('ClassroomId')) {
-            Classroom.findById(req.query.ClassroomId, null, function(err, currentClassroom){
-                filterString = {SchoolId: req.session.SchoolId, ClassroomId: req.query.ClassroomId};
-                renderLessons(req, res, filterString, currentClassroom);
+        var displayedClassroom = req.params.ClassroomId;
+        if (displayedClassroom > 0) {
+            Classroom.findById(displayedClassroom, null, function (err, currentClassroom) {
+                renderLessons(req, res, displayedClassroom, currentClassroom);
             });
         } else {
-            filterString = {SchoolId: req.session.SchoolId};
-            renderLessons(req, res, filterString, null);
+            renderLessons(req, res, displayedClassroom, null);
         }
     });
 
     //========================= NEW LESSON =========================//
-    router.get("/lesson/new/", isAuthenticated, function(req, res) {
+    router.get("/classroom/:ClassroomId/lesson/new/", isAuthenticated, function (req, res) {
         var activation = "";
+        var displayedClassroom = req.params.ClassroomId;
         if (req.query.hasOwnProperty("when")) {
             activation = req.query.when;
         }
-        if (req.query.hasOwnProperty("ClassroomId")){
-            Classroom.findById(req.query.ClassroomId, null, function(err, currentClassroom) {
-                renderActivation(req, res, activation, null, currentClassroom);
+        if (displayedClassroom > 0) {
+            Classroom.findById(displayedClassroom, null, function (err, currentClassroom) {
+                renderActivation(req, res, displayedClassroom, activation, null, currentClassroom);
             })
         } else {
-            Classroom.findAll({SchoolId: req.session.SchoolId}, null, function(err, classroomList) {
-                renderActivation(req, res, activation, classroomList, null);
+            Classroom.findAll({SchoolId: req.session.SchoolId}, null, function (err, classroomList) {
+                renderActivation(req, res, displayedClassroom, activation, classroomList, null);
             })
 
         }
     });
-    router.post("/lesson/new/", isAuthenticated, function(req, res){
-        if (req.body.hasOwnProperty('wifiActivation')){
-            newActivaton(req, res, "/lesson");
+    router.post("/classroom/:ClassroomId/lesson/new/", isAuthenticated, function (req, res) {
+        var displayedClassroom = req.params.ClassroomId;
+        if (req.body.hasOwnProperty('wifiActivation')) {
+            saveLesson(req, null, function (err) {
+                if (err) {
+                    res.render("error");
+                } else {
+                    res.redirect("/classroom/" + displayedClassroom + "/lesson/");
+                }
+            });
         } else {
-            res.redirect("/lesson");
+            res.redirect("/classroom/" + displayedClassroom + "/lesson/");
         }
     });
 
     //========================= DELETE LESSON =========================//
-    router.get("/lesson/delete/", isAuthenticated, function(req, res) {
-        if (req.query.hasOwnProperty("id")){
-            Lesson.deleteById(req.query.id, function(err){
-                if (err){
+    router.get("/lesson/delete/", isAuthenticated, function (req, res) {
+        if (req.query.hasOwnProperty("LessonId")) {
+            Lesson.deleteById(req.query.LessonId, function (err) {
+                if (err) {
                     res.render("error");
                 } else {
                     res.redirect('back');
                 }
             })
+        } else {
+            res.redirect('back');
         }
     });
 
     //========================= EDIT LESSON =========================//
-    router.get("/lesson/edit/", isAuthenticated, function(req, res){
-        if (req.query.hasOwnProperty('id')){
-            Lesson.findById(req.query.id, null, function(err, currentLesson){
-                if (err){
+    router.get("/classroom/:ClassroomId/lesson/edit/", isAuthenticated, function (req, res) {
+        var displayedClassroom = req.params.ClassroomId;
+        if (req.query.hasOwnProperty('LessonId')) {
+            Lesson.findById(req.query.LessonId, null, function (err, currentLesson) {
+                if (err) {
                     res.render("error");
                 } else {
-                    Classroom.findById(currentLesson.ClassroomId, null, function(err, currentClassroom){
-                        if (err){
+                    Classroom.findById(currentLesson.ClassroomId, null, function (err, currentClassroom) {
+                        if (err) {
                             res.render("error");
                         } else {
-                            renderActivation(req, res, null, null, currentClassroom, currentLesson);
+                            renderActivation(req, res, displayedClassroom, null, null, currentClassroom, currentLesson);
                         }
                     })
                 }
             })
         }
     });
-    router.post("/lesson/edit/", isAuthenticated, function(req, res){
-        if (req.body.hasOwnProperty('LessonId')){
-            var lesson = new Lesson.LessonSeralizer(req.body);
-            lesson.updateDB(req.body.LessonId);
-            renderLessons(req, res, null, null);
+    router.post("/classroom/:ClassroomId/lesson/edit/", isAuthenticated, function (req, res) {
+        var displayedClassroom = req.params.ClassroomId;
+        if (req.query.hasOwnProperty('LessonId')) {
+            saveLesson(req, req.query.LessonId, function (err) {
+                if (err) {
+                    res.render("error");
+                } else {
+                    res.redirect("/classroom/" + displayedClassroom + "/lesson/");
+                }
+            });
+        } else {
+            res.redirect("/classroom/" + displayedClassroom + "/lesson/");
         }
     });
 
+
     //========================= ENABLE LESSON =========================//
-    router.post("/lesson/enable/", isAuthenticated, function(req, res) {
-        if (req.body.hasOwnProperty('wifiActivation')){
-            newActivaton(req, res, "back");
+    router.post("/lesson/enable/", isAuthenticated, function (req, res) {
+        if (req.body.hasOwnProperty('wifiActivation')) {
+            saveLesson(req, null, function (err) {
+                if (err) {
+                    res.render("error");
+                } else {
+                    res.redirect("back");
+                }
+            });
         } else {
             res.redirect("back");
         }
     });
 
     //========================= DISABLE LESSON =========================//
-    router.post("/lesson/disable/", isAuthenticated, function(req, res, next) {
-        if (req.body.hasOwnProperty('ClassroomId')){
+    router.post("/lesson/disable/", isAuthenticated, function (req, res, next) {
+        if (req.body.hasOwnProperty('ClassroomId')) {
             var classroomId = req.body.ClassroomId;
-            Lesson.findActive(classroomId, req.session.SchoolId, function(err, ret){
-                if (err){
+            Lesson.findActive(classroomId, req.session.SchoolId, function (err, ret) {
+                if (err) {
                     res.render('error');
                 } else {
                     var lesson = ret[0];
-                    lesson.endDate = new Date().getTime();
+                    lesson.endDateTs = new Date().getTime();
                     var lessontToDB = new Lesson.LessonSeralizer(lesson);
-                    lessontToDB.updateDB(lesson.id, function(err){
+                    lessontToDB.updateDB(lesson.id, function (err) {
                         res.redirect("back");
                     });
                 }
@@ -180,7 +215,7 @@ module.exports = function (router, isAuthenticated) {
                 if (err) {
                     res.render("error");
                 } else {
-                    lesson.endDate = new Date().getTime();
+                    lesson.endDateTs = new Date().getTime();
                     var lessonToDB = new Lesson.LessonSeralizer(lesson);
                     lessonToDB.updateDB(lessonId, function (err) {
                         if (err) {
@@ -191,10 +226,10 @@ module.exports = function (router, isAuthenticated) {
                     })
                 }
             })
-        } else{
+        } else {
             res.redirect("back");
         }
-    })
+    });
 };
 
 

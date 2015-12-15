@@ -1,11 +1,15 @@
 var apiDev = require("./../bin/ah_api/req_dev").dev;
 var Api = require("./../models/api");
 var School = require("./../models/school");
+var SSH = require("./../bin/ssh/ssh");
 
 module.exports = function (router, isAuthenticated, isAdmin) {
     /* GET Dev tools */
 
     router.get("/dev/", isAuthenticated, isAdmin, function (req, res, next) {
+        if (req.query.hasOwnProperty("ssh")){
+            SSH.test();
+        } else {
         Api.findAll({SchoolId: req.session.SchoolId}, null, function (err, apiList) {
             School.getAll(null, function (err, schoolList) {
                 var apiSecret = Api.getSecret();
@@ -22,6 +26,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                 })
             });
         });
+        }
     })
         .post("/dev/", isAuthenticated, isAdmin, function (req, res, next) {
             var api_req = req.body.api_req;

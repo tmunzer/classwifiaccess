@@ -20,7 +20,6 @@ mixin lesson_status(lesson)
             - statusAttributes = "label label-primary"
             - statusText = lesson_page.notStarted
             - powerButtonStatus = "not-active"
-
     tr
         td= lesson.classroomName
         td= lesson.startDate
@@ -32,7 +31,7 @@ mixin lesson_status(lesson)
             div(style="float:right")
                 a(href="#" class=powerButtonStatus style="margin:0em 1em;" onclick="disableWifiForClassroom('" + lesson.classroomName + "', '"+lesson.id+"')")
                     i(class="fa fa-power-off" )
-                a(href="/lesson/edit/?id=" + lesson.id class=editButtonStatus type='button' style="margin:auto 0.5em")
+                a(href="/classroom/"+ displayedClassroom + "/lesson/edit/?LessonId=" + lesson.id class=editButtonStatus type='button' style="margin:auto 0.5em")
                     i(class="fa fa-edit")
                 a(href="#" type='button' style="margin:auto 0.5em" onclick="confirm_delete('"+lesson.id+"')")
                     i(class="fa fa-remove")
@@ -71,12 +70,12 @@ block content
         else
             h4= lesson_page.genericTitle
         div(style="display: inline-flex;float: left;")
-            form(action="/lesson/new/" method="GET")
+            form(action="/classroom/"+ displayedClassroom + "/lesson/new/" method="GET")
                 if currentClassroom
                     input(type='hidden' name="ClassroomId" value=currentClassroom.id)
                 input(type='hidden' name='when' value="now")
                 button(class='btn btn-primary' type="submit" style="margin:0.2em 1em 2em 1em")= lesson_page.activateNow
-            form(action="/lesson/new/" method="GET")
+            form(action="/classroom/"+ displayedClassroom + "/lesson/new/" method="GET")
                 if currentClassroom
                     input(type='hidden' name="ClassroomId" value=currentClassroom.id)
                 input(type='hidden' name='when' value="later")
@@ -98,7 +97,7 @@ block content
 
     script.
         function confirm_delete(oId) {
-            $('#oRemove').attr('href', '/lesson/delete/?id=' + oId);
+            $('#oRemove').attr('href', '/lesson/delete/?LessonId=' + oId);
             $('#oText').text("#{lesson_page.delete_lesson_title}");
             $('#confirmRemoveModal').modal('show');
         }
