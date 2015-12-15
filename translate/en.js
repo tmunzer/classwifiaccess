@@ -88,7 +88,11 @@ module.exports.classroom_page = {
     unlimited: "Until manual deactivation",
     for: "For  ",
     minutes: " minutes",
-    untilDate: "Until "
+    untilDate: "Until ",
+    device: "Device ",
+    isConnected: " is connected.",
+    isNotConnected: " is not connected.",
+    noDeviceConfigured: "There is no device configured for this classroom."
 };
 
 module.exports.lesson_page = {

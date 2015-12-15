@@ -30,13 +30,13 @@ block content
                     hr
                     label(for="group")= user_page.group
                     if userToEdit.id == user.id
-                        label(for="group")= user_page.group
-                        select(class="form-control", disabled="disabled", name="GroupId")
+                        select(class="form-control", disabled="disabled")
                             each item in groups
                                 if userToEdit.GroupId == item.id
                                     option(value=item.id, selected="selected")= item.groupName
+                        input(type="hidden" id="GroupId" name="GroupId" value=userToEdit.GroupId)
                     else
-                        select(class="form-control", name="GroupId", id="GroupId")
+                        select(class="form-control", name="GroupId" id="GroupId")
                             each item in groups
                                 if userToEdit.GroupId == item.id
                                     option(value=item.id, selected="selected")= item.groupName

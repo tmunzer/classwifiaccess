@@ -32,17 +32,17 @@ mixin classroom_entry(classroom)
         case classroom.deviceConnected
             when "true"
                 - divDeviceClass = "alert alert-success"
-                - spanDevice = "Device " + classroom.deviceHostname + " is connected"
+                - spanDevice = classroom_page.device + classroom.deviceHostname + classroom_page.isConnected
             when "false"
                 - buttonClass = "not-active"
                 - buttonAction = ""
                 - divDeviceClass = "alert alert-danger"
                 - warning = "fa fa-exclamation-triangle fa-lg"
-                - spanDevice = " Device " + classroom.deviceHostname + " is not connected"
+                - spanDevice = classroom_page.device + classroom.deviceHostname + classroom_page.isNotConnected
     else
         - divDeviceClass = "alert alert-danger"
         - warning = "fa fa-exclamation-triangle fa-lg"
-        - spanDevice = " No device configured for this classroom"
+        - spanDevice = classroom_page.noDeviceConfigured
 
     div
         h4= classroom.classroomName
@@ -56,7 +56,7 @@ mixin classroom_entry(classroom)
         span(class="label " + wifiEnableLabel)= wifiEnable
         hr.classroom
         div(class=divDeviceClass style="margin: 0; padding: 6px; width: 100%; box-shadow: none; font-size: 0.8em")
-            i(class=warning)
+            i(class=warning style="margin-right:0.5em")
             span= spanDevice
 
 

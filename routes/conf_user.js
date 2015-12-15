@@ -66,6 +66,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
     });
     /* POST - SAVE User Edit page. */
     router.post("/conf/user/edit", isAuthenticated, function (req, res, next) {
+        console.log(req.body);
         var userIdToEdit = req.query.id;
         // check if requested user to display is the same as the current user
         // or if current user is an admin

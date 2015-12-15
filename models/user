@@ -17,7 +17,6 @@ newLogin = function(userId, callback){
 /////////////////////////////// Serializer and DB update/insert ///////////////////////////////
 function UserSerializer(row){
     this.user = {};
-    this.user.lastLogin=row.lastLogin;
     this.user.firstName=row.firstName;
     this.user.lastName=row.lastName;
     this.user.email=row.email;
