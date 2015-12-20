@@ -1,6 +1,7 @@
 extends layout_admin
-block nav
+
 block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}
+    h1= "Something went wrong when loading " + current_page + " page..."
+    h2= error.status
+    pre= error.message
+    pre #{error.stack}

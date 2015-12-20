@@ -141,6 +141,31 @@ findAll = function (fields, options, callback) {
     });
 };
 
+findActiveByDevice = function(DeviceId, SchoolId, callback){
+    var currentDate = new Date().getTime();
+    if (DeviceId > 0) {
+        db.customJoin("Classroom", "Lesson",
+            "Lesson.ClassroomId", "Classroom.id",
+            " Classroom.DeviceId = " + DeviceId +
+            " AND Lesson.SchoolId = " + SchoolId +
+            " AND Lesson.startDate < " + currentDate +
+            " AND " +
+            " (Lesson.endDate > " + currentDate +
+            " OR Lesson.endDate = 0)",
+            function (err, ret) {
+                if (err) {
+                    callback(err);
+                } else if (ret) {
+                    callback(null, ret);
+                } else {
+                    callback(null, []);
+                }
+            });
+    } else {
+        callback('');
+    }
+};
+
 findOne = function (fields, options, callback) {
     db.findOne("Classroom", fields, options, function (err, classroomFromDB) {
         if (err) {
@@ -199,6 +224,7 @@ deleteById = function (classroomId, callback) {
 };
 
 module.exports = Classroom;
+module.exports.findActiveByDevice = findActiveByDevice;
 module.exports.findAll = findAll;
 module.exports.findOne = findOne;
 module.exports.findById = findById;

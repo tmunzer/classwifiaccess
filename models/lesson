@@ -9,7 +9,7 @@ function LessonSeralizer(row) {
     } else {
         this.lesson.startDate = row.startDate;
     }
-    if (row.hasOwnProperty("startDateTs")){
+    if (row.hasOwnProperty("endDateTs")){
         this.lesson.endDate = row.endDateTs;
     } else {
         this.lesson.endDate = row.endDate;
@@ -174,12 +174,13 @@ findAll = function (fields, options, callback) {
     });
 };
 
-findActive = function (cId, sId, callback) {
+
+findActive = function (ClassroomId, SchoolId, callback) {
     var currentDate = new Date().getTime();
-    if (cId > 0) {
+    if (ClassroomId > 0) {
         db.customSelect("Lesson",
-            " ClassroomId = " + cId +
-            " AND SchoolId = " + sId +
+            " ClassroomId = " + ClassroomId +
+            " AND SchoolId = " + SchoolId +
             " AND startDate < " + currentDate +
             " AND " +
             " (endDate > " + currentDate +

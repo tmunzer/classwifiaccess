@@ -72,7 +72,21 @@ var Sqlite = function(){
 };
 
 Sqlite.prototype.customSelect = function(table, filter_string, callback){
+    console.log('SELECT * FROM ' + table + " WHERE " + filter_string);
     this.db.all('SELECT * FROM ' + table + " WHERE " + filter_string, function(err, ret){
+        if (err){
+            callback(err);
+        }
+        callback(err, ret);
+    });
+};
+
+Sqlite.prototype.customJoin = function(table1, table2, table1JoinId, table2JoinId, filterString, callback){
+    var queryString = 'SELECT * FROM ' + table1 + " INNER JOIN " + table2 +
+        " ON " + table1JoinId + " = " + table2JoinId +
+        " WHERE " + filterString;
+    console.log(queryString);
+    this.db.all(queryString, function(err, ret){
         if (err){
             callback(err);
         }

@@ -1,4 +1,5 @@
 var School = require('./../models/school');
+var Error = require('./error');
 
 module.exports = function (router, isAuthenticated, isAdmin) {
     /* GET User Display page. */
@@ -7,16 +8,19 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         var schoolIdToEdit = req.query.id;
         // get the school to edit in the DB
         School.findById(schoolIdToEdit, null, function (err, schoolToEdit) {
-            // render the page
-            res.render('conf_schoolDisplay', {
-                user: req.user,
-                current_page: 'conf',
-                user_button: req.translationFile.user_button,
-                schoolToEdit: schoolToEdit,
-                school_page: req.translationFile.config_school_page,
-                buttons: req.translationFile.buttons
-            });
-
+            if (err){
+                Error.render(err, "conf", req);
+            } else {
+                // render the page
+                res.render('conf_schoolDisplay', {
+                    user: req.user,
+                    current_page: 'conf',
+                    user_button: req.translationFile.user_button,
+                    schoolToEdit: schoolToEdit,
+                    school_page: req.translationFile.config_school_page,
+                    buttons: req.translationFile.buttons
+                });
+            }
         });
     });
 
@@ -25,15 +29,19 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         var schoolIdToEdit = req.query.id;
         // get the school to edit in the DB
         School.findById(schoolIdToEdit, null, function (err, schoolToEdit) {
-            // render the page
-            res.render('conf_schoolEdit', {
-                user: req.user,
-                current_page: 'conf',
-                user_button: req.translationFile.user_button,
-                schoolToEdit: schoolToEdit,
-                school_page: req.translationFile.config_school_page,
-                buttons: req.translationFile.buttons
-            });
+            if (err){
+                Error.render(err, "conf", req);
+            } else {
+                // render the page
+                res.render('conf_schoolEdit', {
+                    user: req.user,
+                    current_page: 'conf',
+                    user_button: req.translationFile.user_button,
+                    schoolToEdit: schoolToEdit,
+                    school_page: req.translationFile.config_school_page,
+                    buttons: req.translationFile.buttons
+                });
+            }
         });
     });
     /* POST - SAVE User Edit page. */
@@ -43,7 +51,11 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         var SchoolSerializer = new School.SchoolSerializer(req.body);
         // update the user
         SchoolSerializer.updateDB(schoolIdToEdit, function (err) {
-            res.redirect('/conf/school?id=' + schoolIdToEdit);
+            if (err){
+                Error.render(err, "conf", req);
+            } else {
+                res.redirect('/conf/school?id=' + schoolIdToEdit);
+            }
         });
     });
 
@@ -66,7 +78,11 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         var schoolToDB = new School.SchoolSerializer(req.body);
         // update the school
         schoolToDB.insertDB(function (err) {
-            res.redirect('/conf');
+            if (err){
+                Error.render(err, "conf", req);
+            } else {
+                res.redirect('/conf');
+            }
         });
     });
     router.get('/conf/school/delete', isAuthenticated, isAdmin, function (req, res) {

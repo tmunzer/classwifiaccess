@@ -1,3 +1,4 @@
+var Error = require('./error');
 
 module.exports = function(router, passport){
     /* GET login page. */

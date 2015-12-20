@@ -64,6 +64,9 @@ block content
                                         when 1
                                             td
                                                 a(href="#", type='button', style="margin:auto 0.5em", onclick="api_conf(" + api.id + ")")= config_page.api_none
+                                        when "undefined"
+                                            td
+                                                a(href="#", type='button', style="margin:auto 0.5em", onclick="api_conf(" + api.id + ")")= config_page.api_none
                                         default
                                             td
                                                 a(href="#", type='button', style="margin:auto 0.5em", onclick="api_conf(" + api.id + ")")= api.schoolName

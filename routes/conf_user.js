@@ -2,6 +2,7 @@ var User = require("./../models/user");
 var Group = require("./../models/group");
 var UILanguage = require('./../models/UiLanguage');
 var School = require('./../models/school');
+var Error = require('./error');
 
 module.exports = function (router, isAuthenticated, isAdmin) {
     /* GET User Display page. */
@@ -13,16 +14,19 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         if ((req.user.id == userIdToEdit) || (isAdmin)) {
             // get the user to edit in the DB
             User.findById(userIdToEdit, null, function (err, userToEdit) {
-                // render the page
-                res.render('conf_userDisplay', {
-                    user: req.user,
-                    current_page: 'conf',
-                    userToEdit: userToEdit,
-                    user_button: req.translationFile.user_button,
-                    user_page: req.translationFile.config_user_page,
-                    buttons: req.translationFile.buttons
-                });
-
+                if (err){
+                    Error.render(err, "conf", req);
+                } else {
+                    // render the page
+                    res.render('conf_userDisplay', {
+                        user: req.user,
+                        current_page: 'conf',
+                        userToEdit: userToEdit,
+                        user_button: req.translationFile.user_button,
+                        user_page: req.translationFile.config_user_page,
+                        buttons: req.translationFile.buttons
+                    });
+                }
             });
         } else {
             res.redirect('/');
@@ -37,28 +41,44 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         if ((req.user.id == userIdToEdit) || (isAdmin)) {
             // get the user to edit in the DB
             User.findById(userIdToEdit, null, function (err, userToEdit) {
-                // Find the language for this user
-                // list all groups to display
-                Group.getAll(null, function (err, groups) {
-                    // list all schools to display
-                    School.getAll(null, function (err, schools) {
-                        // list all languages to display
-                        UILanguage.getAll(null, function (err, languages) {
-                            // render the page
-                            res.render('conf_userEdit', {
-                                user: req.user,
-                                current_page: 'conf',
-                                userToEdit: userToEdit,
-                                groups: groups,
-                                schools: schools,
-                                languages: languages,
-                                user_button: req.translationFile.user_button,
-                                user_page: req.translationFile.config_user_page,
-                                buttons: req.translationFile.buttons
+                if (err){
+                    Error.render(err, "conf", req);
+                } else {
+                    // Find the language for this user
+                    // list all groups to display
+                    Group.getAll(null, function (err, groups) {
+                        if (err){
+                            Error.render(err, "conf", req);
+                        } else {
+                            // list all schools to display
+                            School.getAll(null, function (err, schools) {
+                                if (err){
+                                    Error.render(err, "conf", req);
+                                } else {
+                                    // list all languages to display
+                                    UILanguage.getAll(null, function (err, languages) {
+                                        if (err){
+                                            Error.render(err, "conf", req);
+                                        } else {
+                                            // render the page
+                                            res.render('conf_userEdit', {
+                                                user: req.user,
+                                                current_page: 'conf',
+                                                userToEdit: userToEdit,
+                                                groups: groups,
+                                                schools: schools,
+                                                languages: languages,
+                                                user_button: req.translationFile.user_button,
+                                                user_page: req.translationFile.config_user_page,
+                                                buttons: req.translationFile.buttons
+                                            });
+                                        }
+                                    });
+                                }
                             });
-                        });
+                        }
                     });
-                });
+                }
             });
         } else {
             res.redirect('/');
@@ -75,7 +95,11 @@ module.exports = function (router, isAuthenticated, isAdmin) {
             var UserSerializer = new User.UserSerializer(req.body);
             // update the user
             UserSerializer.updateDB(userIdToEdit, function (err) {
-                res.redirect('/conf/user?id=' + userIdToEdit);
+                if (err){
+                    Error.render(err, "conf", req);
+                } else {
+                    res.redirect('/conf/user?id=' + userIdToEdit);
+                }
             });
         } else {
             res.redirect('/');
@@ -87,25 +111,36 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         // Find the language for this user
         // list all groups to display
         Group.getAll(null, function (err, groups) {
-            // list all schools to display
-            School.getAll(null, function (err, schools) {
-                // list all languages to display
-                UILanguage.getAll(null, function (err, languages) {
-                    // render the page
-                    res.render('conf_userEdit', {
-                        user: req.user,
-                        current_page: 'conf',
-                        userToEdit: new User(),
-                        groups: groups,
-                        schools: schools,
-                        languages: languages,
-                        user_button: req.translationFile.user_button,
-                        user_page: req.translationFile.config_user_page,
-                        buttons: req.translationFile.buttons
-                    });
+            if (err){
+                Error.render(err, "conf", req);
+            } else {
+                // list all schools to display
+                School.getAll(null, function (err, schools) {
+                    if (err){
+                        Error.render(err, "conf", req);
+                    } else {
+                        // list all languages to display
+                        UILanguage.getAll(null, function (err, languages) {
+                            if (err){
+                                Error.render(err, "conf", req);
+                            } else {
+                                // render the page
+                                res.render('conf_userEdit', {
+                                    user: req.user,
+                                    current_page: 'conf',
+                                    userToEdit: new User(),
+                                    groups: groups,
+                                    schools: schools,
+                                    languages: languages,
+                                    user_button: req.translationFile.user_button,
+                                    user_page: req.translationFile.config_user_page,
+                                    buttons: req.translationFile.buttons
+                                });
+                            }
+                        });
+                    }
                 });
-
-            });
+            }
         });
     });
     /* POST - SAVE New User Edit . */
@@ -114,7 +149,11 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         var userToDB = new User.UserSerializer(req.body);
         // update the user
         userToDB.insertDB(function (err) {
-            res.redirect('/conf');
+            if (err){
+                Error.render(err, "conf", req);
+            } else {
+                res.redirect('/conf');
+            }
         });
     });
     router.get('/conf/user/delete', isAuthenticated, isAdmin, function (req, res) {

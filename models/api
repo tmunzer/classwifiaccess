@@ -68,12 +68,17 @@ createAPI = function(apiFromDB, callback){
     api.refreshToken = apiFromDB.refreshToken;
     api.expireAt = apiFromDB.expireAt;
     api.SchoolId = apiFromDB.SchoolId;
-    School.findById(api.SchoolId, null, function(err, school){
-        if (school){
-            api.schoolName = school.schoolName;
-        }
+    if (api.SchoolId != "undefined"){
+        School.findById(api.SchoolId, null, function(err, school){
+            if (school){
+                api.schoolName = school.schoolName;
+            }
+            callback(api);
+        });
+    } else {
+        api.schoolName = "";
         callback(api);
-    });
+    }
 };
 
 Api.prototype.registerApp = function(authCode, callback){

@@ -3,6 +3,7 @@ var apiDB = require('./../../models/api');
 
 
 module.exports.apiRequest = function (api, path, callback) {
+
     var result = {};
     result.request = {};
     result.result = {};
@@ -32,8 +33,7 @@ module.exports.apiRequest = function (api, path, callback) {
             data += chunk;
         });
         res.on('end', function () {
-            if (data!=''){
-                console.log(data);
+            if (data != '') {
                 var dataJSON = JSON.parse(data);
                 result.data = dataJSON.data;
                 result.error = dataJSON.error;
@@ -49,16 +49,13 @@ module.exports.apiRequest = function (api, path, callback) {
 
             }
         });
-        req.on('error', function (err) {
-            console.log("=====ERROR2=====");
-            console.log(err);
-        });
+    });
+    req.on('error', function (err) {
+        callback(err, null);
     });
 
 
-
 // write data to request body
-    req.write('data\n');
     req.write('data\n');
     req.end();
 

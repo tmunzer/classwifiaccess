@@ -1,6 +1,8 @@
 var Classroom = require('./../models/classroom');
 var Device = require("./../models/device");
 var School = require("./../models/school");
+var Error = require('./error');
+
 
 module.exports = function (router, isAuthenticated, isAdmin) {
     /* GET User Display page. */
@@ -10,15 +12,19 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         // check if current user is an admin
         // get the classroom to edit in the DB
         Classroom.findById(classroomIdToEdit, null, function (err, classroomToEdit) {
-            // render the page
-            res.render('conf_classroomDisplay', {
-                user: req.user,
-                current_page: 'conf',
-                user_button: req.translationFile.user_button,
-                classroomToEdit: classroomToEdit,
-                classroom_page: req.translationFile.config_classroom_page,
-                buttons: req.translationFile.buttons
-            });
+            if (err){
+                Error.render(err, "conf", req);
+            } else {
+                // render the page
+                res.render('conf_classroomDisplay', {
+                    user: req.user,
+                    current_page: 'conf',
+                    user_button: req.translationFile.user_button,
+                    classroomToEdit: classroomToEdit,
+                    classroom_page: req.translationFile.config_classroom_page,
+                    buttons: req.translationFile.buttons
+                });
+            }
         });
     });
 
@@ -26,22 +32,34 @@ module.exports = function (router, isAuthenticated, isAdmin) {
     router.get('/conf/classroom/edit', isAuthenticated, isAdmin, function (req, res, next) {
         var classroomIdToEdit = req.query.id;
         Device.getAll(null, function (err, deviceList) {
-            // get the classroom to edit in the DB
-            Classroom.findById(classroomIdToEdit, null, function (err, classroomToEdit) {
-                School.getAll(null, function (err, schoolList) {
-                    // render the page
-                    res.render('conf_classroomEdit', {
-                        user: req.user,
-                        current_page: 'conf',
-                        user_button: req.translationFile.user_button,
-                        classroomToEdit: classroomToEdit,
-                        schoolList: schoolList,
-                        deviceList: deviceList,
-                        classroom_page: req.translationFile.config_classroom_page,
-                        buttons: req.translationFile.buttons
-                    });
+            if (err){
+                Error.render(err, "conf", req);
+            } else {
+                // get the classroom to edit in the DB
+                Classroom.findById(classroomIdToEdit, null, function (err, classroomToEdit) {
+                    if (err){
+                        Error.render(err, "conf", req);
+                    } else {
+                        School.getAll(null, function (err, schoolList) {
+                            if (err){
+                                Error.render(err, "conf", req);
+                            } else {
+                                // render the page
+                                res.render('conf_classroomEdit', {
+                                    user: req.user,
+                                    current_page: 'conf',
+                                    user_button: req.translationFile.user_button,
+                                    classroomToEdit: classroomToEdit,
+                                    schoolList: schoolList,
+                                    deviceList: deviceList,
+                                    classroom_page: req.translationFile.config_classroom_page,
+                                    buttons: req.translationFile.buttons
+                                });
+                            }
+                        });
+                    }
                 });
-            });
+            }
         });
     });
     /* POST - SAVE User Edit page. */
@@ -51,7 +69,11 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         var ClassroomSerializer = new Classroom.ClassroomSeralizer(req.body);
         // update the user
         ClassroomSerializer.updateDB(classroomIdToEdit, function (err) {
-            res.redirect('/conf/classroom?id=' + classroomIdToEdit);
+            if (err){
+                Error.render(err, "conf", req);
+            } else {
+                res.redirect('/conf/classroom?id=' + classroomIdToEdit);
+            }
         });
     });
 
@@ -59,19 +81,25 @@ module.exports = function (router, isAuthenticated, isAdmin) {
     router.get("/conf/classroom/new/", isAuthenticated, isAdmin, function (req, res, next) {
         // Find the language for this user
         Device.getAll(null, function (err, deviceList) {
-            School.getAll(null, function (err, schoolList) {
-                // render the page
-                res.render('conf_classroomEdit', {
-                    user: req.user,
-                    current_page: 'conf',
-                    user_button: req.translationFile.user_button,
-                    classroomToEdit: new Classroom(),
-                    schoolList: schoolList,
-                    deviceList: deviceList,
-                    classroom_page: req.translationFile.config_classroom_page,
-                    buttons: req.translationFile.buttons
+            if (err){
+                Error.render(err, "conf", req);
+            } else {
+                School.getAll(null, function (err, schoolList) {
+                    if (err) {
+                        // render the page
+                        res.render('conf_classroomEdit', {
+                            user: req.user,
+                            current_page: 'conf',
+                            user_button: req.translationFile.user_button,
+                            classroomToEdit: new Classroom(),
+                            schoolList: schoolList,
+                            deviceList: deviceList,
+                            classroom_page: req.translationFile.config_classroom_page,
+                            buttons: req.translationFile.buttons
+                        });
+                    }
                 });
-            });
+            }
         });
     });
     /* POST - SAVE New User Edit . */
@@ -80,7 +108,11 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         var classroomToDB = new Classroom.ClassroomSeralizer(req.body);
         // update the classroom
         classroomToDB.insertDB(function (err) {
-            res.redirect('/conf');
+            if (err){
+                Error.render(err, "conf", req);
+            } else {
+                res.redirect('/conf');
+            }
         });
     });
     router.get('/conf/classroom/delete', isAuthenticated, isAdmin, function (req, res) {
