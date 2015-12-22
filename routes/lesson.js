@@ -15,7 +15,7 @@ function renderLessons(req, res, displayedClassroom, currentClassroom) {
     School.getAll(null, function (err, schoolList) {
         Lesson.findAll(filterString, null, function (err, lessonList) {
             if (err) {
-                Error.render(err, "classroom", req);
+                Error.render(err, "classroom", req, res);
             } else {
                 res.render('lesson', {
                     user: req.user,
@@ -91,7 +91,7 @@ module.exports = function (router, isAuthenticated) {
         if (displayedClassroom > 0) {
             Classroom.findById(displayedClassroom, null, function (err, currentClassroom) {
                 if (err) {
-                    Error.render(err, "classroom", req);
+                    Error.render(err, "classroom", req, res);
                 } else {
                     renderLessons(req, res, displayedClassroom, currentClassroom);
                 }
@@ -111,7 +111,7 @@ module.exports = function (router, isAuthenticated) {
         if (displayedClassroom > 0) {
             Classroom.findById(displayedClassroom, null, function (err, currentClassroom) {
                 if (err) {
-                    Error.render(err, "classroom", req);
+                    Error.render(err, "classroom", req, res);
                 } else {
                     renderActivation(req, res, displayedClassroom, activation, null, currentClassroom);
                 }
@@ -119,7 +119,7 @@ module.exports = function (router, isAuthenticated) {
         } else {
             Classroom.findAll({SchoolId: req.session.SchoolId}, null, function (err, classroomList) {
                 if (err) {
-                    Error.render(err, "classroom", req);
+                    Error.render(err, "classroom", req, res);
                 } else {
                     renderActivation(req, res, displayedClassroom, activation, classroomList, null);
                 }
@@ -132,7 +132,7 @@ module.exports = function (router, isAuthenticated) {
         if (req.body.hasOwnProperty('wifiActivation')) {
             saveLesson(req, null, function (err) {
                 if (err) {
-                    Error.render(err, "classroom", req);
+                    Error.render(err, "classroom", req, res);
                 } else {
                     res.redirect("/classroom/" + displayedClassroom + "/lesson/");
                 }
@@ -147,7 +147,7 @@ module.exports = function (router, isAuthenticated) {
         if (req.query.hasOwnProperty("LessonId")) {
             Lesson.deleteById(req.query.LessonId, function (err) {
                 if (err) {
-                    Error.render(err, "classroom", req);
+                    Error.render(err, "classroom", req, res);
                 } else {
                     res.redirect('back');
                 }
@@ -163,11 +163,11 @@ module.exports = function (router, isAuthenticated) {
         if (req.query.hasOwnProperty('LessonId')) {
             Lesson.findById(req.query.LessonId, null, function (err, currentLesson) {
                 if (err) {
-                    Error.render(err, "classroom", req);
+                    Error.render(err, "classroom", req, res);
                 } else {
                     Classroom.findById(currentLesson.ClassroomId, null, function (err, currentClassroom) {
                         if (err) {
-                            Error.render(err, "classroom", req);
+                            Error.render(err, "classroom", req, res);
                         } else {
                             renderActivation(req, res, displayedClassroom, null, null, currentClassroom, currentLesson);
                         }
@@ -181,7 +181,7 @@ module.exports = function (router, isAuthenticated) {
         if (req.query.hasOwnProperty('LessonId')) {
             saveLesson(req, req.query.LessonId, function (err) {
                 if (err) {
-                    Error.render(err, "classroom", req);
+                    Error.render(err, "classroom", req, res);
                 } else {
                     res.redirect("/classroom/" + displayedClassroom + "/lesson/");
                 }
@@ -198,14 +198,19 @@ module.exports = function (router, isAuthenticated) {
             if (req.body.hasOwnProperty('ClassroomId')) {
                 Classroom.findById(req.body.ClassroomId, null, function (err, classroom) {
                     if (err) {
-                        Error.render(err, "classroom", req);
+                        Error.render(err, "classroom", req, res);
                     } else {
-                        Control.enableWiFi(classroom.DeviceId, req.session.SchoolId);
-                        saveLesson(req, null, function (err) {
+                        Control.enableWiFi(classroom.DeviceId, function (err) {
                             if (err) {
-                                Error.render(err, "classroom", req);
+                                Error.render(err, "classroom", req, res);
                             } else {
-                                res.redirect("back");
+                                saveLesson(req, null, function (err) {
+                                    if (err) {
+                                        Error.render(err, "classroom", req, res);
+                                    } else {
+                                        res.redirect("back");
+                                    }
+                                });
                             }
                         });
                     }
@@ -223,7 +228,7 @@ module.exports = function (router, isAuthenticated) {
                 var classroomId = req.body.ClassroomId;
                 Lesson.findActive(classroomId, req.session.SchoolId, function (err, ret) {
                     if (err) {
-                        Error.render(err, "classroom", req);
+                        Error.render(err, "classroom", req, res);
                     } else {
                         var lessonCurrent = 0;
                         for (var lessonNum in ret) {
@@ -232,16 +237,21 @@ module.exports = function (router, isAuthenticated) {
                             var lessonToDB = new Lesson.LessonSeralizer(lesson);
                             lessonToDB.updateDB(lesson.id, function (err) {
                                 if (err) {
-                                    Error.render(err, "classroom", req);
+                                    Error.render(err, "classroom", req, res);
                                 } else {
                                     lessonCurrent++;
                                     if (lessonCurrent == ret.length) {
                                         Classroom.findById(classroomId, null, function (err, classroom) {
                                             if (err) {
-                                                Error.render(err, "classroom", req);
+                                                Error.render(err, "classroom", req, res);
                                             } else {
-                                                Control.disableWiFi(classroom.DeviceId, req.session.SchoolId);
-                                                res.redirect("back");
+                                                Control.disableWiFi(classroom.DeviceId, req.session.SchoolId, function (err) {
+                                                    if (err) {
+                                                        Error.render(err, "classroom", req, res);
+                                                    } else {
+                                                        res.redirect("back");
+                                                    }
+                                                });
                                             }
                                         });
                                     }
@@ -268,8 +278,13 @@ module.exports = function (router, isAuthenticated) {
                                     if (err) {
                                         res.render("error");
                                     } else {
-                                        Control.disableWiFi(classroom.DeviceId, req.session.SchoolId);
-                                        res.redirect("back");
+                                        Control.disableWiFi(classroom.DeviceId, req.session.SchoolId, function (err) {
+                                            if (err) {
+                                                Error.render(err, "classroom", req)
+                                            } else {
+                                                res.redirect("back");
+                                            }
+                                        });
                                     }
                                 });
                             }

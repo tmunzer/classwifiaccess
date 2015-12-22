@@ -15,7 +15,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
             // get the user to edit in the DB
             User.findById(userIdToEdit, null, function (err, userToEdit) {
                 if (err){
-                    Error.render(err, "conf", req);
+                    Error.render(err, "conf", req, res);
                 } else {
                     // render the page
                     res.render('conf_userDisplay', {

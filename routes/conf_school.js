@@ -9,7 +9,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         // get the school to edit in the DB
         School.findById(schoolIdToEdit, null, function (err, schoolToEdit) {
             if (err){
-                Error.render(err, "conf", req);
+                Error.render(err, "conf", req, res);
             } else {
                 // render the page
                 res.render('conf_schoolDisplay', {
@@ -30,7 +30,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         // get the school to edit in the DB
         School.findById(schoolIdToEdit, null, function (err, schoolToEdit) {
             if (err){
-                Error.render(err, "conf", req);
+                Error.render(err, "conf", req, res);
             } else {
                 // render the page
                 res.render('conf_schoolEdit', {
@@ -52,7 +52,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         // update the user
         SchoolSerializer.updateDB(schoolIdToEdit, function (err) {
             if (err){
-                Error.render(err, "conf", req);
+                Error.render(err, "conf", req, res);
             } else {
                 res.redirect('/conf/school?id=' + schoolIdToEdit);
             }
@@ -79,7 +79,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         // update the school
         schoolToDB.insertDB(function (err) {
             if (err){
-                Error.render(err, "conf", req);
+                Error.render(err, "conf", req, res);
             } else {
                 res.redirect('/conf');
             }

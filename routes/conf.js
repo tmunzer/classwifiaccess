@@ -9,19 +9,19 @@ module.exports = function (router, isAuthenticated, isAdmin) {
     router.get('/conf/', isAuthenticated, isAdmin, function (req, res, next) {
         User.getAll(null, function (err, userList) {
             if (err){
-                Error.render(err, "conf", req);
+                Error.render(err, "conf", req, res);
             } else {
                 Api.getAll(null, function (err, apiList) {
                     if (err){
-                        Error.render(err, "conf", req);
+                        Error.render(err, "conf", req, res);
                     } else {
                         Classroom.getAll(null, function (err, classList) {
                             if (err){
-                                Error.render(err, "conf", req);
+                                Error.render(err, "conf", req, res);
                             } else {
                                 School.getAll(null, function (err, schoolList) {
                                     if (err){
-                                        Error.render(err, "conf", req);
+                                        Error.render(err, "conf", req, res);
                                     } else {
                                         res.render('conf', {
                                             user: req.user,

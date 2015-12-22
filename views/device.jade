@@ -25,21 +25,25 @@ mixin device_status(device)
         span= " " + device.locations
 
 block content
-    div(style="float:left; width:100%; padding: 0px")
-        section(id="device")
-            if deviceList
-                table(class="square")
-                    tbody
-                        - var itemNum = 0
-                        while itemNum < deviceList.length
-                            tr
-                                td(style="width:50%;background-color:white;")
-                                    - var device = deviceList[itemNum++]
-                                    + device_status(device)
-
-                                td(style="width:50%;background-color:white;")
-                                    - var device = deviceList[itemNum++]
-                                    if device
+    if session.SchoolId == 1
+        pre(style="margin:10%; text-align:center")
+            h3= user_button.select_school
+    else
+        div(style="float:left; width:100%; padding: 0px")
+            section(id="device")
+                if deviceList
+                    table(class="square")
+                        tbody
+                            - var itemNum = 0
+                            while itemNum < deviceList.length
+                                tr
+                                    td(style="width:50%;background-color:white;")
+                                        - var device = deviceList[itemNum++]
                                         + device_status(device)
+
+                                    td(style="width:50%;background-color:white;")
+                                        - var device = deviceList[itemNum++]
+                                        if device
+                                            + device_status(device)
 
 

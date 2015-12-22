@@ -26,11 +26,11 @@ ApiSerializer.prototype.updateDB = function(apiId, callback){
 };
 
 ApiSerializer.prototype.insertDB = function(callback){
-    console.log(this.api);
     db.insertDB("API", this.api, function(err){
         if (err){
             callback(err);
         }
+        console.log("API InsertDB");
         callback(err);
     });
 };

@@ -10,7 +10,8 @@ module.exports.login_page = {
 module.exports.user_button = {
     logout:"Déconnexion",
     account: "Compte",
-    change_password: "Changer le mot passe"
+    change_password: "Changer le mot passe",
+    select_school:"Veuillez sélectionner une école..."
 };
 
 // Config page
@@ -62,7 +63,14 @@ module.exports.config_user_page = {
 module.exports.config_school_page = {
     school:"Ecole",
     schoolName:"Nom",
-    new_school_button:"Nouvelle école"
+    new_school_button:"Nouvelle école",
+    access_method: "Méthode d'accès pour configurer les points d'accès",
+    api: "API",
+    ssh: "SSH",
+    ssh_warning: "Attention: Ce serveur doit pouvoir contacter l'adresse IP de chacun des points d'accès.",
+    ssh_account: "Compte admin SSH",
+    ssh_password: "Mot de passe admin SSH",
+    ssh_password_confirm: "Confirmation du mot de passe admin SSH"
 };
 
 module.exports.buttons = {

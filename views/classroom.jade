@@ -64,100 +64,104 @@ mixin classroom_entry(classroom)
 
 
 block content
-    div(class="modal fade" id="enableWifiForClassroom" tabindex="-1" role="dialog" aria-labelledby="enableWifiForClassroomLabel" aria-hidden="true")
-        div(class="modal-dialog")
-            form(id="enableWifiForClassroomForm" action='' method='POST')
-                div(class="modal-content")
-                    div(class="modal-header")
-                        h4(class="modal-title" id="enableWifiForClassroomLabel")
-                            span= classroom_page.enableWifiForClassroom
-                            span(id="enableClassroom")
-                    div(class="modal-body")
-                        label(for="group")= classroom_page.wifiActivation
-                        div(class="row" style="margin:5%" class='row_activation' data-name="unlimited")
-                            div(class="input-group")
-                                span(class="input-group-addon" )
-                                    input(type="radio" aria-label="unlimited" name="wifiActivation" id="unlimited" value="unlimited" checked="checked")
-                                span(aria-label="unlimited" class="input-group-addon" style="width:100%;text-align: left;border:1px solid #ccc")= classroom_page.unlimited
-                        div(class="row" style="margin:5%" class='row_activation' data-name="duration")
-                            div(class="input-group")
-                                span(class="input-group-addon")
-                                    input(type="radio" aria-label="duration" name="wifiActivation" id="duration" value="duration")
-                                span(class="input-group-addon" aria-label="duration")= classroom_page.for
-                                input(type="text" name="duration" value="120" size='4' class="form-control" style="display:inline; width: auto; height: auto; padding: Opx 12px;")
-                                span(class="input-group-addon" aria-label="duration" style="width: 100%;text-align: left;border:1px solid #ccc")= classroom_page.minutes
-                        div(class="row" style="margin:5%" class='row_activation' data-name="until")
-                            div(class="input-group")
-                                span(class="input-group-addon")
-                                    input(type="radio" aria-label="until" name="wifiActivation" id="until" value="until")
-                                span(class="input-group-addon" aria-label='until')= classroom_page.untilDate
-                                input(type='text' class="form-control" name="endDate" id='endDatePicker')
-                                span(class="input-group-addon")
-                                    span(class="glyphicon glyphicon-calendar")
+    if session.SchoolId == 1
+        pre(style="margin:10%; text-align:center")
+            h3= user_button.select_school
+    else
+        div(class="modal fade" id="enableWifiForClassroom" tabindex="-1" role="dialog" aria-labelledby="enableWifiForClassroomLabel" aria-hidden="true")
+            div(class="modal-dialog")
+                form(id="enableWifiForClassroomForm" action='' method='POST')
+                    div(class="modal-content")
+                        div(class="modal-header")
+                            h4(class="modal-title" id="enableWifiForClassroomLabel")
+                                span= classroom_page.enableWifiForClassroom
+                                span(id="enableClassroom")
+                        div(class="modal-body")
+                            label(for="group")= classroom_page.wifiActivation
+                            div(class="row" style="margin:5%" class='row_activation' data-name="unlimited")
+                                div(class="input-group")
+                                    span(class="input-group-addon" )
+                                        input(type="radio" aria-label="unlimited" name="wifiActivation" id="unlimited" value="unlimited" checked="checked")
+                                    span(aria-label="unlimited" class="input-group-addon" style="width:100%;text-align: left;border:1px solid #ccc")= classroom_page.unlimited
+                            div(class="row" style="margin:5%" class='row_activation' data-name="duration")
+                                div(class="input-group")
+                                    span(class="input-group-addon")
+                                        input(type="radio" aria-label="duration" name="wifiActivation" id="duration" value="duration")
+                                    span(class="input-group-addon" aria-label="duration")= classroom_page.for
+                                    input(type="text" name="duration" value="120" size='4' class="form-control" style="display:inline; width: auto; height: auto; padding: Opx 12px;")
+                                    span(class="input-group-addon" aria-label="duration" style="width: 100%;text-align: left;border:1px solid #ccc")= classroom_page.minutes
+                            div(class="row" style="margin:5%" class='row_activation' data-name="until")
+                                div(class="input-group")
+                                    span(class="input-group-addon")
+                                        input(type="radio" aria-label="until" name="wifiActivation" id="until" value="until")
+                                    span(class="input-group-addon" aria-label='until')= classroom_page.untilDate
+                                    input(type='text' class="form-control" name="endDate" id='endDatePicker')
+                                    span(class="input-group-addon")
+                                        span(class="glyphicon glyphicon-calendar")
 
-                    div(class="modal-footer")
-                        input(type="hidden" name="ClassroomId" id="enableClassroomId" value="")
-                        button(type="button" class="btn btn-danger" data-dismiss="modal")= buttons.cancel_button
-                        button(class='btn btn-primary', type='submit')= buttons.activate_button
+                        div(class="modal-footer")
+                            input(type="hidden" name="ClassroomId" id="enableClassroomId" value="")
+                            button(type="button" class="btn btn-danger" data-dismiss="modal")= buttons.cancel_button
+                            button(class='btn btn-primary', type='submit')= buttons.activate_button
 
-    div(class="modal fade" id="disableWifiForClassroom" tabindex="-1" role="dialog" aria-labelledby="disableWifiForClassroomLabel" aria-hidden="true")
-        div(class="modal-dialog")
-            form(id="disableWifiForClassroomForm", action='', method='POST')
-                div(class="modal-content")
-                    div(class="modal-header")
-                        h4(class="modal-title" id="disableWifiForClassroomLabel")
-                            span= classroom_page.disableWifiForClassroom
-                            span(id="disableClassroom")
-                    div(class="modal-body")
-                        label(for="group")= classroom_page.wifiDeactivation
-                    div(class="modal-footer")
-                        input(type="hidden" name="ClassroomId" id="disableClassroomId" value="")
-                        button(type="button" class="btn btn-danger" data-dismiss="modal")= buttons.cancel_button
-                        button(class='btn btn-primary', type='submit')= buttons.deactivate_button
+        div(class="modal fade" id="disableWifiForClassroom" tabindex="-1" role="dialog" aria-labelledby="disableWifiForClassroomLabel" aria-hidden="true")
+            div(class="modal-dialog")
+                form(id="disableWifiForClassroomForm", action='', method='POST')
+                    div(class="modal-content")
+                        div(class="modal-header")
+                            h4(class="modal-title" id="disableWifiForClassroomLabel")
+                                span= classroom_page.disableWifiForClassroom
+                                span(id="disableClassroom")
+                        div(class="modal-body")
+                            label(for="group")= classroom_page.wifiDeactivation
+                        div(class="modal-footer")
+                            input(type="hidden" name="ClassroomId" id="disableClassroomId" value="")
+                            button(type="button" class="btn btn-danger" data-dismiss="modal")= buttons.cancel_button
+                            button(class='btn btn-primary', type='submit')= buttons.deactivate_button
 
 
-    div(style="float:left; width:100%; padding: 0px")
-        section(id="classroom")
-            if classroomList
-                table(class="square")
-                    tbody
-                        - var itemNum = 0
-                        while itemNum < classroomList.length
-                            tr
-                            - var classroom = classroomList[itemNum++]
-                            td(style="width:50%;background-color:white;")
-                                +classroom_entry(classroom)
-                            - var classroom = classroomList[itemNum++]
-                            if classroom
+        div(style="float:left; width:100%; padding: 0px")
+            section(id="classroom")
+                if classroomList
+                    table(class="square")
+                        tbody
+                            - var itemNum = 0
+                            while itemNum < classroomList.length
+                                tr
+                                - var classroom = classroomList[itemNum++]
                                 td(style="width:50%;background-color:white;")
                                     +classroom_entry(classroom)
+                                - var classroom = classroomList[itemNum++]
+                                if classroom
+                                    td(style="width:50%;background-color:white;")
+                                        +classroom_entry(classroom)
 
-    script.
-        function enableWifiForClassroom(cName, cId) {
-            $('#enableClassroom').text(cName);
-            $('#enableWifiForClassroomForm').attr('action', '/lesson/enable/?ClassroomId=' + cId);
-            $('#enableClassroomId').val(cId);
-            $('#enableWifiForClassroom').modal('show');
-        }
-        function disableWifiForClassroom(cName, cId) {
-            $('#disableClassroom').text(cName);
-            $('#disableWifiForClassroomForm').attr('action', '/lesson/disable/?ClassroomId=' + cId);
-            $('#disableClassroomId').val(cId);
-            $('#disableWifiForClassroom').modal('show');
-        }
-        function api_conf(apiId) {
-            $('#apiConfig').attr('action', '/conf/api/update?id=' + apiId);
-            $('#linkApiToSchool').modal('show');
-        }
-        $(function () {
-            $('#endDatePicker').datetimepicker({
-                useCurrent: true,
-                minDate: new Date(),
-                collapse: false,
-                sideBySide: true,
-                format: "MM/DD/YYYY HH:mm"
+        script.
+            function enableWifiForClassroom(cName, cId) {
+                $('#enableClassroom').text(cName);
+                $('#enableWifiForClassroomForm').attr('action', '/lesson/enable/?ClassroomId=' + cId);
+                $('#enableClassroomId').val(cId);
+                $('#enableWifiForClassroom').modal('show');
+            }
+            function disableWifiForClassroom(cName, cId) {
+                $('#disableClassroom').text(cName);
+                $('#disableWifiForClassroomForm').attr('action', '/lesson/disable/?ClassroomId=' + cId);
+                $('#disableClassroomId').val(cId);
+                $('#disableWifiForClassroom').modal('show');
+            }
+            function api_conf(apiId) {
+                $('#apiConfig').attr('action', '/conf/api/update?id=' + apiId);
+                $('#linkApiToSchool').modal('show');
+            }
+            $(function () {
+                $('#endDatePicker').datetimepicker({
+                    useCurrent: true,
+                    minDate: new Date(),
+                    collapse: false,
+                    sideBySide: true,
+                    format: "MM/DD/YYYY HH:mm"
+                });
+                $('.row_activation').click(function(){
+                    $("#"+$(this).data('name')).prop("checked", true);
+                })
             });
-            $('.row_activation').click(function(){
-                $("#"+$(this).data('name')).prop("checked", true);
-            })
-        });

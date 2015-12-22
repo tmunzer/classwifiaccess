@@ -37,7 +37,7 @@ block content
                             span(class="glyphicon glyphicon-calendar")
                 hr
             label= activation_page.endDate
-            div(class="row" style="margin:5%" class='row_activation' data-name="unlimited")
+            div(class="row" data-name="unlimited").spanSelect
                 div(class="input-group")
                     span(class="input-group-addon" )
                         if manualDeactivation == true
@@ -45,14 +45,14 @@ block content
                         else
                             input(type="radio" aria-label="unlimited" name="wifiActivation" id="unlimited" value="unlimited")
                     span(aria-label="unlimited" class="input-group-addon" style="width:100%;text-align: left;border:1px solid #ccc")= activation_page.unlimited
-            div(class="row" style="margin:5%" class='row_activation' data-name="duration")
+            div(class="row" data-name="duration").spanSelect
                 div(class="input-group")
                     span(class="input-group-addon")
                         input(type="radio" aria-label="duration" name="wifiActivation" id="duration" value="duration")
                     span(class="input-group-addon" aria-label="duration")= activation_page.for
                     input(type="text" name="duration" value="120" size='4' class="form-control" style="display:inline; width: auto; height: auto; padding: Opx 12px;")
                     span(class="input-group-addon" aria-label="duration" style="width: 100%;text-align: left;border:1px solid #ccc")= activation_page.minutes
-            div(class="row" style="margin:5%" class='row_activation' data-name="until")
+            div(class="row" data-name="until").spanSelect
                 div(class="input-group")
                     span(class="input-group-addon")
                         if manualDeactivation == true

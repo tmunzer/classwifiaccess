@@ -5,7 +5,7 @@ var Error = require('./error');
 module.exports = function (router, isAuthenticated, isAdmin) {
     router.get('/conf/api/reg', isAuthenticated, isAdmin, function (req, res) {
         if (req.query.hasOwnProperty('error')) {
-            Error.render(err, "conf", req);
+            Error.render(err, "conf", req, res);
         } else {
             var authCode = req.query.authCode;
             var api = new Api();
@@ -18,7 +18,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                             apiReg.SchoolId = 1;
                             apiReg.insertDB(function (err) {
                                 if (err){
-                                    Error.render(err, "conf", req);
+                                    Error.render(err, "conf", req, res);
                                 } else {
                                     res.redirect('/conf');
                                 }
@@ -29,7 +29,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                         Error.render(apiError, "conf", req);
                     }
                 } else {
-                    Error.render(err, "conf", req);
+                    Error.render(err, "conf", req, res);
                 }
             });
         }
@@ -53,14 +53,14 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         // serialize the user
         Api.findById(apiIdToEdit, null, function (err, apiFromDB) {
             if (err){
-                Error.render(err, "conf", req);
+                Error.render(err, "conf", req, res);
             } else {
                 var apiSerializer = new Api.ApiSerializer(apiFromDB);
                 apiSerializer.api.SchoolId = req.body.SchoolId;
                 // update the user
                 apiSerializer.updateDB(apiIdToEdit, function (err) {
                     if (err){
-                        Error.render(err, "conf", req);
+                        Error.render(err, "conf", req, res);
                     } else {
                         res.redirect('/conf');
                     }

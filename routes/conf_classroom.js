@@ -13,7 +13,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         // get the classroom to edit in the DB
         Classroom.findById(classroomIdToEdit, null, function (err, classroomToEdit) {
             if (err){
-                Error.render(err, "conf", req);
+                Error.render(err, "conf", req, res);
             } else {
                 // render the page
                 res.render('conf_classroomDisplay', {
@@ -33,16 +33,16 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         var classroomIdToEdit = req.query.id;
         Device.getAll(null, function (err, deviceList) {
             if (err){
-                Error.render(err, "conf", req);
+                Error.render(err, "conf", req, res);
             } else {
                 // get the classroom to edit in the DB
                 Classroom.findById(classroomIdToEdit, null, function (err, classroomToEdit) {
                     if (err){
-                        Error.render(err, "conf", req);
+                        Error.render(err, "conf", req, res);
                     } else {
                         School.getAll(null, function (err, schoolList) {
                             if (err){
-                                Error.render(err, "conf", req);
+                                Error.render(err, "conf", req, res);
                             } else {
                                 // render the page
                                 res.render('conf_classroomEdit', {
@@ -70,7 +70,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         // update the user
         ClassroomSerializer.updateDB(classroomIdToEdit, function (err) {
             if (err){
-                Error.render(err, "conf", req);
+                Error.render(err, "conf", req, res);
             } else {
                 res.redirect('/conf/classroom?id=' + classroomIdToEdit);
             }
@@ -82,7 +82,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         // Find the language for this user
         Device.getAll(null, function (err, deviceList) {
             if (err){
-                Error.render(err, "conf", req);
+                Error.render(err, "conf", req, res);
             } else {
                 School.getAll(null, function (err, schoolList) {
                     if (err) {
@@ -109,7 +109,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         // update the classroom
         classroomToDB.insertDB(function (err) {
             if (err){
-                Error.render(err, "conf", req);
+                Error.render(err, "conf", req, res);
             } else {
                 res.redirect('/conf');
             }

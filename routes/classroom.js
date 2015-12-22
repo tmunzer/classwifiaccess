@@ -12,12 +12,12 @@ module.exports = function (router, isAuthenticated) {
     router.get('/classroom/', isAuthenticated, function (req, res, next) {
         School.getAll(null, function (err, schoolList) {
             if (err){
-                Error.render(err, "classroom", req);
+                Error.render(err, "classroom", req, res);
             } else {
                 var filterString = {SchoolId: req.session.SchoolId};
                 Api.findAll({SchoolId: req.session.SchoolId}, null, function (err, apiList) {
                     if (err){
-                        Error.render(err, "classroom", req);
+                        Error.render(err, "classroom", req, res);
                     } else if (apiList){
                         var apiNum = 0;
                         var deviceList = [];

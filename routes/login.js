@@ -15,8 +15,9 @@ module.exports = function(router, passport){
     }));
 
     /* Handle Logout */
-    router.get('/logout', function(req, res) {
+    router.get('/logout/', function(req, res) {
         req.logout();
-        res.redirect('/');
+        req.session.destroy();
+        res.redirect('/login');
     });
 };

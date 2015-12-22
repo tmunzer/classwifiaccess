@@ -21,18 +21,18 @@ module.exports = function (router, isAuthenticated, isAdmin) {
     router.get('/device/', isAuthenticated, isAdmin, function (req, res, next) {
         School.getAll(null, function (err, schoolList) {
             if (err){
-                Error.render(err, "device", req);
+                Error.render(err, "device", req, res);
             } else {
                 Api.findAll({SchoolId: req.session.SchoolId}, null, function (err, apiList) {
                     if (err){
-                        Error.render(err, "device", req);
+                        Error.render(err, "device", req, res);
                     } else if (apiList) {
                         var apiNum = 0;
                         var deviceList = [];
                         for (var i = 0; i < apiList.length; i++) {
                             apiReq.getDevices(apiList[i], function (err, devices) {
                                 if (err) {
-                                    Error.render(err, "device", req);
+                                    Error.render(err, "device", req, res);
                                 } else {
                                     deviceList = deviceList.concat(devices);
                                     apiNum++;

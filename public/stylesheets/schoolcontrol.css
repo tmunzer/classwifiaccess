@@ -44,3 +44,7 @@ div.classroom_button {
 button, a.btn {
     border-radius: 1px !important;
 }
+
+.spanSelect {
+    margin:2%;
+}
