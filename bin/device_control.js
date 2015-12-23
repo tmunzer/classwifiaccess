@@ -14,6 +14,8 @@ module.exports.disableWiFi = function(DeviceId, SchoolId, callback){
                     callback(e);
                 }
             })
+        } else {
+            callback(null);
         }
     })
 };
