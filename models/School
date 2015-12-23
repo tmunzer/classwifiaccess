@@ -3,6 +3,8 @@ var db = require("./../app").db;
 function SchoolSerializer(row){
     this.school = {};
     this.school.schoolName = row.schoolName;
+    this.school.sshAdmin = row.sshAdmin;
+    this.school.sshPassword = row.sshPassword;
 }
 
 
@@ -29,6 +31,8 @@ SchoolSerializer.prototype.insertDB = function(callback){
 function School(){
     this.id="";
     this.schoolName="";
+    this.sshAdmin="";
+    this.sshPassword="";
 }
 
 findOne = function(fields, options, callback){

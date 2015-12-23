@@ -55,9 +55,9 @@ function parseSSID(data) {
 }
 
 
-module.exports.execute = function (deviceIP, commands, callback) {
+module.exports.execute = function (deviceIP, commands, login, password, callback) {
     var sshEvent = new EventEmitter();
-    connect(deviceIP, 22, "admin", "NG27nsgwx2", sshEvent);
+    connect(deviceIP, 22, login, password, sshEvent);
     var commandReady = -1;
     var commandData = -1;
     sshEvent.on("ready", function (stream) {

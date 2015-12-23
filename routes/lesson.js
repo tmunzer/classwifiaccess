@@ -97,7 +97,7 @@ function enableWiFi(req, classroomId, callback) {
             if (err) {
                 callback(err);
             } else {
-                Control.enableWiFi(classroom.DeviceId, function (err) {
+                Control.enableWiFi(classroom.DeviceId, req.session.SchoolId, function (err) {
                     if (err) {
                         callback(err);
                     } else {

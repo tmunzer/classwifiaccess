@@ -21,15 +21,15 @@ block content
                             tr
                                 td
                                     if api_req == item.id
-                                        input(type="checkbox" selected="selected" class="checkbox" id="api_"+item.id value=item.id)
+                                        input(type="checkbox" selected="selected" class="checkbox" id="api_" + item.id value=item.id)
                                     else
-                                        input(type="checkbox" class="checkbox" id="api_"+item.id value=item.id)
-                                td(id="clientId_"+item.id)= apiClientId
-                                td(id="secret_"+item.id)= apiSecret
-                                td(id="ownerId_"+item.id)= item.ownerId
-                                td(id="vhmId_"+item.id)= item.vhmId
-                                td(id="vpcUrl_"+item.id)= item.vpcUrl
-                                td(id="accessToken_"+item.id)= item.accessToken
+                                        input(type="checkbox" class="checkbox" id="api_" + item.id value=item.id)
+                                td(id="clientId_" + item.id)= apiClientId
+                                td(id="secret_" + item.id)= apiSecret
+                                td(id="ownerId_" + item.id)= item.ownerId
+                                td(id="vhmId_" + item.id)= item.vhmId
+                                td(id="vpcUrl_" + item.id)= item.vpcUrl
+                                td(id="accessToken_" + item.id)= item.accessToken
                     else
                         each item, i in apiList
                             tr
@@ -51,48 +51,27 @@ block content
                 div(class="input-group")
                     div(class="input-group-addon" id="getURILabel" style="padding-right:0px") https://
                     if api_uri
-                        input(type="text" class="form-control" style="padding-left:0px" id="api_uri" name="api_uri" placeholder="/xapi/v1/monitoring/devices?ownerID=abcd")=api_uri
+                        input(type="text" class="form-control" style="padding-left:0px" id="api_uri" name="api_uri" placeholder="/xapi/v1/monitoring/devices?ownerID=abcd" value=api_uri)
                     else
                         input(type="text" class="form-control" style="padding-left:0px" id="api_uri" name="api_uri" placeholder="/xapi/v1/monitoring/devices?ownerID=abcd")
             input(type="hidden" id="api_req" name="api_req" value="")
-            button(class="btn btn-success", type="submit") Send Request
+            input(type="button" class="btn btn-success" id="send_req" name="send_req" value="Send Request")
 
-        if result
-            h2 Request
-            div(class="bs-example bs-example-tabs" data-example-id="togglable-tabs")
-                ul(id="myTabs" class="nav nav-tabs" role="tablist")
-                    li(role="presentation" class="")
-                        a(href="#Headers" id="Headers-tab" role="tab" data-toggle="tab" aria-controls="Headers" aria-expanded="false") Headers
+    div
+        h2 Request
+        div(class="bs-example bs-example-tabs" data-example-id="togglable-tabs")
+            ul(id="myTabs" class="nav nav-tabs" role="tablist")
+                li(role="presentation" class="")
+                    a(href="#Headers" id="Headers-tab" role="tab" data-toggle="tab" aria-controls="Headers" aria-expanded="false") Headers
 
-                    li(role="presentation" class="")
-                        a(href="#Response" role="tab" id="Response-tab" data-toggle="tab" aria-controls="Response" aria-expanded="false") Response
-                div(id="myTabContent" class="tab-content")
-                    div(role="tabpanel" class="tab-pane fade" id="Headers" aria-labelledby="Headers-tab")
-                        h4 Request
-                        span= result.request.options.method + " " + result.request.options.host + ":" + result.request.options.port + "/" + result.request.options.path
-                        hr
-                        for value, key in result.request.options.headers
-                            div= key + ": "
-                                span= value
-                        hr
-                        h4 Response
-                        span= "Code: " + result.result.status
-                        br
-                        span= "Headers: " + result.result.headers
-                    div(role="tabpanel" class="tab-pane fade" id="Response" aria-labelledby="Response-tab")
-                        div(style='padding-left:2em')
-                            span {
-                            br
-                            for item in result.data
-                                div(style='padding-left:2em')
-                                    span {
-                                    br
-                                    div(style='padding-left:2em')
-                                        for value, key in item
-                                            span= key + ": " + value
-                                            br
-                                    span }
-                            span }
+                li(role="presentation" class="")
+                    a(href="#Response" role="tab" id="Response-tab" data-toggle="tab" aria-controls="Response" aria-expanded="false") Response
+            div(id="myTabContent" class="tab-content")
+                div(role="tabpanel" class="tab-pane fade" id="Headers" aria-labelledby="Headers-tab")
+                    div(style='padding-left:2em' id="div_headers")
+
+                div(role="tabpanel" class="tab-pane fade" id="Response" aria-labelledby="Response-tab")
+                    div(style='padding-left:2em' id="div_res")
 
 
 
@@ -138,7 +117,7 @@ block script_footer
             });
         };
 
-        $(document).ready(function() {
+        $(document).ready(function () {
 
             $('#apiList > tr:first').find('input').prop('checked', true);
 
@@ -148,14 +127,14 @@ block script_footer
                 apiListChanged($(this).val());
             });
 
-            for (var api in api_select){
-                $("#select_req").append("<option value="+api_uri[api]+">"+api_select[api]+"</option>");
+            for (var api in api_select) {
+                $("#select_req").append("<option value=" + api_uri[api] + ">" + api_select[api] + "</option>");
             }
 
             $("#select_req").change(function () {
                 var apiString = $(this).val();
                 var ownerId = $("#ownerId_" + apiId).text();
-                apiString = apiString.replace('{ownerId}', "ownerId="+ownerId);
+                apiString = apiString.replace('{ownerId}', "ownerId=" + ownerId);
                 $('#api_uri').val(apiString);
             })
 
@@ -163,6 +142,49 @@ block script_footer
             $('#myTabs a[href="#Response"]').tab('show')
         })
 
+        function request_headers(result){
+            var htmlString = "<h4> Request </h4>" +
+                    "<span>" + result.request.options.method +
+                    " " + result.request.options.host +
+                    ":" + result.request.options.port +
+                    "/" + result.request.options.path +
+                    "</span><hr>";
+            for (var i in result.request.options.headers){
+                htmlString += "<div><span>"+i+": </span><span>"+result.request.options.headers[i]+"</span>";
+            }
+            htmlString += "<hr><h4> Response </h4>" +
+                    "<span>Code: </span><span>"+result.result.status+"</span>" +
+                    "<span>Headers: </span><span>"+result.result.headers+"</span>";
+            $("#div_headers").html(htmlString);
+        }
+
+
+
+        function request_response(result){
+            var htmlString = JSON.stringify(result.data);
+            htmlString = htmlString.replace(/\{/g, "<div style='padding-left:1em'><span>{</span><br>");
+            htmlString = htmlString.replace(/\}/g, "<br><span>}</span></div>");
+            htmlString = htmlString.replace(/\[/g, "<span>[</span>");
+            htmlString = htmlString.replace(/\]/g, "<span>]</span>");
+            htmlString = htmlString.replace(/,/g, ",<br>");
+            $("#div_res").html(htmlString);
+        }
+        $("#send_req").click(function () {
+            var data_req = {api_uri: $("#api_uri").val(), api_req: $("#api_req").val()};
+            $.ajax({
+                url: "/dev",
+                type: "POST",
+                crossDomain: true,
+                data: data_req,
+                success: function (data) {
+                    request_headers(data)
+                    request_response(data);
+                },
+                error: function () {
+                    alert("Cannot get data");
+                }
+            });
+        });
 
 
 

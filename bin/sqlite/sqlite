@@ -58,7 +58,9 @@ var Sqlite = function(){
                 "language VARCHAR(20)," +
                 "code VARCHAR(6))");
             db.run('CREATE TABLE School (id integer primary key,' +
-                'schoolName VARCHAR(32))');
+                'schoolName VARCHAR(32), ' +
+                'sshAdmin VARCHAR(32), ' +
+                'sshPassword VARCHAR(64))');
             db.run("INSERT INTO User VALUES (1, '', '', '', 'admin', '"+createHash("aerohive")+"', 'true', '', '1', '', '1')");
             db.run("INSERT INTO UserGroup VALUES (1, 'Administrator')");
             db.run("INSERT INTO UserGroup VALUES (2, 'Operator')");

@@ -46,21 +46,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                                     });
                                 } else {
                                     console.log(result);
-                                    var apiSecret = Api.getSecret();
-                                    var apiClientId = Api.getClientId();
-                                    res.render('dev', {
-                                        user: req.user,
-                                        current_page: 'dev',
-                                        session: req.session,
-                                        apiSecret: apiSecret,
-                                        apiClientId: apiClientId,
-                                        schoolList: schoolList,
-                                        apiList: apiList,
-                                        user_button: req.translationFile.user_button,
-                                        api_req: api_req,
-                                        api_uri: api_uri,
-                                        result: result
-                                    })
+                                    res.send(result);
                                 }
                             });
                         }
