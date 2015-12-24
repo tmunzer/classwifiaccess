@@ -67,7 +67,7 @@ function getSchoolName(SchoolId, callback) {
 }
 
 function getWifiState(classroom, callback) {
-    if (classroom.DeviceId > 0){
+    if (classroom.DeviceId > 0) {
         Lesson.findActive(classroom.id, classroom.SchoolId, function (err, ret) {
             if (err) {
                 callback(err);
@@ -141,10 +141,11 @@ findAll = function (fields, options, callback) {
     });
 };
 
-findActiveByDevice = function(DeviceId, SchoolId, callback){
+findActiveByDevice = function (DeviceId, SchoolId, callback) {
     var currentDate = new Date().getTime();
     if (DeviceId > 0) {
-        db.customJoin("Classroom", "Lesson",
+        db.customJoin(null,
+            "Classroom", "Lesson",
             "Lesson.ClassroomId", "Classroom.id",
             " Classroom.DeviceId = " + DeviceId +
             " AND Lesson.SchoolId = " + SchoolId +
@@ -162,7 +163,7 @@ findActiveByDevice = function(DeviceId, SchoolId, callback){
                 }
             });
     } else {
-        callback('');
+        callback(null, []);
     }
 };
 
@@ -177,9 +178,9 @@ findOne = function (fields, options, callback) {
     });
 };
 
-findById = function(rowId, options, callback){
-    db.findById("Classroom", rowId, options, function(err, classroomFromDB){
-        if (err){
+findById = function (rowId, options, callback) {
+    db.findById("Classroom", rowId, options, function (err, classroomFromDB) {
+        if (err) {
             callback(err);
         } else if (!classroomFromDB) {
             callback(null, null);

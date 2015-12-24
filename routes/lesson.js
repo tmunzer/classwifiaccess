@@ -51,69 +51,52 @@ function renderActivation(req, res, displayedClassroom, activation, classroomLis
 
 
 function saveLesson(req, classroomId, LessonId, callback) {
-    var lesson = new Lesson();
-    lesson.ClassroomId = classroomId;
-    lesson.UserId = req.user.id;
-    lesson.SchoolId = req.session.SchoolId;
-    if (req.body.hasOwnProperty("startDate")) {
-        lesson.startDateTs = new Date(req.body.startDate).getTime();
-    } else {
-        lesson.startDateTs = new Date().getTime();
-    }
-    switch (req.body.wifiActivation) {
-        case "unlimited":
-            lesson.endDateTs = 0;
-            break;
-        case "duration":
-            lesson.endDateTs = new Date(lesson.startDateTs + (req.body.duration * 60 * 1000)).getTime();
-            break;
-        case "until":
-            lesson.endDateTs = new Date(req.body.endDate).getTime();
-            break;
-    }
-    var lessonToDb = new Lesson.LessonSeralizer(lesson);
-    if (LessonId != null) {
-        lessonToDb.updateDB(LessonId, function (err) {
+    Classroom.findById(classroomId, null, function (err, classroom) {
+        if (err) {
             callback(err);
-        });
-    } else {
-        lessonToDb.insertDB(function (err) {
-            callback(err);
-        });
-    }
-};
-
-function enableWiFi(req, classroomId, callback) {
-    if (req.body.hasOwnProperty("startDate")) {
-        saveLesson(req, classroomId, null, function (err) {
-            if (err) {
-                callback(err);
+        } else {
+            var lesson = new Lesson();
+            lesson.ClassroomId = classroomId;
+            lesson.UserId = req.user.id;
+            lesson.SchoolId = req.session.SchoolId;
+            if (req.body.hasOwnProperty("startDate")) {
+                lesson.startDateTs = new Date(req.body.startDate).getTime();
             } else {
-                callback(null);
+                lesson.startDateTs = new Date().getTime();
             }
-        });
-    } else {
-        Classroom.findById(classroomId, null, function (err, classroom) {
-            if (err) {
-                callback(err);
-            } else {
-                Control.enableWiFi(classroom.DeviceId, req.session.SchoolId, function (err) {
-                    if (err) {
+            switch (req.body.wifiActivation) {
+                case "unlimited":
+                    lesson.endDateTs = 0;
+                    break;
+                case "duration":
+                    lesson.endDateTs = new Date(lesson.startDateTs + (req.body.duration * 60 * 1000)).getTime();
+                    break;
+                case "until":
+                    lesson.endDateTs = new Date(req.body.endDate).getTime();
+                    break;
+            }
+            var lessonToDb = new Lesson.LessonSeralizer(lesson);
+
+            if (LessonId != null) {
+                lessonToDb.updateDB(LessonId, function (err) {
+                    Control.enableWiFi(classroom.DeviceId, lesson.SchoolId, LessonId, function (err) {
                         callback(err);
-                    } else {
-                        saveLesson(req, classroomId, null, function (err) {
-                            if (err) {
-                                callback(err);
-                            } else {
-                                callback(null);
-                            }
+                    })
+                });
+            } else {
+                lessonToDb.insertDB(function (err, LessonId) {
+                    if (err) callback(err);
+                    else {
+                        Control.enableWiFi(classroom.DeviceId, lesson.SchoolId, LessonId, function (err) {
+                            callback(err);
                         });
                     }
                 });
             }
-        });
-    }
+        }
+    });
 };
+
 
 module.exports = function (router, isAuthenticated) {
     /* GET Home Page */
@@ -164,7 +147,7 @@ module.exports = function (router, isAuthenticated) {
         if (req.body.hasOwnProperty("ClassroomId")) {
             var classroomId = req.body.ClassroomId;
             if (req.body.hasOwnProperty('wifiActivation')) {
-                enableWiFi(req, classroomId, function (err) {
+                saveLesson(req, classroomId, null, function (err) {
                     if (err) {
                         Error.render(err, "classroom", req, res);
                     } else {
@@ -184,7 +167,7 @@ module.exports = function (router, isAuthenticated) {
         if (req.body.hasOwnProperty("ClassroomId")) {
             var classroomId = req.body.ClassroomId;
             if (req.body.hasOwnProperty('wifiActivation')) {
-                enableWiFi(req, classroomId, function (err) {
+                saveLesson(req, classroomId, null, function (err) {
                     if (err) {
                         Error.render(err, "classroom", req, res);
                     } else {
@@ -272,7 +255,7 @@ module.exports = function (router, isAuthenticated) {
                                             if (err) {
                                                 Error.render(err, "classroom", req, res);
                                             } else {
-                                                Control.disableWiFi(classroom.DeviceId, req.session.SchoolId, function (err) {
+                                                Control.disableWiFi(classroom.DeviceId, req.session.SchoolId, lesson.id, function (err) {
                                                     if (err) {
                                                         Error.render(err, "classroom", req, res);
                                                     } else {
@@ -305,7 +288,7 @@ module.exports = function (router, isAuthenticated) {
                                     if (err) {
                                         res.render("error");
                                     } else {
-                                        Control.disableWiFi(classroom.DeviceId, req.session.SchoolId, function (err) {
+                                        Control.disableWiFi(classroom.DeviceId, req.session.SchoolId, lessonId, function (err) {
                                             if (err) {
                                                 Error.render(err, "classroom", req)
                                             } else {

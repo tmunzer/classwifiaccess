@@ -53,7 +53,9 @@ var Sqlite = function(){
                 "endDate DATETIME," +
                 "ClassroomId INTEGER," +
                 "UserId INTEGER," +
-                "SchoolId INTEGER)");
+                "SchoolId INTEGER, " +
+                "startDone BOOL NOT NULL DEFAULT FALSE," +
+                "endDone BOOL NOT NULL DEFAULT FALSE)");
             db.run("CREATE TABLE UILanguage (id integer primary key," +
                 "language VARCHAR(20)," +
                 "code VARCHAR(6))");
@@ -83,8 +85,11 @@ Sqlite.prototype.customSelect = function(table, filter_string, callback){
     });
 };
 
-Sqlite.prototype.customJoin = function(table1, table2, table1JoinId, table2JoinId, filterString, callback){
-    var queryString = 'SELECT * FROM ' + table1 + " INNER JOIN " + table2 +
+Sqlite.prototype.customJoin = function(fields, table1, table2, table1JoinId, table2JoinId, filterString, callback){
+    if (fields == null) {
+        fields = "*";
+    }
+    var queryString = 'SELECT ' + fields+ ' FROM ' + table1 + " INNER JOIN " + table2 +
         " ON " + table1JoinId + " = " + table2JoinId +
         " WHERE " + filterString;
     console.log(queryString);
@@ -151,9 +156,9 @@ Sqlite.prototype.insertDB = function(table, rows, callback){
     console.log(insertString);
     this.db.run(insertString, function(err){
         if (err){
-            return err;
+            callback(err);
         }
-        callback(err);
+        callback(err, this.lastID);
     });
 };
 
@@ -251,15 +256,20 @@ Sqlite.prototype.findById = function(table, rowId, options, callback){
          columns: columns to retrieve
          orderBy: how to sort the result
      */
-    var rOptions = processOptions(options);
-    var getString = "SELECT " + rOptions.columns + " FROM " + table + " WHERE id = " + rowId;
-    //console.log(getString);
-    this.db.get(getString, function(err, ret){
-        if (err){
-            throw err;
-        }
-        callback(err, ret);
-    });
+    if (rowId >= 0){
+        var rOptions = processOptions(options);
+        var getString = "SELECT " + rOptions.columns + " FROM " + table + " WHERE id = " + rowId;
+        //console.log(getString);
+        this.db.get(getString, function(err, ret){
+            if (err){
+                throw err;
+            }
+            callback(err, ret);
+        });
+    } else {
+        callback(null, null);
+    }
+
 };
 
 Sqlite.prototype.getAll = function(table, options, callback){

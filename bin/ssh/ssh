@@ -5,7 +5,7 @@ var EventEmitter = require('events').EventEmitter;
 function connect(host, port, username, password, sshEvent) {
     var conn = new Client();
     conn.on('ready', function () {
-        console.log('Client :: ready');
+        console.log('SSH >> Client :: ready :: ' + host);
         conn.shell(function (err, stream) {
             if (err) {
                 conn.end();

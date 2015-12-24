@@ -17,6 +17,16 @@ function LessonSeralizer(row) {
     this.lesson.ClassroomId = row.ClassroomId;
     this.lesson.UserId = row.UserId;
     this.lesson.SchoolId = row.SchoolId;
+    if (row.hasOwnProperty("startDone")){
+        this.lesson.startDone = row.startDone;
+    } else {
+        this.lesson.startDone = "false";
+    }
+    if (row.hasOwnProperty("endDone")){
+        this.lesson.endDone = row.endDone;
+    } else {
+        this.lesson.endDone = "false";
+    }
 }
 
 LessonSeralizer.prototype.updateDB = function (LessonId, callback) {
@@ -30,12 +40,12 @@ LessonSeralizer.prototype.updateDB = function (LessonId, callback) {
 };
 
 LessonSeralizer.prototype.insertDB = function (callback) {
-    db.insertDB("Lesson", this.lesson, function (err) {
+    db.insertDB("Lesson", this.lesson, function (err, id) {
         if (err) {
             callback(err);
         }
         console.log("Lesson InsertDB");
-        callback(err);
+        callback(err, id);
     });
 };
 
@@ -52,8 +62,9 @@ function Lesson() {
     this.schoolName = "";
     this.endDateTs = "";
     this.startDateTs = "";
+    this.startDone = "false";
+    this.endDone = "false";
 }
-
 
 sortLesson = function (lessonA, lessonB) {
     var a = lessonA.startDateTs;
@@ -117,6 +128,8 @@ createLesson = function (lessonFromDB, callback) {
     var now = new Date().getTime();
     if (lessonFromDB) {
         lesson.id = lessonFromDB.id;
+        lesson.startDone = lessonFromDB.startDone;
+        lesson.endDone = lessonFromDB.endDone;
         lesson.startDateTs = lessonFromDB.startDate;
         lesson.startDate = new Date(lessonFromDB.startDate);
         lesson.endDateTs = lessonFromDB.endDate;
@@ -174,7 +187,6 @@ findAll = function (fields, options, callback) {
     });
 };
 
-
 findActive = function (ClassroomId, SchoolId, callback) {
     var currentDate = new Date().getTime();
     if (ClassroomId > 0) {
@@ -197,6 +209,67 @@ findActive = function (ClassroomId, SchoolId, callback) {
     }
 };
 
+findActiveByDevice = function (DeviceId, SchoolId, callback) {
+    var currentDate = new Date().getTime();
+    if (DeviceId > 0) {
+        db.customJoin(null, "Classroom", "Lesson",
+            "Lesson.ClassroomId", "Classroom.id",
+            " Classroom.DeviceId = " + DeviceId +
+            " AND Lesson.SchoolId = " + SchoolId +
+            " AND Lesson.startDate < " + currentDate +
+            " AND " +
+            " (Lesson.endDate > " + currentDate +
+            " OR Lesson.endDate = 0)",
+            function (err, ret) {
+                if (err) {
+                    callback(err);
+                } else if (ret) {
+                    callback(null, ret);
+                } else {
+                    callback(null, []);
+                }
+            });
+    } else {
+        callback('');
+    }
+};
+
+findPassedButNotDisabled = function(SchoolId, callback) {
+    var currentDate = new Date().getTime();
+    db.customJoin("Lesson.*, Classroom.DeviceId",
+        "Lesson", "Classroom",
+        "Lesson.ClassroomId", "Classroom.id",
+        " Lesson.SchoolId = " + SchoolId +
+        " AND Lesson.endDone = 'false'" +
+        " AND Lesson.endDate < " + currentDate +
+        " AND Lesson.endDate > 0",
+        function (err, ret) {
+            if (err) {
+                callback(err);
+            } else {
+                callback(null, ret);
+            }
+        });
+};
+findActiveButNotEnabled = function(SchoolId, callback) {
+    var currentDate = new Date().getTime();
+    db.customJoin("Lesson.*, Classroom.DeviceId",
+        "Lesson", "Classroom",
+        "Lesson.ClassroomId", "Classroom.id",
+        " Lesson.SchoolId = " + SchoolId +
+        " AND Lesson.startDone = 'false'" +
+        " AND Lesson.startDate < " + currentDate +
+        " AND " +
+        " (Lesson.endDate > " + currentDate +
+        " OR Lesson.endDate = 0)",
+        function (err, ret) {
+            if (err) {
+                callback(err);
+            } else {
+                callback(null, ret);
+            }
+        });
+};
 findOne = function (fields, options, callback) {
     db.findOne("Lesson", fields, options, function (err, lessonFromDB) {
         if (err) {
@@ -256,6 +329,8 @@ module.exports = Lesson;
 module.exports.findAll = findAll;
 module.exports.findOne = findOne;
 module.exports.findById = findById;
+module.exports.findPassedButNotDisabled = findPassedButNotDisabled;
+module.exports.findActiveButNotEnabled = findActiveButNotEnabled;
 module.exports.findActive = findActive;
 module.exports.getAll = getAll;
 module.exports.deleteById = deleteByID;

@@ -8,7 +8,6 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-
 //===============CREATE APP=================
 
 var app = express();
@@ -88,5 +87,21 @@ app.use(function (err, req, res, next) {
     });
 });
 
+//===============CREATE CRON=================
+var CronJob = require("cron").CronJob;
+var Control = require("./bin/device_control");
+Control.checkLessons();
+try {
+    new CronJob({
+            cronTime: "0 */1 * * * *",
+            onTick: function () {
+                console.log("========== CRON");
+                Control.checkLessons();
+            },
+            start: true
+        });
+}catch(ex) {
+    console.log("cron pattern not valid");
+}
 
 module.exports = app;

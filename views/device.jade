@@ -1,7 +1,7 @@
 extends layout_admin
 
 mixin device_status(device)
-    div
+    div(class="box-shadow")
         h4= device.hostName
         case device.connected
             when true
