@@ -4,81 +4,85 @@ var UILanguage = require(appRoot + '/models/UiLanguage');
 var School = require(appRoot + '/models/school');
 var Error = require(appRoot + '/routes/error');
 
+function renderEditUser(message, userToEdit, req, res){
+    // if user is not admin (ie if user is operator)
+    var filterStringSchool = null;
+    if (req.user.GroupId != 1) {
+        filterStringSchool = {id: req.user.SchoolId};
+    }
+    Group.getAll(null, function (err, groups) {
+        if (err) Error.render(err, "conf", req, res);
+        else {
+            // list all schools to display
+            School.findAll(filterStringSchool, null, function (err, schools) {
+                if (err) Error.render(err, "conf", req, res);
+                else {
+                    // list all languages to display
+                    UILanguage.getAll(null, function (err, languages) {
+                        if (err) Error.render(err, "conf", req, res);
+                        else {
+                            // render the page
+                            res.render('conf_userEdit', {
+                                message: message,
+                                userToEdit: userToEdit,
+                                user: req.user,
+                                current_page: 'conf',
+                                groups: groups,
+                                schools: schools,
+                                languages: languages,
+                                user_button: req.translationFile.user_button,
+                                user_page: req.translationFile.config_user_page,
+                                buttons: req.translationFile.buttons
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
+
 module.exports = function (router, isAuthenticated, isAtLeastOperator) {
     /* GET User Display page. */
-    router.get("/conf/user/", isAuthenticated, isAtLeastOperator, function (req, res, next) {
+    router.get("/conf/user/:userId(\\d+)/", isAuthenticated, isAtLeastOperator, function (req, res, next) {
         // save the userID requested
-        var userIdToEdit = req.query.id;
+        var userIdToEdit = req.params.userId;
         var filterString = null;
         // if user is not admin (ie if user is operator)
         if (req.user.GroupId != 1) {
             filterString = {SchoolId: req.user.SchoolId};
         }
-            // get the user to edit in the DB
-            User.findById(userIdToEdit, filterString, function (err, userToEdit) {
-                if (err){
-                    Error.render(err, "conf", req, res);
-                } else {
-                    // render the page
-                    res.render('conf_userDisplay', {
-                        user: req.user,
-                        current_page: 'conf',
-                        userToEdit: userToEdit,
-                        user_button: req.translationFile.user_button,
-                        user_page: req.translationFile.config_user_page,
-                        buttons: req.translationFile.buttons
-                    });
-                }
-            });
+        // get the user to edit in the DB
+        User.findById(userIdToEdit, filterString, function (err, userToEdit) {
+            if (err) {
+                Error.render(err, "conf", req, res);
+            } else {
+                // render the page
+                res.render('conf_userDisplay', {
+                    user: req.user,
+                    current_page: 'conf',
+                    userToEdit: userToEdit,
+                    user_button: req.translationFile.user_button,
+                    user_page: req.translationFile.config_user_page,
+                    buttons: req.translationFile.buttons
+                });
+            }
+        });
 
     });
 
     /* GET User Edit page. */
-    router.get('/conf/user/edit', isAuthenticated, function (req, res, next) {
-        var userIdToEdit = req.query.id;
-        // if user is not admin (ie if user is operator)
-        var filterStringSchool = null;
-        if (req.user.GroupId != 1){
-            filterStringSchool = {id: req.user.SchoolId};
-        }
+    router.get('/conf/user/:userId(\\d+)/edit/', isAuthenticated, function (req, res, next) {
+        var userIdToEdit = req.params.userId;
+
         // check if requested user to display is the same as the current user
         // or if current user is an admin
         if ((req.user.id == userIdToEdit) || (isAtLeastOperator)) {
             // get the user to edit in the DB
             User.findById(userIdToEdit, null, function (err, userToEdit) {
-                if (err) Error.render(err, "conf", req);
+                if (err) Error.render(err, "conf", req, res);
                 else {
-                    // Find the language for this user
-                    // list all groups to display
-                    Group.getAll(null, function (err, groups) {
-                        if (err) Error.render(err, "conf", req);
-                        else {
-                            // list all schools to display
-                            School.findAll(filterStringSchool, null, function (err, schools) {
-                                if (err)Error.render(err, "conf", req);
-                                else {
-                                    // list all languages to display
-                                    UILanguage.getAll(null, function (err, languages) {
-                                        if (err)Error.render(err, "conf", req);
-                                        else {
-                                            // render the page
-                                            res.render('conf_userEdit', {
-                                                user: req.user,
-                                                current_page: 'conf',
-                                                userToEdit: userToEdit,
-                                                groups: groups,
-                                                schools: schools,
-                                                languages: languages,
-                                                user_button: req.translationFile.user_button,
-                                                user_page: req.translationFile.config_user_page,
-                                                buttons: req.translationFile.buttons
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
+                    renderEditUser(null, userToEdit, req, res);
                 }
             });
         } else {
@@ -86,8 +90,8 @@ module.exports = function (router, isAuthenticated, isAtLeastOperator) {
         }
     });
     /* POST - SAVE User Edit page. */
-    router.post("/conf/user/edit", isAuthenticated, function (req, res, next) {
-        var userIdToEdit = req.query.id;
+    router.post("/conf/user/:userId(\\d+)/edit/", isAuthenticated, function (req, res, next) {
+        var userIdToEdit = req.params.userId;
         // check if requested user to display is the same as the current user
         // or if current user is an admin
         if ((req.user.id == userIdToEdit) || (isAtLeastOperator)) {
@@ -99,10 +103,10 @@ module.exports = function (router, isAuthenticated, isAtLeastOperator) {
             }
             // update the user
             UserSerializer.updateDB(userIdToEdit, function (err) {
-                if (err){
-                    Error.render(err, "conf", req);
+                if (err) {
+                    renderEditUser(err, UserSerializer.user, req, res);
                 } else {
-                    res.redirect('/conf/user?id=' + userIdToEdit);
+                    res.redirect('/conf/user/' + userIdToEdit + "/");
                 }
             });
         } else {
@@ -112,40 +116,7 @@ module.exports = function (router, isAuthenticated, isAtLeastOperator) {
 
     /* GET New User page. */
     router.get("/conf/user/new/", isAuthenticated, isAtLeastOperator, function (req, res, next) {
-        var filterStringSchool = null;
-        if (req.user.GroupId != 1){
-            filterStringSchool = {id: req.user.SchoolId};
-        }
-        // list all groups to display
-        Group.getAll(null, function (err, groups) {
-            if (err) Error.render(err, "conf", req);
-            else {
-                // list all schools to display
-                School.findAll(filterStringSchool, null, function (err, schools) {
-                    if (err) Error.render(err, "conf", req);
-                    else {
-                        // list all languages to display
-                        UILanguage.getAll(null, function (err, languages) {
-                            if (err) Error.render(err, "conf", req);
-                            else {
-                                // render the page
-                                res.render('conf_userEdit', {
-                                    user: req.user,
-                                    current_page: 'conf',
-                                    userToEdit: new User(),
-                                    groups: groups,
-                                    schools: schools,
-                                    languages: languages,
-                                    user_button: req.translationFile.user_button,
-                                    user_page: req.translationFile.config_user_page,
-                                    buttons: req.translationFile.buttons
-                                });
-                            }
-                        });
-                    }
-                });
-            }
-        });
+        renderEditUser(null, null, req, res);
     });
     /* POST - SAVE New User Edit . */
     router.post("/conf/user/new/", isAuthenticated, isAtLeastOperator, function (req, res, next) {
@@ -157,11 +128,10 @@ module.exports = function (router, isAuthenticated, isAtLeastOperator) {
         }
         // update the user
         userToDB.insertDB(function (err) {
-            if (err){
-                Error.render(err, "conf", req);
-            } else {
-                res.redirect('/conf');
+            if (err) {
+                renderEditUser(err, userToDB.user, req, res);
             }
+            else res.redirect('/conf');
         });
     });
     router.get('/conf/user/delete', isAuthenticated, isAtLeastOperator, function (req, res) {
@@ -171,7 +141,7 @@ module.exports = function (router, isAuthenticated, isAtLeastOperator) {
             if (req.user.GroupId != 1) {
                 filterString = {SchoolId: req.user.SchoolId};
             }
-            User.findById(req.query.id, filterString, function(err, user){
+            User.findById(req.query.id, filterString, function (err, user) {
                 User.deleteById(user.id, function () {
                     res.redirect("/conf");
                 })

@@ -1,77 +1,98 @@
 extends layout
 
 block content
+    - var passwordPh = ""
+    - var usernameVal = ""
+    - var firstNameVal = ""
+    - var lastNameVal = ""
+    - var emailVal = ""
+    - var schoolSel = 0
+    - var groupSel = 0
+    - var languageSel = 0
+    if userToEdit
+        - var usernameVal = userToEdit.username
+        - var passwordPh= user_page.password_placeholder
+        - var firstNameVal = userToEdit.firstName
+        - var lastNameVal = userToEdit.lastName
+        - var emailVal = userToEdit.email
+        - var schoolSel = userToEdit.SchoolId
+        - var groupSel = userToEdit.GroupId
+        - var languageSel = userToEdit.LanguageId
+
     div(style="width:50%; margin:auto")
+        if message
+            h4.text-center.error-message #{message}
         h3= user_page.user_account
-        form(action='', method='POST')
+        form(action='', method='POST' id="userForm")
             label(for="username")= user_page.username
-            input(type="text" class="form-control" name="username" id="username" value=userToEdit.username required="" maxlength=60 minlength=4)
+            input(type="text" class="form-control" name="username" id="username" value=usernameVal required="" pattern="^[a-zA-Z0-9@._-]{4,60}$")
             label(for="password")= user_page.password
-            input(type="password" class="form-control" name="password" id="password" placeholder=user_page.password_placeholder minlength=6 maxlength=60)
-            label(for="password")= user_page.confirm_password
-            input(type="password" class="form-control" id="confirm_password" placeholder="")
+            input(type="password" class="form-control" name="password" id="password" placeholder=passwordPh pattern="^[^ ]{6,60}$")
+            label(for="password_confirm")= user_page.confirm_password
+            input(type="password" class="form-control" id="password_confirm" pattern="" placeholder="")
             hr
             label(for="firstName")= user_page.firstName
-            input(type="text" class="form-control" name="firstName" id="firstName" value=userToEdit.firstName)
+            input(type="text" class="form-control" name="firstName" id="firstName" value=firstNameVal)
             label(for="lastName")= user_page.lastName
-            input(type="text" class="form-control" name="lastName" id="lastName" value=userToEdit.lastName)
+            input(type="text" class="form-control" name="lastName" id="lastName" value=lastNameVal)
             label(for="email")= user_page.email
-            input(type="email" class="form-control" name="email" id="email" value=userToEdit.email)
+            input(type="email" class="form-control" name="email" id="email" value=emailVal)
             hr
-            case user.GroupId
-                when 1
-                    label(for="group")= user_page.school
-                    select(class="form-control" name="SchoolId" id="SchoolId")
-                        each item in schools
-                            if userToEdit.SchoolId == item.id
-                                option(value=item.id, selected="selected")= item.schoolName
-                            else
-                                option(value=item.id)= item.schoolName
-                    hr
-                    label(for="group")= user_page.group
-                    if userToEdit.id == user.id
-                        select(class="form-control", disabled="disabled")
-                            each item in groups
-                                if userToEdit.GroupId == item.id
-                                    option(value=item.id, selected="selected")= item.groupName
-                        input(type="hidden" id="GroupId" name="GroupId" value=userToEdit.GroupId)
-                    else
-                        select(class="form-control", name="GroupId" id="GroupId")
-                            each item in groups
-                                if userToEdit.GroupId == item.id
-                                    option(value=item.id, selected="selected")= item.groupName
-                                else
-                                    option(value=item.id)= item.groupName
-                default
-                    label(for="group")= user_page.school
-                    select(class="form-control" name="SchoolId", disabled="disabled")
-                        each item in schools
-                            if user.SchoolId == item.id
-                                option(value=item.id, selected="selected")= item.schoolName
-                    hr
-                    label(for="group")= user_page.group
-                    select(class="form-control", disabled="disabled", name="GroupId")
+            if (user.GroupId == 1)
+                label(for="group")= user_page.school
+                select(class="form-control" name="SchoolId" id="SchoolId")
+                    each item in schools
+                        if schoolSel == item.id
+                            option(value=item.id, selected="selected")= item.schoolName
+                        else
+                            option(value=item.id)= item.schoolName
+                hr
+            else
+                input(type="hidden" name="SchoolId" id="SchoolId" value=user.SchoolId)
+
+            if (user.GroupId <= 2)
+                label(for="group")= user_page.group
+                if userToEdit && userToEdit.id == user.id
+                    select(class="form-control", disabled="disabled")
                         each item in groups
-                            if user.GroupId == item.id
+                            if userToEdit.GroupId == item.id
                                 option(value=item.id, selected="selected")= item.groupName
+                    input(type="hidden" id="GroupId" name="GroupId" value=userToEdit.GroupId)
+                else
+                    select(class="form-control", name="GroupId" id="GroupId")
+                        each item in groups
+                            if groupSel == item.id
+                                option(value=item.id, selected="selected")= item.groupName
+                            else if user.GroupId <= item.id
+                                option(value=item.id)= item.groupName
+            else
+                hr
+                label(for="group")= user_page.group
+                select(class="form-control", disabled="disabled", name="GroupId")
+                    each item in groups
+                        if user.GroupId == item.id
+                            option(value=item.id, selected="selected")= item.groupName
+
+
             label(for="language")= user_page.language
             select(class="form-control" name="LanguageId")
                 each item in languages
-                    if userToEdit.LanguageId == item.id
+                    if languageSel == item.id
                         option(value=item.id, selected="selected")= item.language
                     else
                         option(value=item.id)= item.language
-            if userToEdit.id == user.id
+            if userToEdit && userToEdit.id == user.id
                 input(type="hidden", name="userEnable", value=userToEdit.userEnable)
             else
+                hr
                 label(for="enable")= user_page.enable
-                if userToEdit.userEnable == "true"
+                if userToEdit && userToEdit.userEnable == "true"
                     input(type="checkbox", name="userEnable", style="margin-left:1em", checked)
                 else
                     input(type="checkbox", name="userEnable", style="margin-left:1em")
             hr
-            if userToEdit.id
-                a(href="/conf/user?id="+userToEdit.id, class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
+            if userToEdit && userToEdit.id
+                a(href="/conf/user/"+userToEdit.id + "/", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
             else
                 a(href="/conf/", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
             button(class='btn btn-primary', type='submit', style="margin:0.2em 1em 2em 1em")= buttons.save_button
@@ -85,5 +106,11 @@ block content
                 $("#SchoolId").prop("disabled", false);
             }
         });
-
-
+        $("#password").change(function () {
+            $('#password_confirm').attr('pattern', $('#password').val());
+            if ($("#password").val != ""){
+                $('#password_confirm').attr('required', true);
+            } else {
+                $('#password_confirm').attr('required', false);
+            }
+        });

@@ -25,9 +25,9 @@ block content
                 label(for="schoolName")= school_page.ssh_account
                 input(type="text" class="form-control" name="sshAdmin" id="sshAdmin" maxlength=30 minlength=4 value='admin')
                 label(for="schoolName")= school_page.ssh_password
-                input(type="password" class="form-control" name="sshPassword" id="sshPassword" maxlength=30 minlength=4)
+                input(type="password" class="form-control" name="sshPassword" id="sshPassword")
                 label(for="schoolName")= school_page.ssh_password_confirm
-                input(type="password" class="form-control" name="sshPassword_confirm" id="sshPassword_confirm" maxlength=30 minlength=4)
+                input(type="password" class="form-control" name="sshPassword_confirm" id="sshPassword_confirm")
 
 
             hr
@@ -52,4 +52,7 @@ block content
             } else if ($("#ssh").attr("checked")) {
                 $('#ssh_param').show();
             }
+        });
+        $("#sshPassword").change(function () {
+            $('#sshPassword_confirm').attr('pattern', $('#sshPassword').val());
         });

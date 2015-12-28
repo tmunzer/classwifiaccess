@@ -21,7 +21,7 @@ module.exports.config_page = {
     register:"Register APP",
     user_mgmt:"Users management",
     classroom_mgmt:"Classrooms management",
-    school_mgmt:"School management",
+    school_mgmt:"Schools management",
 //Users
     delete_api_title:"Do you want to remove this API access?",
     delete_user_title:"Do you want to remove this user?",

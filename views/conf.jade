@@ -56,6 +56,30 @@ mixin displayApi(api)
                 a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('api', " + api.id + ")")
                     i(class="fa fa-remove")
 
+mixin displayUser(userToDisplay)
+    - var rowClass = ""
+    if userToDisplay.userEnable == "false"
+        - rowClass = "active"
+    tr(class=rowClass)
+        td= userToDisplay.schoolName
+        td
+            a(href="/conf/user/" + userToDisplay.id + "/")= userToDisplay.username
+        td= userToDisplay.firstName
+        td= userToDisplay.lastName
+        td= userToDisplay.groupName
+        td= userToDisplay.userEnable
+        td= userToDisplay.lastLogin
+        td
+            div(style="float:right")
+                a(href="/conf/user/" + userToDisplay.id +"/edit/", type='button', style="margin:auto 0.5em")
+                    i(class="fa fa-edit")
+                if userToDisplay.id == user.id
+                    i(class="fa fa-remove" style="margin:auto 0.5em")
+                else
+                    a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('user', " + userToDisplay.id + ")")
+                        i(class="fa fa-remove")
+
+
 block script_header
 
 block content
@@ -129,41 +153,7 @@ block content
                                     div(style="float:right") Action
                         tbody
                             each userToDisplay in userList
-                                if userToDisplay.userEnable == "true"
-                                    tr
-                                        td= userToDisplay.schoolName
-                                        td
-                                            a(href="/conf/user?id=" + userToDisplay.id)= userToDisplay.username
-                                        td= userToDisplay.firstName
-                                        td= userToDisplay.lastName
-                                        td= userToDisplay.groupName
-                                        td= userToDisplay.userEnable
-                                        td= userToDisplay.lastLogin
-                                        td
-                                            div(style="float:right")
-                                                a(href="/conf/user/edit?id=" + userToDisplay.id, type='button', style="margin:auto 0.5em")
-                                                    i(class="fa fa-edit")
-                                                if userToDisplay.id == user.id
-                                                    i(class="fa fa-remove" style="margin:auto 0.5em")
-                                                else
-                                                    a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('user', " + userToDisplay.id + ")")
-                                                        i(class="fa fa-remove")
-                                else
-                                    tr.active
-                                        td= userToDisplay.schoolName
-                                        td
-                                            a(href="/conf/user?id=" + userToDisplay.id)= userToDisplay.username
-                                        td= userToDisplay.firstName
-                                        td= userToDisplay.lastName
-                                        td= userToDisplay.userGroup
-                                        td= userToDisplay.userEnable
-                                        td= userToDisplay.lastLogin
-                                        td
-                                            div(style="float:right")
-                                                a(href="/conf/user/edit?id=" + userToDisplay.id, type='button', style="margin:auto 0.5em")
-                                                    i(class="fa fa-edit")
-                                                a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('user', " + userToDisplay.id + ")")
-                                                    i(class="fa fa-remove")
+                                + displayUser(userToDisplay)
 
                 div(role="tabpanel" class="tab-pane fade" id="classroom" aria-labelledby="classroom-tab")
                     a(href="/conf/classroom/new/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= classroom_page.new_classroom_button

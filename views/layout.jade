@@ -63,7 +63,7 @@ html
                                     i(class="fa fa-user fa-lg")
                                 ul(class="dropdown-menu")
                                     li
-                                        a(href="/conf/user?id=" + user.id)= user_button.account
+                                        a(href="/conf/user/" + user.id + "/edit/")= user_button.account
                                     li(role="separator" class="divider")
                                     li
                                         a(href="/logout/")= user_button.logout
