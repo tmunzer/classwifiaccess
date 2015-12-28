@@ -44,16 +44,116 @@
 
 <p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
 
-<h2>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+<h1>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h1>
 
-<p>To run this App, you need NodeJS and NodeJS packages:
-1. Download and Install <a href="https://nodejs.org/en/">NodeJS</a>
-2. From the project root folder, run 
-    npm install
-3. Configure the app with your <a href="https://developer.aerohive.com/">Aerohive Developer information</a>:
-    - Copy/Paste the file <code>/bin/ah_api/config_example</code> to <code>/bin/ah_api/config</code>
-    - Edit the file <code>/bin/ah_api/config</code> to match your developer credentials</p>
+<h2>
+<a id="first-run" class="anchor" href="#first-run" aria-hidden="true"><span class="octicon octicon-link"></span></a>First Run</h2>
+
+<p>To run this App, you need NodeJS and NodeJS packages:</p>
+
+<ol>
+<li>Download and Install <img src="https://nodejs.org/en/" alt="NodeJS">
+</li>
+<li>From the project root folder, run 
+npm install</li>
+<li>Configure the app with your <a href="https://developer.aerohive.com/">Aerohive Developer information</a>:
+
+<ul>
+<li>Copy/Paste the file <code>/bin/ah_api/config_example</code> to <code>/bin/ah_api/config</code>
+</li>
+<li>Edit the file <code>/bin/ah_api/config</code> to match your developer credentials</li>
+</ul>
+</li>
+</ol>
+
+<h2>
+<a id="first-login" class="anchor" href="#first-login" aria-hidden="true"><span class="octicon octicon-link"></span></a>First Login</h2>
+
+<p>The default credentials are:</p>
+
+<p>login: admin
+password: aerohive</p>
+
+<h2>
+<a id="initial-configuration" class="anchor" href="#initial-configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Initial Configuration</h2>
+
+<p>Once you are logged in for the first time, you still need a few steps:</p>
+
+<ul>
+<li>Go to the Configuration Page <img src="http://i.imgur.com/weyxtOc.png" alt="ConfigurationPage">
+
+<ul>
+<li>Go to "School Management"
+
+<ul>
+<li>Click "New School" to create a new School. You'll be able to select the access method (used by SchoolControl to control Aerohive Access Points). <strong>Currently, only SSH is available</strong>, the API access method will be available as soon as Aerohive Control APIs are available. </li>
+</ul>
+</li>
+<li>Go to "API Configuration"
+
+<ul>
+<li>Click "Register APP": this will allow SchoolControl to get the needed credentials to request Aerohive HiveManager NG API</li>
+<li>On the "API Configuration" page, under the "School" column, click on "None" to assign the new API parameters to one of the configured School</li>
+</ul>
+</li>
+<li>Go to "Classrooms Management"
+
+<ul>
+<li>Click "New Classroom" to create a new classroom and assign a device. A classroom can have only one device, but a device can be assigned to several classrooms.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<h1>
+<a id="menus" class="anchor" href="#menus" aria-hidden="true"><span class="octicon octicon-link"></span></a>Menus</h1>
+
+<ul>
+<li>
+<img src="http://i.imgur.com/PAQIdIT.png" alt="ClassroomPage"> <strong>Classroom Page</strong>:
+
+<ul>
+<li>This page will list all the classrooms configured for a school, and the status of the assigned device. </li>
+<li>From this page, a user can enable/disable the Wi-Fi for a classroom, or access to all the schedules for this classroom.</li>
+<li>All the users (admin, operator and teacher) can access to this page</li>
+</ul>
+</li>
+<li>
+<img src="http://i.imgur.com/7W2MSrr.png" alt="LessonPage"> <strong>Lesson Page</strong>:
+
+<ul>
+<li>This page will list all the lessons/schedules for a school or for a classroom. </li>
+<li>From this page, a user can enable/disable the Wi-Fi for a classroom, or schedule an activation.</li>
+<li>All the users (admin, operator and teacher) can access to this page</li>
+</ul>
+</li>
+<li>
+<img src="http://i.imgur.com/YWBClPv.png" alt="DevicePage"> <strong>Devices Page</strong>:
+
+<ul>
+<li>This page will list all the devices connected to HiveManager NG. All the information are retrieved through Aerohive APIs.</li>
+<li>This page is only accessible for admin and operators</li>
+</ul>
+</li>
+<li>
+<img src="http://i.imgur.com/weyxtOc.png" alt="ConfigurationPage"> <strong>Configuration Page</strong>:
+
+<ul>
+<li>This page will give access to SchoolControl configuration:
+
+<ul>
+<li>Users management</li>
+<li>Classrooms management</li>
+<li>Schools management</li>
+<li>API configuration</li>
+</ul>
+</li>
+<li>This page is only accessible for admin and operators</li>
+</ul>
+</li>
+</ul>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/tmunzer">tmunzer</a></p>
