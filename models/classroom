@@ -12,18 +12,12 @@ function ClassroomSeralizer(row) {
 
 ClassroomSeralizer.prototype.updateDB = function (classroomId, callback) {
     db.updateDB("Classroom", classroomId, this.classroom, function (err) {
-        if (err) {
-            callback(err);
-        }
         callback(err);
     });
 };
 
 ClassroomSeralizer.prototype.insertDB = function (callback) {
     db.insertDB("Classroom", this.classroom, function (err) {
-        if (err) {
-            callback(err);
-        }
         callback(err);
     });
 };
@@ -39,15 +33,13 @@ function Classroom() {
     this.wifiEnabled = "";
 }
 
-function getDevice(DeviceId, callback) {
+function getDevice(DeviceId, SchoolId, callback) {
     var device = null;
     if (DeviceId > 0) {
-        Device.findById(DeviceId, null, function (err, device) {
+        Device.findOne({id: DeviceId, SchoolId: SchoolId}, null, function (err, device) {
             callback(device);
         });
-    } else {
-        callback(device);
-    }
+    } else callback(device);
 }
 
 function getSchoolName(SchoolId, callback) {
@@ -59,26 +51,17 @@ function getSchoolName(SchoolId, callback) {
             }
             callback(schoolName);
         });
-    } else {
-        callback(schoolName);
-    }
+    } else callback(schoolName);
 }
 
 function getWifiState(classroom, callback) {
     if (classroom.DeviceId > 0) {
         Lesson.findActive(classroom.id, classroom.SchoolId, function (err, ret) {
-            if (err) {
-                callback(err);
-            }
-            if (ret.length > 0) {
-                callback(true);
-            } else {
-                callback(false);
-            }
+            if (err) callback(err);
+            if (ret.length > 0) callback(true);
+            else callback(false);
         });
-    } else {
-        callback("");
-    }
+    } else callback("");
 }
 
 createClassroom = function (classroomFromDB, callback) {
@@ -88,10 +71,12 @@ createClassroom = function (classroomFromDB, callback) {
         classroom.classroomName = classroomFromDB.classroomName;
         classroom.DeviceId = classroomFromDB.DeviceId;
         classroom.SchoolId = classroomFromDB.SchoolId;
-        getDevice(classroom.DeviceId, function (device) {
+        getDevice(classroom.DeviceId, classroom.SchoolId, function (device) {
             if (device) {
                 classroom.deviceHostname = device.hostName;
                 classroom.deviceConnected = device.connected;
+            } else {
+                classroom.DeviceId = "";
             }
             getSchoolName(classroom.SchoolId, function (schoolName) {
                 classroom.schoolName = schoolName;
@@ -107,22 +92,18 @@ createClassroom = function (classroomFromDB, callback) {
 sortClassroom = function (classroomA, classroomB) {
     var a = classroomA.classroomName.toLowerCase();
     var b = classroomB.classroomName.toLowerCase();
-    if (a < b) {
-        return -1;
-    } else if (a > b) {
-        return 1;
-    } else {
-        return 0;
-    }
+
+    if (a < b) return -1;
+    else if (a > b) return 1;
+    else return 0;
 };
 
-findAll = function (fields, options, callback) {
-    db.findAll("Classroom", fields, options, function (err, classroomFromDB) {
-        if (err) {
-            callback(err);
-        } else if (classroomFromDB.length == 0) {
-            callback(null, null);
-        } else {
+findAll = function (filters, options, callback) {
+    var rOptions = options || {"orderBy": "classroomName"};
+    db.findAll("Classroom", filters, rOptions, function (err, classroomFromDB) {
+        if (err) callback(err);
+        else if (classroomFromDB.length == 0) callback(null, null);
+        else {
             var classroomList = [];
             var classroomNum = 0;
             for (var classroom in classroomFromDB) {
@@ -150,7 +131,7 @@ findActiveByDevice = function (DeviceId, SchoolId, callback) {
             " AND Lesson.startDate < " + currentDate +
             " AND " +
             " (Lesson.endDate > " + currentDate +
-            " OR Lesson.endDate = 0)",
+            " OR Lesson.endDate = 0) ORDER BY classroomName",
             function (err, ret) {
                 if (err) {
                     callback(err);
@@ -165,12 +146,10 @@ findActiveByDevice = function (DeviceId, SchoolId, callback) {
     }
 };
 
-findOne = function (fields, options, callback) {
-    db.findOne("Classroom", fields, options, function (err, classroomFromDB) {
-        if (err) {
-            callback(err);
-        }
-        createClassroom(classroomFromDB, function (classroom) {
+findOne = function (filters, options, callback) {
+    db.findOne("Classroom", filters, options, function (err, classroomFromDB) {
+        if (err) callback(err);
+        else  createClassroom(classroomFromDB, function (classroom) {
             callback(err, classroom);
         });
     });
@@ -178,42 +157,18 @@ findOne = function (fields, options, callback) {
 
 findById = function (rowId, options, callback) {
     db.findById("Classroom", rowId, options, function (err, classroomFromDB) {
-        if (err) {
-            callback(err);
-        } else if (!classroomFromDB) {
-            callback(null, null);
-        } else {
-            createClassroom(classroomFromDB, function (classroom) {
+        if (err) callback(err);
+        else if (!classroomFromDB) callback(null, null);
+        else createClassroom(classroomFromDB, function (classroom) {
                 callback(err, classroom);
             });
-        }
     });
 };
 
 getAll = function (options, callback) {
-    var rOptions = options || {"orderBy": "classroomName"};
-    db.getAll("Classroom", rOptions, function (err, classroomsFromDB) {
-        if (err) {
-            callback(err);
-        } else if (classroomsFromDB == null || classroomsFromDB.length == 0) {
-            callback(null, null);
-        } else {
-            if (classroomsFromDB) {
-                var insert = 0;
-                var classroomList = [];
-                for (var i = 0; i < classroomsFromDB.length; i++) {
-                    createClassroom(classroomsFromDB[i], function (user) {
-                        classroomList.push(user);
-                        insert++;
-                        if (insert == classroomsFromDB.length) {
-                            classroomList.sort(sortClassroom);
-                            callback(null, classroomList);
-                        }
-                    })
-                }
-            }
-        }
-    });
+    this.findAll(null, options, function(err, res){
+        callback(err, res);
+    })
 };
 
 deleteById = function (classroomId, callback) {

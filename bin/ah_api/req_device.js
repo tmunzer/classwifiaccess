@@ -21,9 +21,10 @@ module.exports.getDevices = function (api, callback) {
 
                 var device = devicesFromAPI[i];
                 device.SchoolId = api.SchoolId;
-                Device.findOne({serialId: device.serialId, SchoolId: api.SchoolId}, null, function (err, deviceToDB) {
+                Device.findOne({serialId: device.serialId}, null, function (err, deviceToDB) {
                     if (deviceToDB) {
                         var deviceSerialized = new Device.DeviceSerializer(this.device);
+                        deviceSerialized.device.ApiId = api.id;
                         deviceSerialized.updateDB(deviceToDB.id, function(err) {
                             deviceList.push(this.device);
                             processed++;
@@ -33,11 +34,12 @@ module.exports.getDevices = function (api, callback) {
                         }.bind({device:this.device}));
                     } else {
                         var deviceSerialized = new Device.DeviceSerializer(this.device);
+                        deviceSerialized.device.ApiId = api.id;
                         deviceSerialized.insertDB(function(err){
                             deviceList.push(this.device);
                             processed++;
                             if (processed == devicesFromAPI.length) {
-                                callback(deviceList)
+                                callback(null, deviceList)
                             }
                         }.bind({device:this.device}));
                     }

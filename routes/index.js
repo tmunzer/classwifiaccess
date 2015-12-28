@@ -23,6 +23,12 @@ var isAdmin = function (req, res, next) {
     res.redirect("back");
 };
 
+var isAtLeastOperator = function(req, res, next) {
+    if (req.user.GroupId <= 2){
+        return next();
+    }
+    res.redirect("back");
+};
 var translationFile = function(req, res, next) {
     var userLanguage;
     if (req.user){
@@ -61,22 +67,22 @@ module.exports = function(passport){
     require("./lesson")(router, isAuthenticated);
 
     /* Device Router */
-    require("./device")(router, isAuthenticated, isAdmin);
+    require("./device")(router, isAuthenticated, isAtLeastOperator);
 
     /* Conf Router */
-    require("./conf")(router, isAuthenticated, isAdmin);
+    require("./conf")(router, isAuthenticated, isAtLeastOperator);
 
     /* User Router */
-    require("./conf_user")(router, isAuthenticated, isAdmin);
+    require("./conf_user")(router, isAuthenticated, isAtLeastOperator);
 
     /* School Router */
-    require("./conf_school")(router, isAuthenticated, isAdmin);
+    require("./conf_school")(router, isAuthenticated, isAtLeastOperator);
 
     /* Classroom Router */
-    require("./conf_classroom")(router, isAuthenticated, isAdmin);
+    require("./conf_classroom")(router, isAuthenticated, isAtLeastOperator);
 
     /* API Router */
-    require("./conf_api")(router, isAuthenticated, isAdmin);
+    require("./conf_api")(router, isAuthenticated, isAtLeastOperator);
 
     /* Dev Router */
     require("./dev")(router, isAuthenticated, isAdmin);

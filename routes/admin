@@ -2,7 +2,7 @@ var School = require(appRoot + '/models/school');
 
 module.exports = function(router, isAuthenticated, isAdmin){
     /* GET Home Page */
-    router.post('/admin/changeSchool', isAuthenticated, function(req, res) {
+    router.post('/admin/changeSchool', isAuthenticated, isAdmin, function(req, res) {
             if (req.body.hasOwnProperty("SchoolId")) {
                 req.session.SchoolId = req.body.SchoolId;
             }

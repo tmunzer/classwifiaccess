@@ -4,16 +4,18 @@ var UILanguage = require(appRoot + '/models/UiLanguage');
 var School = require(appRoot + '/models/school');
 var Error = require(appRoot + '/routes/error');
 
-module.exports = function (router, isAuthenticated, isAdmin) {
+module.exports = function (router, isAuthenticated, isAtLeastOperator) {
     /* GET User Display page. */
-    router.get("/conf/user/", isAuthenticated, function (req, res, next) {
+    router.get("/conf/user/", isAuthenticated, isAtLeastOperator, function (req, res, next) {
         // save the userID requested
         var userIdToEdit = req.query.id;
-        // check if requested user to display is the same as the current user
-        // or if current user is an admin
-        if ((req.user.id == userIdToEdit) || (isAdmin)) {
+        var filterString = null;
+        // if user is not admin (ie if user is operator)
+        if (req.user.GroupId != 1) {
+            filterString = {SchoolId: req.user.SchoolId};
+        }
             // get the user to edit in the DB
-            User.findById(userIdToEdit, null, function (err, userToEdit) {
+            User.findById(userIdToEdit, filterString, function (err, userToEdit) {
                 if (err){
                     Error.render(err, "conf", req, res);
                 } else {
@@ -28,38 +30,37 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                     });
                 }
             });
-        } else {
-            res.redirect('/');
-        }
+
     });
 
     /* GET User Edit page. */
     router.get('/conf/user/edit', isAuthenticated, function (req, res, next) {
         var userIdToEdit = req.query.id;
+        // if user is not admin (ie if user is operator)
+        var filterStringSchool = null;
+        if (req.user.GroupId != 1){
+            filterStringSchool = {id: req.user.SchoolId};
+        }
         // check if requested user to display is the same as the current user
         // or if current user is an admin
-        if ((req.user.id == userIdToEdit) || (isAdmin)) {
+        if ((req.user.id == userIdToEdit) || (isAtLeastOperator)) {
             // get the user to edit in the DB
             User.findById(userIdToEdit, null, function (err, userToEdit) {
-                if (err){
-                    Error.render(err, "conf", req);
-                } else {
+                if (err) Error.render(err, "conf", req);
+                else {
                     // Find the language for this user
                     // list all groups to display
                     Group.getAll(null, function (err, groups) {
-                        if (err){
-                            Error.render(err, "conf", req);
-                        } else {
+                        if (err) Error.render(err, "conf", req);
+                        else {
                             // list all schools to display
-                            School.getAll(null, function (err, schools) {
-                                if (err){
-                                    Error.render(err, "conf", req);
-                                } else {
+                            School.findAll(filterStringSchool, null, function (err, schools) {
+                                if (err)Error.render(err, "conf", req);
+                                else {
                                     // list all languages to display
                                     UILanguage.getAll(null, function (err, languages) {
-                                        if (err){
-                                            Error.render(err, "conf", req);
-                                        } else {
+                                        if (err)Error.render(err, "conf", req);
+                                        else {
                                             // render the page
                                             res.render('conf_userEdit', {
                                                 user: req.user,
@@ -89,9 +90,13 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         var userIdToEdit = req.query.id;
         // check if requested user to display is the same as the current user
         // or if current user is an admin
-        if ((req.user.id == userIdToEdit) || (isAdmin)) {
+        if ((req.user.id == userIdToEdit) || (isAtLeastOperator)) {
             // serialize the user
             var UserSerializer = new User.UserSerializer(req.body);
+            // if user is not admin (ie if user is operator)
+            if (req.user.GroupId != 1) {
+                UserSerializer.user.SchoolId = req.user.SchoolId;
+            }
             // update the user
             UserSerializer.updateDB(userIdToEdit, function (err) {
                 if (err){
@@ -106,23 +111,23 @@ module.exports = function (router, isAuthenticated, isAdmin) {
     });
 
     /* GET New User page. */
-    router.get("/conf/user/new/", isAuthenticated, isAdmin, function (req, res, next) {
-        // Find the language for this user
+    router.get("/conf/user/new/", isAuthenticated, isAtLeastOperator, function (req, res, next) {
+        var filterStringSchool = null;
+        if (req.user.GroupId != 1){
+            filterStringSchool = {id: req.user.SchoolId};
+        }
         // list all groups to display
         Group.getAll(null, function (err, groups) {
-            if (err){
-                Error.render(err, "conf", req);
-            } else {
+            if (err) Error.render(err, "conf", req);
+            else {
                 // list all schools to display
-                School.getAll(null, function (err, schools) {
-                    if (err){
-                        Error.render(err, "conf", req);
-                    } else {
+                School.findAll(filterStringSchool, null, function (err, schools) {
+                    if (err) Error.render(err, "conf", req);
+                    else {
                         // list all languages to display
                         UILanguage.getAll(null, function (err, languages) {
-                            if (err){
-                                Error.render(err, "conf", req);
-                            } else {
+                            if (err) Error.render(err, "conf", req);
+                            else {
                                 // render the page
                                 res.render('conf_userEdit', {
                                     user: req.user,
@@ -143,9 +148,13 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         });
     });
     /* POST - SAVE New User Edit . */
-    router.post("/conf/user/new/", isAuthenticated, isAdmin, function (req, res, next) {
+    router.post("/conf/user/new/", isAuthenticated, isAtLeastOperator, function (req, res, next) {
         // serialize the user
         var userToDB = new User.UserSerializer(req.body);
+        // if user is not admin (ie if user is operator)
+        if (req.user.GroupId != 1) {
+            userToDB.user.GroupId = req.user.SchoolId;
+        }
         // update the user
         userToDB.insertDB(function (err) {
             if (err){
@@ -155,13 +164,18 @@ module.exports = function (router, isAuthenticated, isAdmin) {
             }
         });
     });
-    router.get('/conf/user/delete', isAuthenticated, isAdmin, function (req, res) {
+    router.get('/conf/user/delete', isAuthenticated, isAtLeastOperator, function (req, res) {
         if (req.query.hasOwnProperty("id")) {
-            var userId = req.query.id;
-            User.deleteById(userId, function () {
-                res.redirect("/conf");
+            var filterString = null;
+            // if user is not admin (ie if user is operator)
+            if (req.user.GroupId != 1) {
+                filterString = {SchoolId: req.user.SchoolId};
+            }
+            User.findById(req.query.id, filterString, function(err, user){
+                User.deleteById(user.id, function () {
+                    res.redirect("/conf");
+                })
             })
-
         }
     })
 };

@@ -47,13 +47,14 @@ html
                             li(style = lesson)
                                 a(href="/classroom/0/lesson/")
                                     i(class="fa fa-clock-o fa-lg")
-                            if user.GroupId == 1
+                            if user.GroupId <= 2
                                 li(style=device)
                                     a(href="/device/")
                                         i(class="fa fa-wifi fa-lg")
                                 li(style=conf)
                                     a(href="/conf/")
                                         i(class="fa fa-gear fa-lg")
+                            if user.GroupId == 1
                                 li(style=dev)
                                     a(href="/dev/")
                                         i(class="fa fa-terminal fa-lg")

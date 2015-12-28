@@ -43,7 +43,8 @@ var Sqlite = function(){
                 "simType VARCHAR(10), " +
                 "location VARCHAR(60)," +
                 "SchoolId INTEGER, " +
-                "connected BOOL)");
+                "connected BOOL, " +
+                "ApiId INTEGER)");
             db.run("CREATE TABLE Classroom (id integer primary key," +
                 "classroomName VARCHAR(30), " +
                 "DeviceId INTEGER," +
@@ -188,8 +189,23 @@ processOptions = function(rOptions){
     return { "columns": columnsString, "orderBy": orderByString};
 };
 
+processFilters = function(filters){
+    var filterString = "";
+    if (filters != null) {
+        var filterNum = 0;
+        for (var filterName in filters){
+            if (filterNum != 0){
+                filterString += " AND "
+            }
+            filterString += filterName + "='" + filters[filterName] +"'";
+            filterNum ++;
+        }
+        filterString = " WHERE (" + filterString + ")";
+    }
+    return filterString;
+};
 
-Sqlite.prototype.findOne = function(table, fields, options, callback){
+Sqlite.prototype.findOne = function(table, filters, options, callback){
     /**
      Find the first row matching the fields
      Table: Table to request
@@ -198,18 +214,9 @@ Sqlite.prototype.findOne = function(table, fields, options, callback){
         columns: columns to retrieve
         orderBy: how to sort the result
      */
-    var searchString = "";
-    var fieldNumber = 0;
-    for (var fieldName in fields){
-        if (fieldNumber != 0){
-            searchString += " AND "
-        }
-        searchString += fieldName + "='" + fields[fieldName] +"'";
-        fieldNumber ++;
-    }
-    searchString = "(" + searchString + ")";
+    var filterString = processFilters(filters);
     var rOptions = processOptions(options);
-    var selectString = "SELECT " + rOptions.columns + " FROM " + table + " WHERE "+ searchString;
+    var selectString = "SELECT " + rOptions.columns + " FROM " + table + filterString;
     logger.debug(selectString);
     this.db.get(selectString, function(err, ret){
         if (err){
@@ -219,7 +226,7 @@ Sqlite.prototype.findOne = function(table, fields, options, callback){
     });
 };
 
-Sqlite.prototype.findAll = function(table, fields, options, callback){
+Sqlite.prototype.findAll = function(table, filters, options, callback){
     /**
      Find the rows matching the fields
      Table: Table to request
@@ -228,18 +235,9 @@ Sqlite.prototype.findAll = function(table, fields, options, callback){
      columns: columns to retrieve
      orderBy: how to sort the result
      */
-    var searchString = "";
-    var fieldNumber = 0;
-    for (var fieldName in fields){
-        if (fieldNumber != 0){
-            searchString += " AND "
-        }
-        searchString += fieldName + "='" + fields[fieldName] +"'";
-        fieldNumber ++;
-    }
-    searchString = "(" + searchString + ")";
+    var filterString = processFilters(filters);
     var rOptions = processOptions(options);
-    var selectString = "SELECT " + rOptions.columns + " FROM " + table + " WHERE "+ searchString;
+    var selectString = "SELECT " + rOptions.columns + " FROM " + table + filterString;
     logger.debug(selectString);
     this.db.all(selectString, function(err, ret){
         if (err){
@@ -273,24 +271,6 @@ Sqlite.prototype.findById = function(table, rowId, options, callback){
 
 };
 
-Sqlite.prototype.getAll = function(table, options, callback){
-/**
-    Get all the row in the Database
-    Table: Table to request
-    Options: object {option: []} with the following options (optionals)
-        columns: columns to retrieve
-        orderBy: how to sort the result
- */
-    var rOptions = processOptions(options);
-    var allString = "SELECT " + rOptions.columns + " FROM " + table + rOptions.orderBy;
-    logger.debug(allString);
-    this.db.all(allString, function(err, ret){
-        if (err){
-            logger.error(err);
-        }
-        callback(err, ret);
-    })
-};
 
 Sqlite.prototype.deleteById = function (table, rId, callback){
     this.db.run("DELETE FROM " + table + " WHERE id = "+rId, function(err, ret){

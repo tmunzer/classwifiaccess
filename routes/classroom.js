@@ -7,13 +7,33 @@ var apiReq = require(appRoot + '/bin/ah_api/req_device');
 var Api = require(appRoot + "/models/api");
 var Error = require(appRoot + '/routes/error');
 
+function renderClassroom(filterString, schoolList, req, res){
+    Classroom.findAll(filterString, null, function (err, classroomList) {
+        if (err) {
+            Error.render(err, "classroom", req);
+        } else {
+            res.render('classroom', {
+                user: req.user,
+                current_page: 'classroom',
+                classroomList: classroomList,
+                schoolList: schoolList,
+                session: req.session,
+                user_button: req.translationFile.user_button,
+                classroom_page: req.translationFile.classroom_page,
+                buttons: req.translationFile.buttons
+            });
+        }
+    });
+}
+
 module.exports = function (router, isAuthenticated) {
-    /* GET Home Page */
+    /* GET classroom Page */
     router.get('/classroom/', isAuthenticated, function (req, res, next) {
         School.getAll(null, function (err, schoolList) {
             if (err){
                 Error.render(err, "classroom", req, res);
             } else {
+                // Filter the classroom view based on the current School
                 var filterString = {SchoolId: req.session.SchoolId};
                 Api.findAll({SchoolId: req.session.SchoolId}, null, function (err, apiList) {
                     if (err){
@@ -22,6 +42,7 @@ module.exports = function (router, isAuthenticated) {
                         var apiNum = 0;
                         var deviceList = [];
                         for (var i = 0; i < apiList.length; i++) {
+                            // Update the Device information for devices (request to ALL configured API for this school)
                             apiReq.getDevices(apiList[i], function (err, devices) {
                                 if (err) {
                                     Error.render(err, "classroom", req);
@@ -29,37 +50,13 @@ module.exports = function (router, isAuthenticated) {
                                     deviceList = deviceList.concat(devices);
                                     apiNum++;
                                     if (apiNum == apiList.length) {
-                                        Classroom.findAll(filterString, null, function (err, classroomList) {
-                                            if (err) {
-                                                Error.render(err, "classroom", req);
-                                            } else {
-                                                res.render('classroom', {
-                                                    user: req.user,
-                                                    current_page: 'classroom',
-                                                    classroomList: classroomList,
-                                                    schoolList: schoolList,
-                                                    session: req.session,
-                                                    user_button: req.translationFile.user_button,
-                                                    classroom_page: req.translationFile.classroom_page,
-                                                    buttons: req.translationFile.buttons
-                                                });
-                                            }
-                                        });
+                                        renderClassroom(filterString, schoolList, req, res);
                                     }
                                 }
                             }.bind(this));
                         }
                     } else {
-                        res.render('classroom', {
-                            user: req.user,
-                            current_page: 'classroom',
-                            classroomList: null,
-                            schoolList: schoolList,
-                            session: req.session,
-                            user_button: req.translationFile.user_button,
-                            classroom_page : req.translationFile.classroom_page,
-                            buttons: req.translationFile.buttons
-                        });
+                        renderClassroom(filterString, schoolList, req, res);
                     }
                 });
             }

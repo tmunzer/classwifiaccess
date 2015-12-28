@@ -24,7 +24,7 @@ function lessonEnableDone(LessonId, callback){
         else {
             lesson.startDone = "true";
             var lessonToDb = new Lesson.LessonSeralizer(lesson);
-            lessonToDb.updateDB(lesson.id, function(err){
+            lessonToDb.updateDB(LessonId, function(err){
                 callback(err);
             })
         }

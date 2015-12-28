@@ -11,18 +11,12 @@ function SchoolSerializer(row){
 
 SchoolSerializer.prototype.updateDB = function(schoolId, callback){
     db.updateDB("School", schoolId, this.school, function(err){
-        if (err){
-            callback(err);
-        }
         callback(err);
     });
 };
 
 SchoolSerializer.prototype.insertDB = function(callback){
     db.insertDB("School", this.school, function(err){
-        if (err){
-            callback(err);
-        }
         callback(err);
     });
 };
@@ -35,31 +29,27 @@ function School(){
     this.sshPassword="";
 }
 
-findOne = function(fields, options, callback){
-    db.findOne("School", fields, options, function(err, school){
-        if (err){
-            callback(err);
-        }
+findOne = function(filters, options, callback){
+    db.findOne("School", filters, options, function(err, school){
         callback(err, school);
     });
 };
 
 findById = function(rowId, options, callback){
     db.findById("School", rowId, options, function(err, school){
-        if (err){
-            return err;
-        }
         callback(err, school);
     });
 };
 
-getAll = function(options, callback){
-    var options = options || {"orderBy":"schoolName"};
-    db.getAll("School", options, function(err, schools){
-        if (err){
-            return err;
-        }
+findAll = function (filters, options, callback) {
+    var rOptions = options || {"orderBy":"schoolName"};
+    db.findAll("School", filters, rOptions, function (err, schools) {
         callback(err, schools);
+    })
+};
+getAll = function(options, callback){
+    this.findAll(null, options, function(err, res){
+        callback(err, res);
     })
 };
 
@@ -73,5 +63,6 @@ module.exports = School;
 module.exports.findOne = findOne;
 module.exports.findById = findById;
 module.exports.getAll = getAll;
+module.exports.findAll = findAll;
 module.exports.SchoolSerializer = SchoolSerializer;
 module.exports.deleteById = deleteByID;

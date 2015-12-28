@@ -11,32 +11,26 @@ function Group(){
     this.groupName="";
 }
 
-findOne = function(fields, options, callback){
-    db.findOne("UserGroup", fields, options, function(err, group){
-        if (err){
-            callback(err);
-        }
-        callback(err, group);
+findOne = function(filters, options, callback){
+    db.findOne("UserGroup", filters, options, function(err, group){
+        if (err) callback(err);
+        else callback(err, group);
     });
 };
 
 findById = function(rowId, options, callback){
     db.findById("UserGroup", rowId, options, function(err, group){
-        if (err){
-            return err;
-        }
-        callback(err, group);
+        if (err) callback(err);
+        else callback(err, group);
     });
 };
 
 getAll = function(options, callback){
-    var options = options || {"orderBy":"id"};
-    db.getAll("UserGroup", options, function(err, groups){
-        if (err){
-            return err;
-        }
-        callback(err, groups);
-    })
+    var rOptions = options || {"orderBy":"id"};
+    db.findAll("UserGroup", null, rOptions, function (err, groups) {
+        if (err) callback(err);
+        else callback(err, groups);
+    });
 };
 
 module.exports = Group;

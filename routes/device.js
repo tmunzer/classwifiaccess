@@ -16,9 +16,9 @@ sortDevices = function (deviceA, deviceB) {
     }
 };
 
-module.exports = function (router, isAuthenticated, isAdmin) {
+module.exports = function (router, isAuthenticated, isAtLeastOperator) {
     /* GET Home Page */
-    router.get('/device/', isAuthenticated, isAdmin, function (req, res, next) {
+    router.get('/device/', isAuthenticated, isAtLeastOperator, function (req, res, next) {
         School.getAll(null, function (err, schoolList) {
             if (err){
                 Error.render(err, "device", req, res);

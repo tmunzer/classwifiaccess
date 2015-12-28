@@ -1,5 +1,30 @@
 var Api = require(appRoot + "/models/api");
 var Error = require(appRoot + '/routes/error');
+var apiReq = require(appRoot + '/bin/ah_api/req_device');
+var Device = require(appRoot + "/models/device");
+var logger = require(appRoot + "/app").logger;
+
+function removeDevicesWhenApiIsUnasigned(api, callback) {
+    logger.warn("Removing devices linked to VHM " + api.vhmId);
+    Device.findAll({ApiId: api.id}, null, function (err, devices) {
+        if (err) callback(err);
+        else if (devices == null) callback(null);
+        else {
+            var deviceNum = 0;
+            var errors = [];
+            for (var i = 0; i < devices.length; i++) {
+                Device.deleteById(devices[i].id, function (err) {
+                    deviceNum++;
+                    if (err) errors.push(err);
+                    if (deviceNum == devices.length) {
+                        if (errors.length > 0) callback(errors);
+                        else callback(null);
+                    }
+                })
+            }
+        }
+    });
+}
 
 
 module.exports = function (router, isAuthenticated, isAdmin) {
@@ -17,7 +42,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                             var apiReg = new Api.ApiSerializer(apiDataJSON.data[owner]);
                             apiReg.SchoolId = 1;
                             apiReg.insertDB(function (err) {
-                                if (err){
+                                if (err) {
                                     Error.render(err, "conf", req, res);
                                 } else {
                                     res.redirect('/conf');
@@ -45,24 +70,46 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         }
     });
 
-    /* POST - SAVE User Edit page. */
+    /* POST - SAVE User Edit page.
+     Called when a API configuration is assigned to a School
+     */
     router.post("/conf/api/update", isAuthenticated, isAdmin, function (req, res, next) {
         var apiIdToEdit = req.query.id;
         // check if requested user to display is the same as the current user
         // or if current user is an admin
         // serialize the user
         Api.findById(apiIdToEdit, null, function (err, apiFromDB) {
-            if (err){
+            if (err) {
                 Error.render(err, "conf", req, res);
             } else {
                 var apiSerializer = new Api.ApiSerializer(apiFromDB);
+                if (apiSerializer.api.SchoolId == 1) apiSerializer.api.SchoolId = "";
                 apiSerializer.api.SchoolId = req.body.SchoolId;
                 // update the user
                 apiSerializer.updateDB(apiIdToEdit, function (err) {
-                    if (err){
-                        Error.render(err, "conf", req, res);
+                    // If error
+                    if (err) Error.render(err, "conf", req, res);
+                    // If the API is assigned to a new School
+                    else if (apiSerializer.api.SchoolId > 1) {
+                        // Removing all the devices linked to this API and assigned to this school
+                        removeDevicesWhenApiIsUnasigned(apiFromDB, function (err) {
+                            if (err) Error.render(err, "conf", req, res);
+                            else {
+                                // Retrieve the devices linked to this API and assigned them to the new school
+                                logger.warn("Retrieving devices linked to VHM " + apiFromDB.vhmId);
+                                apiReq.getDevices(apiFromDB, function (err) {
+                                    if (err) Error.render(err, "conf", req, res);
+                                    else res.redirect('/conf');
+                                });
+                            }
+                        });
                     } else {
-                        res.redirect('/conf');
+                        // Removing all the devices linked to this API and assigned to this school
+                        removeDevicesWhenApiIsUnasigned(apiFromDB, function (err) {
+                                if (err) Error.render(err, "conf", req, res);
+                                else res.redirect("/conf/")
+                            }
+                        )
                     }
                 });
             }

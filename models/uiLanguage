@@ -11,8 +11,8 @@ function UILanguages(){
     this.language="";
 }
 
-findOne = function(fields, options, callback){
-    db.findOne("UILanguage", fields, options, function(err, uiLanguage){
+findOne = function(filters, options, callback){
+    db.findOne("UILanguage", filters, options, function(err, uiLanguage){
 
         if (err){
             callback(err);
@@ -31,8 +31,8 @@ findById = function(rowId, options, callback){
 };
 
 getAll = function(options, callback){
-    var options = options || {"orderBy":"language"};
-    db.getAll("UILanguage", options, function(err, uiLanguages){
+    var rOptions = options || {"orderBy":"language"};
+    db.findAll("UILanguage", null, rOptions, function(err, uiLanguages){
         if (err){
             return err;
         }

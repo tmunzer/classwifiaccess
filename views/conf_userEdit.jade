@@ -46,13 +46,13 @@ block content
                     label(for="group")= user_page.school
                     select(class="form-control" name="SchoolId", disabled="disabled")
                         each item in schools
-                            if userToEdit.SchoolId == item.id
+                            if user.SchoolId == item.id
                                 option(value=item.id, selected="selected")= item.schoolName
                     hr
                     label(for="group")= user_page.group
                     select(class="form-control", disabled="disabled", name="GroupId")
                         each item in groups
-                            if userToEdit.GroupId == item.id
+                            if user.GroupId == item.id
                                 option(value=item.id, selected="selected")= item.groupName
             label(for="language")= user_page.language
             select(class="form-control" name="LanguageId")

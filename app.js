@@ -7,6 +7,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+//===============CREATE ROOT PATH=================
+
+var path = require('path');
+global.appRoot = path.resolve(__dirname);
 
 //===============CREATE APP=================
 

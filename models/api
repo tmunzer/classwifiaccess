@@ -64,9 +64,9 @@ createAPI = function(apiFromDB, callback){
     api.vpcUrl = apiFromDB.vpcUrl;
     api.accessToken = apiFromDB.accessToken;
     api.refreshToken = apiFromDB.refreshToken;
-    api.expireAt = apiFromDB.expireAt;
+    api.expireAt = new Date(apiFromDB.expireAt);
     api.SchoolId = apiFromDB.SchoolId;
-    if (api.SchoolId != "undefined"){
+    if (api.SchoolId > 0){
         School.findById(api.SchoolId, null, function(err, school){
             if (school){
                 api.schoolName = school.schoolName;
@@ -97,13 +97,11 @@ getSecret = function(){
     return apiConf.secret;
 };
 
-findOne = function(fields, options, callback){
-    db.findOne("API", fields, options, function(err, apiFromDB){
-        if (err){
-            callback(err);
-        } else if (!apiFromDB) {
-            callback(null, null);
-        } else {
+findOne = function(filters, options, callback){
+    db.findOne("API", filters, options, function(err, apiFromDB){
+        if (err) callback(err);
+        else if (!apiFromDB) callback(null, null);
+        else {
             createAPI(apiFromDB, function (api) {
                 callback(err, api);
             });
@@ -111,13 +109,12 @@ findOne = function(fields, options, callback){
     });
 };
 
-findAll = function(fields, options, callback){
-    db.findAll("API", fields, options, function(err, apiFromDB){
-        if (err){
-            callback(err);
-        } else if (apiFromDB.length == 0) {
-            callback(null, null);
-        } else {
+findAll = function(filters, options, callback){
+    var rOptions = options || {"orderBy":"vhmId"};
+    db.findAll("API", filters, rOptions, function(err, apiFromDB){
+        if (err) callback(err);
+        else if (apiFromDB.length == 0) callback(null, null);
+        else {
             var apiList = [];
             var apiNum = 0;
             for (var api in apiFromDB){
@@ -135,11 +132,9 @@ findAll = function(fields, options, callback){
 
 findById = function(rowId, options, callback){
     db.findById("API", rowId, options, function(err, apiFromDB){
-        if (err){
-            callback(err);
-        } else if (!apiFromDB) {
-            callback(null, null);
-        } else {
+        if (err) callback(err);
+        else if (!apiFromDB) callback(null, null);
+        else {
             createAPI(apiFromDB, function (api) {
                 callback(err, api);
             });
@@ -150,27 +145,8 @@ findById = function(rowId, options, callback){
 
 
 getAll = function(options, callback){
-    var rOptions = options || {"orderBy":"vhmId"};
-    db.getAll("API", rOptions, function(err, apisFromDB){
-        if (err){
-            callback(err);
-        } else if (!apisFromDB){
-            callback(null, null);
-        } else {
-            if (apisFromDB) {
-                var insert = 0;
-                var apis = [];
-                for (var i = 0; i < apisFromDB.length; i++) {
-                    createAPI(apisFromDB[i], function (api) {
-                        apis.push(api);
-                        insert ++;
-                        if (insert == apisFromDB.length) {
-                            callback(null, apis);
-                        }
-                    })
-                }
-            }
-        }
+    this.findAll(null, options, function(err, res){
+        callback(err, res)
     })
 };
 

@@ -31,18 +31,12 @@ function LessonSeralizer(row) {
 
 LessonSeralizer.prototype.updateDB = function (LessonId, callback) {
     db.updateDB("Lesson", LessonId, this.lesson, function (err) {
-        if (err) {
-            callback(err);
-        }
         callback(err);
     });
 };
 
 LessonSeralizer.prototype.insertDB = function (callback) {
     db.insertDB("Lesson", this.lesson, function (err, id) {
-        if (err) {
-            callback(err);
-        }
         callback(err, id);
     });
 };
@@ -67,13 +61,10 @@ function Lesson() {
 sortLesson = function (lessonA, lessonB) {
     var a = lessonA.startDateTs;
     var b = lessonB.startDateTs;
-    if (a > b) {
-        return -1;
-    } else if (a < b) {
-        return 1;
-    } else {
-        return 0;
-    }
+
+    if (a > b) return -1;
+    else if (a < b) return 1;
+    else return 0;
 };
 
 function getClassroomName(cId, callback){
@@ -97,28 +88,20 @@ function getUserUsername(uId, callback){
     var username = "";
     if (uId > 0){
         User.findById(uId, null, function (err, user){
-            if (user){
-                username = user.username;
-            }
+            if (user) username = user.username;
             callback(username)
         });
-    } else {
-        callback(username);
-    }
+    } else callback(username);
 }
 
 function getSchoolName(sId, callback){
     var schoolName = "";
     if (sId > 0){
         School.findById(sId, null, function (err, school){
-            if (school){
-                schoolName = school.schoolName;
-            }
+            if (school) schoolName = school.schoolName;
             callback(schoolName)
         });
-    } else {
-        callback(schoolName);
-    }
+    } else callback(schoolName);
 }
 
 createLesson = function (lessonFromDB, callback) {
@@ -162,13 +145,12 @@ createLesson = function (lessonFromDB, callback) {
 };
 
 
-findAll = function (fields, options, callback) {
-    db.findAll("Lesson", fields, options, function (err, lessonFromDB) {
-        if (err) {
-            callback(err);
-        } else if (lessonFromDB.length == 0) {
-            callback(null, null);
-        } else {
+findAll = function (filters, options, callback) {
+    var rOptions = options || {"orderBy": "startDate"};
+    db.findAll("Lesson", filters, rOptions, function (err, lessonFromDB) {
+        if (err) callback(err);
+        else if (lessonFromDB.length == 0) callback(null, null);
+        else {
             var lessonList = [];
             var lessonNum = 0;
             for (var classroom in lessonFromDB) {
@@ -268,8 +250,8 @@ findActiveButNotEnabled = function(SchoolId, callback) {
             }
         });
 };
-findOne = function (fields, options, callback) {
-    db.findOne("Lesson", fields, options, function (err, lessonFromDB) {
+findOne = function (filters, options, callback) {
+    db.findOne("Lesson", filters, options, function (err, lessonFromDB) {
         if (err) {
             callback(err);
         }
@@ -292,29 +274,9 @@ findById = function (rowId, options, callback) {
 
 
 getAll = function (options, callback) {
-    var rOptions = options || {"orderBy": "startDate"};
-    db.getAll("Lesson", rOptions, function (err, lessonsFromDB) {
-        if (err) {
-            callback(err);
-        } else if (lessonsFromDB.length == 0 || lessonsFromDB == null) {
-            callback(null, null);
-        } else {
-            if (lessonsFromDB) {
-                var insert = 0;
-                var lessonList = [];
-                for (var i = 0; i < lessonsFromDB.length; i++) {
-                    createLesson(lessonsFromDB[i], function (lesson) {
-                        lessonList.push(lesson);
-                        insert++;
-                        if (insert == lessonsFromDB.length) {
-                            lessonList.sort(sortLesson);
-                            callback(null, lessonList);
-                        }
-                    })
-                }
-            }
-        }
-    });
+    this.findAll(null, options, function(err, res){
+        callback(err, res);
+    })
 };
 
 deleteByID = function (lessonId, callback) {

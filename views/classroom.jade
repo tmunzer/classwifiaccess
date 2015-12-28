@@ -52,8 +52,7 @@ mixin classroom_entry(classroom)
                 a(href="/classroom/"+classroom.id+"/lesson/")
                     i(class="fa fa-calendar" style="margin:0em 1em; color="+buttonColor+";")
         hr.classroom
-        span= "Wi-Fi: "
-        span(class="label " + wifiEnableLabel)= wifiEnable
+        span(class="label " + wifiEnableLabel)="Wi-Fi " + wifiEnable
         hr.classroom
         div(class=divDeviceClass style="margin: 0; padding: 6px; width: 100%; box-shadow: none; font-size: 0.8em")
             i(class=warning style="margin-right:0.5em")
@@ -132,8 +131,8 @@ block content
                                 td(style="width:50%;background-color:white;")
                                     +classroom_entry(classroom)
                                 - var classroom = classroomList[itemNum++]
-                                if classroom
-                                    td(style="width:50%;background-color:white;")
+                                td(style="width:50%;background-color:white;")
+                                    if classroom
                                         +classroom_entry(classroom)
 
         script.

@@ -1,5 +1,61 @@
 extends layout
 
+mixin displaySchool(school)
+    if school.id != 1
+        if user.SchoolId == 1 || user.SchoolId == school.id
+            tr
+                td
+                    a(href="/conf/school?id=" + school.id)= school.schoolName
+                td= school.accessMethod
+                td
+                    div(style="float:right")
+                        a(href="/conf/school/edit?id=" + school.id, type='button', style="margin:auto 0.5em")
+                            i(class="fa fa-edit")
+                        if user.GroupId == 1
+                            a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('school', " + school.id + ")")
+                                i(class="fa fa-remove")
+
+mixin displayClassroom(classroom)
+    if user.SchoolId == 1 || user.SchoolId == classroom.SchoolId
+        tr
+            td= classroom.schoolName
+            td
+                a(href="/conf/classroom?id=" + classroom.id)= classroom.classroomName
+            td= classroom.deviceHostname
+            td
+                div(style="float:right")
+                    a(href="/conf/classroom/edit?id=" + classroom.id, type='button', style="margin:auto 0.5em")
+                        i(class="fa fa-edit")
+                    a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('classroom', " + classroom.id + ")")
+                        i(class="fa fa-remove")
+
+mixin displayApi(api)
+    tr
+        if user.GroupId == 1
+            if api.SchoolId == "" || api.SchoolId == 1 || api.SchoolId == "undefined"
+                td
+                    a(href="#", type='button', style="margin:auto 0.5em", onclick="api_conf(" + api.id + ")")= config_page.api_none
+            else
+                td
+                    a(href="#", type='button', style="margin:auto 0.5em", onclick="api_conf(" + api.id + ")")= api.schoolName
+        else
+            if api.SchoolId == "" || api.SchoolId == 1 || api.SchoolId == "undefined"
+                td= config_page.api_none
+            else
+                td= api.schoolName
+
+        td= api.ownerId
+        td= api.vhmId
+        td= api.vpcUrl
+        td= api.accessToken
+        td= api.expireAt
+        td
+            div(style="float:right")
+                a(href="/api/refresh?id=" + api.id, type='button', style="margin:auto 0.5em")
+                    i(class="fa fa-refresh")
+                a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('api', " + api.id + ")")
+                    i(class="fa fa-remove")
+
 block script_header
 
 block content
@@ -56,31 +112,7 @@ block content
                                     div(style="float:right") Action
                         tbody
                             each api in apiList
-                                tr
-                                    case api.SchoolId
-                                        when ""
-                                            td
-                                                a(href="#", type='button', style="margin:auto 0.5em", onclick="api_conf(" + api.id + ")")= config_page.api_none
-                                        when 1
-                                            td
-                                                a(href="#", type='button', style="margin:auto 0.5em", onclick="api_conf(" + api.id + ")")= config_page.api_none
-                                        when "undefined"
-                                            td
-                                                a(href="#", type='button', style="margin:auto 0.5em", onclick="api_conf(" + api.id + ")")= config_page.api_none
-                                        default
-                                            td
-                                                a(href="#", type='button', style="margin:auto 0.5em", onclick="api_conf(" + api.id + ")")= api.schoolName
-                                    td= api.ownerId
-                                    td= api.vhmId
-                                    td= api.vpcUrl
-                                    td= api.accessToken
-                                    td= api.expireAt
-                                    td
-                                        div(style="float:right")
-                                            a(href="/api/refresh?id=" + api.id, type='button', style="margin:auto 0.5em")
-                                                i(class="fa fa-refresh")
-                                            a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('api', " + api.id + ")")
-                                                i(class="fa fa-remove")
+                                + displayApi(api)
                div(role="tabpanel" class="tab-pane fade" id="user" aria-labelledby="user-tab")
                     a(href="/conf/user/new/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= user_page.new_user_button
                     table.table
@@ -145,19 +177,11 @@ block content
                                     div(style="float:right") Action
                         tbody
                             each classroom in classList
-                                tr
-                                    td= classroom.schoolName
-                                    td
-                                        a(href="/conf/classroom?id=" + classroom.id)= classroom.classroomName
-                                    td= classroom.deviceHostname
-                                    td
-                                        div(style="float:right")
-                                            a(href="/conf/classroom/edit?id=" + classroom.id, type='button', style="margin:auto 0.5em")
-                                                i(class="fa fa-edit")
-                                            a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('classroom', " + classroom.id + ")")
-                                                i(class="fa fa-remove")
+                                + displayClassroom(classroom)
+
                 div(role="tabpanel" class="tab-pane fade" id="school" aria-labelledby="school-tab")
-                    a(href="/conf/school/new/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= school_page.new_school_button
+                    if user.GroupId == 1
+                        a(href="/conf/school/new/", class='btn btn-primary', type='button', style="margin:0.2em 1em 2em 1em")= school_page.new_school_button
                     table.table
                         thead
                             tr
@@ -167,18 +191,7 @@ block content
                                     div(style="float:right") Action
                         tbody
                             each school in schoolList
-                                if school.id != 1
-                                    tr
-                                        td
-                                            a(href="/conf/school?id=" + school.id)= school.schoolName
-                                        td= school.accessMethod
-                                        td
-                                            div(style="float:right")
-                                                a(href="/conf/school/edit?id=" + school.id, type='button', style="margin:auto 0.5em")
-                                                    i(class="fa fa-edit")
-                                                a(href="#", type='button', style="margin:auto 0.5em", onclick="confirm_delete('school', " + school.id + ")")
-                                                    i(class="fa fa-remove")
-
+                                + displaySchool(school)
 
 
    script.

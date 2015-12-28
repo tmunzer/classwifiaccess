@@ -1,13 +1,18 @@
 var School = require(appRoot + '/models/school');
 var Error = require(appRoot + '/routes/error');
 
-module.exports = function (router, isAuthenticated, isAdmin) {
+module.exports = function (router, isAuthenticated, isAtLeastOperator) {
     /* GET User Display page. */
-    router.get("/conf/school/", isAuthenticated, isAdmin, function (req, res, next) {
+    router.get("/conf/school/", isAuthenticated, isAtLeastOperator, function (req, res, next) {
         // save the schoolID requested
         var schoolIdToEdit = req.query.id;
+        var filterString = null;
+        // if user is not admin (ie if user is operator)
+        if (req.user.GroupId != 1) {
+            filterString = {SchoolId: req.user.SchoolId};
+        }
         // get the school to edit in the DB
-        School.findById(schoolIdToEdit, null, function (err, schoolToEdit) {
+        School.findById(schoolIdToEdit, filterString, function (err, schoolToEdit) {
             if (err){
                 Error.render(err, "conf", req, res);
             } else {
@@ -25,28 +30,35 @@ module.exports = function (router, isAuthenticated, isAdmin) {
     });
 
     /* GET User Edit page. */
-    router.get('/conf/school/edit', isAuthenticated, isAdmin, function (req, res, next) {
+    router.get('/conf/school/edit', isAuthenticated, isAtLeastOperator, function (req, res, next) {
         var schoolIdToEdit = req.query.id;
-        // get the school to edit in the DB
-        School.findById(schoolIdToEdit, null, function (err, schoolToEdit) {
-            if (err){
-                Error.render(err, "conf", req, res);
-            } else {
-                // render the page
-                res.render('conf_schoolEdit', {
-                    user: req.user,
-                    current_page: 'conf',
-                    user_button: req.translationFile.user_button,
-                    schoolToEdit: schoolToEdit,
-                    school_page: req.translationFile.config_school_page,
-                    buttons: req.translationFile.buttons
-                });
-            }
-        });
+        // if user is admin or if schoolToEdit is the same as the operator's school
+        if ((req.user.GroupId == 1) || (req.user.SchoolId == schoolIdToEdit)) {
+            // get the school to edit in the DB
+            School.findById(schoolIdToEdit, null, function (err, schoolToEdit) {
+                if (err) {
+                    Error.render(err, "conf", req, res);
+                } else {
+                    // render the page
+                    res.render('conf_schoolEdit', {
+                        user: req.user,
+                        current_page: 'conf',
+                        user_button: req.translationFile.user_button,
+                        schoolToEdit: schoolToEdit,
+                        school_page: req.translationFile.config_school_page,
+                        buttons: req.translationFile.buttons
+                    });
+                }
+            });
+        } else {
+            res.redirect("back");
+        }
     });
     /* POST - SAVE User Edit page. */
-    router.post("/conf/school/edit", isAuthenticated, isAdmin, function (req, res, next) {
+    router.post("/conf/school/edit", isAuthenticated, isAtLeastOperator, function (req, res, next) {
         var schoolIdToEdit = req.query.id;
+        // if user is admin or if schoolToEdit is the same as the operator's school
+        if ((req.user.GroupId == 1) || (req.user.SchoolId == schoolIdToEdit)) {
         // serialize the school
         var SchoolSerializer = new School.SchoolSerializer(req.body);
         // update the user
@@ -57,10 +69,13 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                 res.redirect('/conf/school?id=' + schoolIdToEdit);
             }
         });
+        } else {
+            res.redirect("back");
+        }
     });
 
     /* GET New User page. */
-    router.get("/conf/school/new/", isAuthenticated, isAdmin, function (req, res, next) {
+    router.get("/conf/school/new/", isAuthenticated, isAtLeastOperator, function (req, res, next) {
         // Find the language for this user
         // render the page
         res.render('conf_schoolEdit', {
@@ -73,7 +88,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
         });
     });
     /* POST - SAVE New User Edit . */
-    router.post("/conf/school/new/", isAuthenticated, isAdmin, function (req, res, next) {
+    router.post("/conf/school/new/", isAuthenticated, isAtLeastOperator, function (req, res, next) {
         // serialize the user
         var schoolToDB = new School.SchoolSerializer(req.body);
         // update the school
@@ -85,7 +100,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
             }
         });
     });
-    router.get('/conf/school/delete', isAuthenticated, isAdmin, function (req, res) {
+    router.get('/conf/school/delete', isAuthenticated, isAtLeastOperator, function (req, res) {
         if (req.query.hasOwnProperty("id")) {
             var schoolId = req.query.id;
             School.deleteById(schoolId, function () {

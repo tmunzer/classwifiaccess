@@ -1,13 +1,10 @@
 #!/usr/bin/env node
-
-//===============CREATE ROOT PATH=================
-
-var path = require('path');
-global.appRoot = path.resolve(__dirname);
+var httpPort = '3080';
+var httpsPort = '3443';
 
 //===============DEPENDENCIES=================
 
-var app = require(appRoot + '/app');
+var app = require('./../app');
 var logger = require(appRoot + "/app").logger;
 var debug = require('debug')('SchoolControl:server');
 
@@ -15,7 +12,7 @@ var debug = require('debug')('SchoolControl:server');
 
 var http = require('http');
 
-var httpPort = normalizePort(process.env.PORT || '3080');
+var httpPort = normalizePort(process.env.PORT || httpPort);
 var httpServer = http.createServer(app);
 
 httpServer.listen(httpPort);
@@ -32,7 +29,7 @@ var https_options = {
   cert: fs.readFileSync(appRoot + '/cert/server.pem')
 };
 
-var httpsPort = normalizePort(process.env.PORT || '3443');
+var httpsPort = normalizePort(process.env.PORT || httpsPort);
 var httpsServer = https.createServer(https_options, app);
 
 httpsServer.listen(httpsPort);

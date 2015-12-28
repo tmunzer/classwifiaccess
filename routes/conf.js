@@ -5,24 +5,26 @@ var Classroom = require(appRoot + '/models/classroom');
 var School = require(appRoot + '/models/school');
 var Error = require(appRoot + '/routes/error');
 
-module.exports = function (router, isAuthenticated, isAdmin) {
-    router.get('/conf/', isAuthenticated, isAdmin, function (req, res, next) {
-        User.getAll(null, function (err, userList) {
-            if (err){
-                Error.render(err, "conf", req, res);
-            } else {
-                Api.getAll(null, function (err, apiList) {
-                    if (err){
-                        Error.render(err, "conf", req, res);
-                    } else {
-                        Classroom.getAll(null, function (err, classList) {
-                            if (err){
-                                Error.render(err, "conf", req, res);
-                            } else {
-                                School.getAll(null, function (err, schoolList) {
-                                    if (err){
-                                        Error.render(err, "conf", req, res);
-                                    } else {
+module.exports = function (router, isAuthenticated, isAtLeastOperator) {
+    router.get('/conf/', isAuthenticated, isAtLeastOperator, function (req, res, next) {
+        var filterString = null;
+        var filterStringSchool = null;
+        if (req.user.GroupId != 1){
+            filterString = {SchoolId: req.user.SchoolId};
+            filterStringSchool = {id: req.user.SchoolId};
+        }
+        User.findAll(filterString, null, function (err, userList) {
+            if (err) Error.render(err, "conf", req, res);
+            else {
+                Api.findAll(filterString, null, function (err, apiList) {
+                    if (err) Error.render(err, "conf", req, res);
+                    else {
+                        Classroom.findAll(filterString, null, function (err, classList) {
+                            if (err) Error.render(err, "conf", req, res);
+                            else {
+                                School.findAll(filterStringSchool, null, function (err, schoolList) {
+                                    if (err) Error.render(err, "conf", req, res);
+                                    else {
                                         res.render('conf', {
                                             user: req.user,
                                             current_page: 'conf',
