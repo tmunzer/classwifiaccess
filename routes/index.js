@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var Error = require('./error');
+var Error = require(appRoot + '/routes/error');
 
 var isAuthenticated = function (req, res, next) {
     // if user is authenticated in the session, call the next() to call the next request handler
@@ -84,7 +84,7 @@ module.exports = function(passport){
     require("./admin")(router, isAuthenticated, isAdmin);
 
     router.get("*", function(req, res, next){
-        res.status(404);
+        res.redirect("/classroom");
     });
     return router;
 

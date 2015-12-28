@@ -1,5 +1,5 @@
-var db = require("./../app").db;
-var School = require('./school');
+var db = require(appRoot + "/app").db;
+var School = require(appRoot + '/models/school');
 
 function DeviceSerializer(row) {
     this.device = {};
@@ -21,7 +21,6 @@ DeviceSerializer.prototype.insertDB = function (callback) {
         if (err) {
             callback(err);
         }
-        console.log("Device InsertDB");
         callback(err);
     });
 };
@@ -31,7 +30,6 @@ DeviceSerializer.prototype.updateDB = function (rowId, callback) {
         if (err) {
             callback(err);
         }
-        console.log("Device UpdateDB");
         callback(err);
     });
 };

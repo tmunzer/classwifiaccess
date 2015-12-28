@@ -1,4 +1,4 @@
-var Error = require('./error');
+var logger = require(appRoot + "/app").logger;
 
 module.exports = function(router, passport){
     /* GET login page. */
@@ -9,15 +9,16 @@ module.exports = function(router, passport){
 
     /* Handle Login POST */
     router.post('/login/', passport.authenticate('login', {
-        successRedirect: '/classroom',
+        successRedirect: '/classroom/',
         failureRedirect: '/login/',
         failureFlash : true
     }));
 
     /* Handle Logout */
     router.get('/logout/', function(req, res) {
+        logger.info("User " + req.user.username + " is now logged out.");
         req.logout();
         req.session.destroy();
-        res.redirect('/login');
+        res.redirect('/login/');
     });
 };

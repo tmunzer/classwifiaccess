@@ -1,7 +1,7 @@
-var Classroom = require('./../models/classroom');
-var Device = require("./../models/device");
-var School = require("./../models/school");
-var Error = require('./error');
+var Classroom = require(appRoot + '/models/classroom');
+var Device = require(appRoot + "/models/device");
+var School = require(appRoot + "/models/school");
+var Error = require(appRoot + '/routes/error');
 
 
 module.exports = function (router, isAuthenticated, isAdmin) {

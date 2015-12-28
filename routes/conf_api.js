@@ -1,5 +1,5 @@
-var Api = require("./../models/api");
-var Error = require('./error');
+var Api = require(appRoot + "/models/api");
+var Error = require(appRoot + '/routes/error');
 
 
 module.exports = function (router, isAuthenticated, isAdmin) {

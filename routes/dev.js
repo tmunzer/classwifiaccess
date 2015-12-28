@@ -1,7 +1,7 @@
-var apiDev = require("./../bin/ah_api/req_dev").dev;
-var Api = require("./../models/api");
-var School = require("./../models/school");
-var SSH = require("./../bin/ssh/ssh");
+var apiDev = require(appRoot + "/bin/ah_api/req_dev").dev;
+var Api = require(appRoot + "/models/api");
+var School = require(appRoot + "/models/school");
+var SSH = require(appRoot + "/bin/ssh/ssh");
 
 module.exports = function (router, isAuthenticated, isAdmin) {
     /* GET Dev tools */
@@ -45,7 +45,6 @@ module.exports = function (router, isAuthenticated, isAdmin) {
                                         schoolList: schoolList
                                     });
                                 } else {
-                                    console.log(result);
                                     res.send(result);
                                 }
                             });

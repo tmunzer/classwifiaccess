@@ -1,9 +1,9 @@
-var User = require("./../models/user");
-var Group = require("./../models/group");
-var Api = require("./../models/api");
-var Classroom = require('./../models/classroom');
-var School = require('./../models/school');
-var Error = require('./error');
+var User = require(appRoot + "/models/user");
+var Group = require(appRoot + "/models/group");
+var Api = require(appRoot + "/models/api");
+var Classroom = require(appRoot + '/models/classroom');
+var School = require(appRoot + '/models/school');
+var Error = require(appRoot + '/routes/error');
 
 module.exports = function (router, isAuthenticated, isAdmin) {
     router.get('/conf/', isAuthenticated, isAdmin, function (req, res, next) {

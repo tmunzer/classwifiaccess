@@ -1,7 +1,7 @@
-var db = require("./../app").db;
-var Group = require('./group');
-var School = require('./school');
-var UiLanguage = require('./uiLanguage');
+var db = require(appRoot + "/app").db;
+var Group = require(appRoot + '/models/group');
+var School = require(appRoot + '/models/school');
+var UiLanguage = require(appRoot + '/models/uiLanguage');
 
 /////////////////////////////// Update the lastLogin entry ///////////////////////////////
 newLogin = function(userId, callback){
@@ -9,7 +9,6 @@ newLogin = function(userId, callback){
         if (err){
             callback(err);
         }
-        console.log("User UpdateDB");
         callback(err);
     });
 };
@@ -38,7 +37,6 @@ UserSerializer.prototype.updateDB = function(userId, callback){
         if (err){
             callback(err);
         }
-        console.log("User UpdateDB");
         callback(err);
     });
 };

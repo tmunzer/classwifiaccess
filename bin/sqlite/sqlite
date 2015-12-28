@@ -1,8 +1,8 @@
 var bCrypt = require('bcrypt');
-var file = "./sqlite/local.db";
+var file = appRoot + "/bin/sqlite/local.db";
 var sqlite3 = require("sqlite3").verbose();
 var fs = require("fs");
-
+var logger = require(appRoot + "/app").logger;
 
 var Sqlite = function(){
     var exists = fs.existsSync(file);
@@ -61,6 +61,7 @@ var Sqlite = function(){
                 "code VARCHAR(6))");
             db.run('CREATE TABLE School (id integer primary key,' +
                 'schoolName VARCHAR(32), ' +
+                'accessMethod VARCHAR(3), ' +
                 'sshAdmin VARCHAR(32), ' +
                 'sshPassword VARCHAR(64))');
             db.run("INSERT INTO User VALUES (1, '', '', '', 'admin', '"+createHash("aerohive")+"', 'true', '', '1', '', '1')");
@@ -76,10 +77,10 @@ var Sqlite = function(){
 };
 
 Sqlite.prototype.customSelect = function(table, filter_string, callback){
-    console.log('SELECT * FROM ' + table + " WHERE " + filter_string);
+    logger.debug('SELECT * FROM ' + table + " WHERE " + filter_string);
     this.db.all('SELECT * FROM ' + table + " WHERE " + filter_string, function(err, ret){
         if (err){
-            callback(err);
+            logger.error(err);
         }
         callback(err, ret);
     });
@@ -92,10 +93,10 @@ Sqlite.prototype.customJoin = function(fields, table1, table2, table1JoinId, tab
     var queryString = 'SELECT ' + fields+ ' FROM ' + table1 + " INNER JOIN " + table2 +
         " ON " + table1JoinId + " = " + table2JoinId +
         " WHERE " + filterString;
-    console.log(queryString);
+    logger.debug(queryString);
     this.db.all(queryString, function(err, ret){
         if (err){
-            callback(err);
+            logger.error(err);
         }
         callback(err, ret);
     });
@@ -122,10 +123,10 @@ Sqlite.prototype.updateDB = function(table, rowId, entries, callback){
         }
     }
     updateString = 'UPDATE ' + table + ' SET ' + updateString + ' WHERE id=' + rowId + ";" ;
-    console.log(updateString);
+    logger.debug(updateString);
     this.db.run(updateString, function(err){
         if (err){
-            return err;
+            logger.error(err);
         }
         callback(err);
     })
@@ -153,10 +154,10 @@ Sqlite.prototype.insertDB = function(table, rows, callback){
         }
     }
     var insertString = 'INSERT INTO ' + table + ' (' + insertFields + ') VALUES (' + insertValues + ");" ;
-    console.log(insertString);
+    logger.debug(insertString);
     this.db.run(insertString, function(err){
         if (err){
-            callback(err);
+            logger.error(err);
         }
         callback(err, this.lastID);
     });
@@ -209,10 +210,10 @@ Sqlite.prototype.findOne = function(table, fields, options, callback){
     searchString = "(" + searchString + ")";
     var rOptions = processOptions(options);
     var selectString = "SELECT " + rOptions.columns + " FROM " + table + " WHERE "+ searchString;
-    //console.log(selectString);
+    logger.debug(selectString);
     this.db.get(selectString, function(err, ret){
         if (err){
-            callback(err);
+            logger.error(err);
         }
         callback(err, ret);
     });
@@ -239,10 +240,10 @@ Sqlite.prototype.findAll = function(table, fields, options, callback){
     searchString = "(" + searchString + ")";
     var rOptions = processOptions(options);
     var selectString = "SELECT " + rOptions.columns + " FROM " + table + " WHERE "+ searchString;
-    //console.log(selectString);
+    logger.debug(selectString);
     this.db.all(selectString, function(err, ret){
         if (err){
-            callback(err);
+            logger.error(err);
         }
         callback(err, ret);
     });
@@ -259,10 +260,10 @@ Sqlite.prototype.findById = function(table, rowId, options, callback){
     if (rowId >= 0){
         var rOptions = processOptions(options);
         var getString = "SELECT " + rOptions.columns + " FROM " + table + " WHERE id = " + rowId;
-        //console.log(getString);
+        logger.debug(getString);
         this.db.get(getString, function(err, ret){
             if (err){
-                throw err;
+                logger.error(err);
             }
             callback(err, ret);
         });
@@ -282,10 +283,10 @@ Sqlite.prototype.getAll = function(table, options, callback){
  */
     var rOptions = processOptions(options);
     var allString = "SELECT " + rOptions.columns + " FROM " + table + rOptions.orderBy;
-    //console.log(allString);
+    logger.debug(allString);
     this.db.all(allString, function(err, ret){
         if (err){
-            throw err;
+            logger.error(err);
         }
         callback(err, ret);
     })
@@ -294,7 +295,7 @@ Sqlite.prototype.getAll = function(table, options, callback){
 Sqlite.prototype.deleteById = function (table, rId, callback){
     this.db.run("DELETE FROM " + table + " WHERE id = "+rId, function(err, ret){
         if (err){
-            throw err;
+            logger.error(err);
         }
         callback(err, ret);
     });

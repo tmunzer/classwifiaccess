@@ -1,4 +1,5 @@
-var School = require('./../models/school');
+var School = require(appRoot + '/models/school');
+
 module.exports = function(router, isAuthenticated, isAdmin){
     /* GET Home Page */
     router.post('/admin/changeSchool', isAuthenticated, function(req, res) {

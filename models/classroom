@@ -1,7 +1,7 @@
-var db = require("./../app").db;
-var School = require("./school");
-var Device = require("./device");
-var Lesson = require("./lesson");
+var db = require(appRoot + "/app").db;
+var School = require(appRoot + "/models/school");
+var Device = require(appRoot + "/models/device");
+var Lesson = require(appRoot + "/models/lesson");
 
 function ClassroomSeralizer(row) {
     this.classroom = {};
@@ -15,7 +15,6 @@ ClassroomSeralizer.prototype.updateDB = function (classroomId, callback) {
         if (err) {
             callback(err);
         }
-        console.log("Classroom UpdateDB");
         callback(err);
     });
 };
@@ -25,7 +24,6 @@ ClassroomSeralizer.prototype.insertDB = function (callback) {
         if (err) {
             callback(err);
         }
-        console.log("Classroom InsertDB");
         callback(err);
     });
 };

@@ -1,7 +1,7 @@
-var db = require("./../app").db;
-var apiAuth = require("./../bin/ah_api/auth");
-var apiConf = require("./../bin/ah_api/config");
-var School = require("./school");
+var db = require(appRoot + "/app").db;
+var apiAuth = require(appRoot + "/bin/ah_api/auth");
+var apiConf = require(appRoot + "/bin/ah_api/config");
+var School = require(appRoot + "/models/school");
 
 function ApiSerializer(row){
     this.api = {};
@@ -20,7 +20,6 @@ ApiSerializer.prototype.updateDB = function(apiId, callback){
         if (err){
             callback(err);
         }
-        console.log("API UpdateDB");
         callback(err);
     });
 };
@@ -30,7 +29,6 @@ ApiSerializer.prototype.insertDB = function(callback){
         if (err){
             callback(err);
         }
-        console.log("API InsertDB");
         callback(err);
     });
 };

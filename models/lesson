@@ -1,6 +1,6 @@
-var db = require("./../app").db;
-var School = require("./school");
-var User = require("./user");
+var db = require(appRoot + "/app").db;
+var School = require(appRoot + "/models/school");
+var User = require(appRoot + "/models/user");
 
 function LessonSeralizer(row) {
     this.lesson = {};
@@ -34,7 +34,6 @@ LessonSeralizer.prototype.updateDB = function (LessonId, callback) {
         if (err) {
             callback(err);
         }
-        console.log("Lesson UpdateDB");
         callback(err);
     });
 };
@@ -44,7 +43,6 @@ LessonSeralizer.prototype.insertDB = function (callback) {
         if (err) {
             callback(err);
         }
-        console.log("Lesson InsertDB");
         callback(err, id);
     });
 };
@@ -79,7 +77,7 @@ sortLesson = function (lessonA, lessonB) {
 };
 
 function getClassroomName(cId, callback){
-    var Classroom = require("./classroom");
+    var Classroom = require(appRoot + "/models/classroom");
     var classroomName = "";
     if (cId > 0) {
         Classroom.findById(cId, null, function (err, classroom) {

@@ -162,6 +162,7 @@ block content
                         thead
                             tr
                                 th= school_page.schoolName
+                                th= school_page.access_method
                                 th
                                     div(style="float:right") Action
                         tbody
@@ -170,6 +171,7 @@ block content
                                     tr
                                         td
                                             a(href="/conf/school?id=" + school.id)= school.schoolName
+                                        td= school.accessMethod
                                         td
                                             div(style="float:right")
                                                 a(href="/conf/school/edit?id=" + school.id, type='button', style="margin:auto 0.5em")

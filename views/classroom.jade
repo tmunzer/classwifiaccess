@@ -159,7 +159,8 @@ block content
                     minDate: new Date(),
                     collapse: false,
                     sideBySide: true,
-                    stepping: 5,
+                    date: new Date(new Date().getTime() + 300000),
+                    minDate: new Date(new Date().getTime() + 300000),
                     format: "MM/DD/YYYY HH:mm"
                 });
                 $('.row_activation').click(function(){

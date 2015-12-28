@@ -65,7 +65,7 @@ block content
                 input(type="hidden", name="userEnable", value=userToEdit.userEnable)
             else
                 label(for="enable")= user_page.enable
-                if userToEdit.userEnable
+                if userToEdit.userEnable == "true"
                     input(type="checkbox", name="userEnable", style="margin-left:1em", checked)
                 else
                     input(type="checkbox", name="userEnable", style="margin-left:1em")

@@ -1,5 +1,6 @@
 var https = require('https');
-var apiDB = require('./../../models/api');
+var apiDB = require(appRoot + '/models/api');
+var logger = require(appRoot + "/app").logger;
 
 
 module.exports.apiRequest = function (api, path, callback) {
@@ -21,12 +22,13 @@ module.exports.apiRequest = function (api, path, callback) {
             'Authorization': "Bearer " + api.accessToken
         }
     };
+    logger.info(options);
     result.request.options = options;
     var req = https.request(options, function (res) {
         result.result.status = res.statusCode;
-        console.log('STATUS: ' + result.result.status);
+        logger.info('STATUS: ' + result.result.status);
         result.result.headers = JSON.stringify(res.headers);
-        console.log('HEADERS: ' + result.result.headers);
+        logger.info('HEADERS: ' + result.result.headers);
         res.setEncoding('utf8');
         var data = '';
         res.on('data', function (chunk) {
@@ -43,7 +45,7 @@ module.exports.apiRequest = function (api, path, callback) {
                     callback(null, result);
                     break;
                 default:
-                    console.log("=====ERROR1=====");
+                    logger.error(result);
                     callback(result.error, result);
                     break;
 

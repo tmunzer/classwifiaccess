@@ -1,4 +1,4 @@
-var db = require("./../app").db;
+var db = require(appRoot + "/app").db;
 
 function UiLanguageSerializer(row){
     this.uiLanguage = {};

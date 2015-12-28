@@ -1,11 +1,11 @@
-var User = require("./../models/user");
-var api = require('./../bin/ah_api/req');
-var Classroom = require('./../models/classroom');
-var School = require("./../models/school");
-var Lesson = require("./../models/lesson");
-var apiReq = require('./../bin/ah_api/req_device');
-var Api = require("./../models/api");
-var Error = require('./error');
+var User = require(appRoot + "/models/user");
+var api = require(appRoot + '/bin/ah_api/req');
+var Classroom = require(appRoot + '/models/classroom');
+var School = require(appRoot + "/models/school");
+var Lesson = require(appRoot + "/models/lesson");
+var apiReq = require(appRoot + '/bin/ah_api/req_device');
+var Api = require(appRoot + "/models/api");
+var Error = require(appRoot + '/routes/error');
 
 module.exports = function (router, isAuthenticated) {
     /* GET Home Page */

@@ -1,5 +1,5 @@
-var login = require('./login');
-var User = require('../models/user');
+var login = require(appRoot + '/passport/login');
+var User = require(appRoot + '/models/user');
 
 module.exports = function(passport){
 

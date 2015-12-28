@@ -1,4 +1,4 @@
-var apiRequest = require("./req").apiRequest;
+var apiRequest = require(appRoot + "/bin/ah_api/req").apiRequest;
 
 
 module.exports.dev = function (apiId, path, callback) {

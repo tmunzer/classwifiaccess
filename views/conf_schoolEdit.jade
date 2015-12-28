@@ -11,12 +11,12 @@ block content
             div(class="row" data-name="api").spanSelect
                 div(class="input-group" )
                     span(class="input-group-addon" )
-                        input(type="radio" aria-label="api" name="waccess" id="api" value="api" )
+                        input(type="radio" aria-label="api" name="accessMethod" id="api" value="api" )
                     span(aria-label="api" class="input-group-addon" style="width:100%;text-align: left;border:1px solid #ccc")= school_page.api
             div(class="row"  data-name="ssh").spanSelect
                 div(class="input-group")
                     span(class="input-group-addon")
-                        input(type="radio" aria-label="ssh" name="waccess" id="ssh" value="ssh" checked="checked")
+                        input(type="radio" aria-label="ssh" name="accessMethod" id="ssh" value="ssh" checked="checked")
                     span(aria-label="ssh" class="input-group-addon" style="width:100%;text-align: left;border:1px solid #ccc")= school_page.ssh
             div(id="ssh_param" style="display:none;")
                 div(class="alert alert-danger" style="margin: 0; padding: 6px; width: 100%; box-shadow: none; font-size: 0.8em")

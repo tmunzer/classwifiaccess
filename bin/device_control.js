@@ -1,8 +1,9 @@
-var ssh = require('./ssh/ssh');
-var Classroom = require("./../models/classroom");
-var School = require("./../models/school");
-var Device = require("./../models/device");
-var Lesson = require("./../models/lesson");
+var ssh = require(appRoot + '/bin/ssh/ssh');
+var Classroom = require(appRoot + "/models/classroom");
+var School = require(appRoot + "/models/school");
+var Device = require(appRoot + "/models/device");
+var Lesson = require(appRoot + "/models/lesson");
+var logger = require(appRoot + "/app").logger;
 
 
 function lessonDisableDone(LessonId, callback){
@@ -92,31 +93,32 @@ function enableWiFi(DeviceId, SchoolId, LessonId, callback) {
         });
     });
 }
+
 function checkLessons(){
-    console.log("check lessons");
+    logger.info("New CRON turn -- " + new Date() + " -- Checking lessons.");
     School.getAll(null, function(err, schools){
-        if (err) console.log("===== CRON ERROR #1: "+err);
+        if (err) logger.warn("CheckLessons (0): "+err);
         else {
             for (var snum in schools){
                 var schoolId = schools[snum].id;
 
                 Lesson.findActiveButNotEnabled(schoolId, function (err, lessons){
-                    if (err) console.log("===== CRON ERROR #2.1: "+err);
+                    if (err) logger.warn("CheckLessons (1.0): "+err);
                     for (var lnum in lessons){
                         var lesson = lessons[lnum];
                         enableWiFi(lesson.DeviceId, this.schoolId, lesson.id, function(err){
-                            if (err) console.log("===== CRON ERROR #2.2: "+err);
+                            if (err) logger.warn("CheckLessons (1.1): "+err);
                         }.bind({lesson: lesson}))
                     }
                 }.bind({schoolId:schoolId}));
 
 
                 Lesson.findPassedButNotDisabled(schoolId, function (err, lessons){
-                    if (err) console.log("===== CRON ERROR #3.1: "+err);
+                    if (err) logger.warn("CheckLessons (2.0): "+err);
                     for (var lnum in lessons){
                         var lesson = lessons[lnum];
                         disableWiFi(lesson.DeviceId, this.schoolId, lesson.id, function(err){
-                            if (err) console.log("===== CRON ERROR #3.2: "+err);
+                            if (err) logger.warn("CheckLessons (2.1): "+err);
                         }.bind({lesson: lesson, schoolId: this.schoolId}))
                     }
                 }.bind({schoolId:schoolId}));

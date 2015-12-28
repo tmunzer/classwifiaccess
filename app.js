@@ -4,14 +4,47 @@
 var express = require('express');
 var path = require('path');
 //var favicon = require('serve-favicon');
-var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+
 
 //===============CREATE APP=================
 
 var app = express();
 
+//=============CREATE LOGGER===============
+var winston = require('winston');
+winston.emitErrs = true;
+var logger = new winston.Logger({
+    transports: [
+        new winston.transports.File({
+            level: 'info',
+            filename: __dirname + '/logs/all-logs.log',
+            handleExceptions: true,
+            json: true,
+            maxsize: 5242880, //5MB
+            maxFiles: 5,
+            colorize: false
+        }),
+        new winston.transports.Console({
+            level: 'debug',
+            handleExceptions: true,
+            json: false,
+            colorize: true
+        })
+    ],
+    exitOnError: false
+});
+
+module.exports.logger = logger;
+module.exports.logger.stream = {
+    write: function(message, encoding){
+        logger.info(message);
+    }
+};
+
+logger.debug("Overriding 'Express' logger");
+app.use(require('morgan')({ "stream": logger.stream }));
 //===============CONF APP=================
 
 // view engine setup
@@ -20,7 +53,6 @@ app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
@@ -95,13 +127,12 @@ try {
     new CronJob({
             cronTime: "0 */1 * * * *",
             onTick: function () {
-                console.log("========== CRON");
                 Control.checkLessons();
             },
             start: true
         });
 }catch(ex) {
-    console.log("cron pattern not valid");
+    logger.warn("cron pattern not valid");
 }
 
 module.exports = app;

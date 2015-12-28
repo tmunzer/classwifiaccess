@@ -1,8 +1,8 @@
-var User = require("./../models/user");
-var apiReq = require('./../bin/ah_api/req_device');
-var Api = require("./../models/api");
-var School = require("./../models/school");
-var Error = require('./error');
+var User = require(appRoot + "/models/user");
+var apiReq = require(appRoot + '/bin/ah_api/req_device');
+var Api = require(appRoot + "/models/api");
+var School = require(appRoot + "/models/school");
+var Error = require(appRoot + '/routes/error');
 
 sortDevices = function (deviceA, deviceB) {
     var a = deviceA.hostName.toLowerCase();

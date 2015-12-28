@@ -3,6 +3,7 @@ extends layout_admin
 block content
     - var action = "/classroom/" + displayedClassroom + "/lesson/new/"
     - var activationDate = ""
+    - var activationDateClass = ""
     - var manualDeactivation = true
     - var deactivationAt = ""
     - var deactivationAtDate = ""
@@ -12,7 +13,8 @@ block content
         if currentLesson.endDateTs != 0
             - manualDeactivation = false
             - deactivationAtDate = currentLesson.endDate
-
+        if currentLesson.lessonStatus != "future"
+            - var activationDateClass = "not-active"
 
     div(style="width:50%; margin:auto")
         form(action=action method="POST" class="form-horizontal")
@@ -30,14 +32,14 @@ block content
             hr
             if activation != 'now'
                 label(for="startDate")= activation_page.startDate
-                div(class="form-group" style="margin:5%")
+                div(class="form-group " + activationDateClass style="margin:5%")
                     div(class='input-group date')
                         input(type='text' class="form-control" name="startDate" id='startDatePicker' placeholder=activationDate)
                         span(class="input-group-addon")
                             span(class="glyphicon glyphicon-calendar")
                 hr
             label= activation_page.endDate
-            div(class="row" data-name="unlimited").spanSelect
+            div(class="row" data-name="unlimited").spanSelect.row_activation
                 div(class="input-group")
                     span(class="input-group-addon" )
                         if manualDeactivation == true
@@ -45,14 +47,14 @@ block content
                         else
                             input(type="radio" aria-label="unlimited" name="wifiActivation" id="unlimited" value="unlimited")
                     span(aria-label="unlimited" class="input-group-addon" style="width:100%;text-align: left;border:1px solid #ccc")= activation_page.unlimited
-            div(class="row" data-name="duration").spanSelect
+            div(class="row" data-name="duration").spanSelect.row_activation
                 div(class="input-group")
                     span(class="input-group-addon")
                         input(type="radio" aria-label="duration" name="wifiActivation" id="duration" value="duration")
                     span(class="input-group-addon" aria-label="duration")= activation_page.for
                     input(type="text" name="duration" value="120" size='4' class="form-control" style="display:inline; width: auto; height: auto; padding: Opx 12px;")
                     span(class="input-group-addon" aria-label="duration" style="width: 100%;text-align: left;border:1px solid #ccc")= activation_page.minutes
-            div(class="row" data-name="until").spanSelect
+            div(class="row" data-name="until").spanSelect.row_activation
                 div(class="input-group")
                     span(class="input-group-addon")
                         if manualDeactivation == true
@@ -66,8 +68,7 @@ block content
 
 
             hr
-            if currentClassroom
-                a(href="/classroom/" + displayedClassroom + "/lesson/", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
+            a(href="/classroom/" + displayedClassroom + "/lesson/", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
             if classroomList || currentClassroom
                 button(class='btn btn-primary', type='submit', style="margin:0.2em 1em 2em 1em")= buttons.save_button
             else
@@ -103,6 +104,7 @@ block content
                     format: "MM/DD/YYYY HH:mm"
                 });
                 $('#endDatePicker').datetimepicker({
+                    minDate: new Date().getTime(),
                     defaultDate: endDate,
                     useCurrent: false,
                     collapse: false,
@@ -124,6 +126,7 @@ block content
         script.
             $(function () {
                 $('#startDatePicker').datetimepicker({
+                    date: new Date(),
                     minDate: new Date(),
                     collapse: false,
                     sideBySide: true,
@@ -133,15 +136,16 @@ block content
                     useCurrent: false,
                     collapse: false,
                     sideBySide: true,
+                    minDate: new Date(new Date().getTime() + 300000),
+                    defaultDate: new Date(new Date().getTime() + 300000),
                     format: "MM/DD/YYYY HH:mm"
                 });
 
                 $("#startDatePicker").on("dp.change", function (e) {
-                    $('#endDatePicker').data("DateTimePicker").minDate(e.date);
+                    $('#endDatePicker').data("DateTimePicker").minDate(new Date(new Date(e.date).getTime() + 300000));
+                    $('#endDatePicker').data("DateTimePicker").date(new Date(new Date(e.date).getTime() + 300000));
                 });
-                $("#endDatePicker").on("dp.change", function (e) {
-                    $('#startDatePicker').data("DateTimePicker").maxDate(e.date);
-                });
+
             });
             $('.row_activation').click(function () {
                 $("#" + $(this).data('name')).prop("checked", true);

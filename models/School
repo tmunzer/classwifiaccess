@@ -1,8 +1,9 @@
-var db = require("./../app").db;
+var db = require(appRoot + "/app").db;
 
 function SchoolSerializer(row){
     this.school = {};
     this.school.schoolName = row.schoolName;
+    this.school.accessMethod = row.accessMethod;
     this.school.sshAdmin = row.sshAdmin;
     this.school.sshPassword = row.sshPassword;
 }
@@ -13,7 +14,6 @@ SchoolSerializer.prototype.updateDB = function(schoolId, callback){
         if (err){
             callback(err);
         }
-        console.log("School UpdateDB");
         callback(err);
     });
 };
@@ -23,7 +23,6 @@ SchoolSerializer.prototype.insertDB = function(callback){
         if (err){
             callback(err);
         }
-        console.log("School InsertDB");
         callback(err);
     });
 };
@@ -31,6 +30,7 @@ SchoolSerializer.prototype.insertDB = function(callback){
 function School(){
     this.id="";
     this.schoolName="";
+    this.accessMethod="";
     this.sshAdmin="";
     this.sshPassword="";
 }

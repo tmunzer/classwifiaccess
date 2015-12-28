@@ -1,5 +1,5 @@
-var School = require('./../models/school');
-var Error = require('./error');
+var School = require(appRoot + '/models/school');
+var Error = require(appRoot + '/routes/error');
 
 module.exports = function (router, isAuthenticated, isAdmin) {
     /* GET User Display page. */

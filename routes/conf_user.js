@@ -1,8 +1,8 @@
-var User = require("./../models/user");
-var Group = require("./../models/group");
-var UILanguage = require('./../models/UiLanguage');
-var School = require('./../models/school');
-var Error = require('./error');
+var User = require(appRoot + "/models/user");
+var Group = require(appRoot + "/models/group");
+var UILanguage = require(appRoot + '/models/UiLanguage');
+var School = require(appRoot + '/models/school');
+var Error = require(appRoot + '/routes/error');
 
 module.exports = function (router, isAuthenticated, isAdmin) {
     /* GET User Display page. */
@@ -86,7 +86,6 @@ module.exports = function (router, isAuthenticated, isAdmin) {
     });
     /* POST - SAVE User Edit page. */
     router.post("/conf/user/edit", isAuthenticated, function (req, res, next) {
-        console.log(req.body);
         var userIdToEdit = req.query.id;
         // check if requested user to display is the same as the current user
         // or if current user is an admin
