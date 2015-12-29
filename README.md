@@ -15,7 +15,7 @@ This program is free software: you can redistribute it and/or modify it under th
 ##First Run
 To run this App, you need NodeJS and NodeJS packages:
 
-1. Download and Install ![NodeJS](https://nodejs.org/en/)
+1. Download and Install [NodeJS](https://nodejs.org/en/)
 2. From the project root folder, run 
     npm install
 3. Configure the app with your [Aerohive Developer information](https://developer.aerohive.com/):
@@ -25,8 +25,8 @@ To run this App, you need NodeJS and NodeJS packages:
 ##First Login
 The default credentials are:
 
-login: admin
-password: aerohive
+- login: admin
+- password: aerohive
 
 ##Initial Configuration
 Once you are logged in for the first time, you still need a few steps:
