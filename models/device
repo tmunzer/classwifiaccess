@@ -3,7 +3,6 @@ var School = require(appRoot + '/models/school');
 
 function DeviceSerializer(row) {
     this.device = {};
-    this.device.deviceId = row.deviceId;
     this.device.ownerId = row.ownerId;
     this.device.macAddress = row.macAddress;
     this.device.hostName = row.hostName;
@@ -38,7 +37,6 @@ DeviceSerializer.prototype.updateDB = function (rowId, callback) {
 
 function Device() {
     this.id = null;
-    this.deviceId = "";
     this.ownerId = "";
     this.macAddress = "";
     this.hostName = "";
@@ -56,7 +54,6 @@ function Device() {
 createDevice = function (deviceFromDB, callback) {
     var device = new Device();
     device.id = deviceFromDB.id;
-    device.deviceId = deviceFromDB.deviceId;
     device.ownerId = deviceFromDB.ownerId;
     device.macAddress = deviceFromDB.macAddress;
     device.hostName = deviceFromDB.hostName;
@@ -68,7 +65,7 @@ createDevice = function (deviceFromDB, callback) {
     device.connected = deviceFromDB.connected;
     device.ApiId = deviceFromDB.ApiId;
     device.SchoolId = deviceFromDB.SchoolId;
-    School.findById(device.SchoolId, null, function (err, school) {
+    School.findById(device.SchoolId, null, null, function (err, school) {
         if (school) {
             device.schoolName = school.schoolName;
         }
@@ -89,8 +86,8 @@ findOne = function(filters, options, callback){
     });
 };
 
-findById = function(rowId, options, callback){
-    db.findById("Device", rowId, options, function(err, deviceFromDB){
+findById = function(rowId,  filters,options, callback){
+    db.findById("Device", rowId, filters, options, function(err, deviceFromDB){
         if (err)callback(err);
         else if (!deviceFromDB) callback(null, null);
         else {

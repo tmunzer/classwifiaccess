@@ -10,14 +10,14 @@ block content
     - var groupSel = 0
     - var languageSel = 0
     if userToEdit
-        - var usernameVal = userToEdit.username
-        - var passwordPh= user_page.password_placeholder
-        - var firstNameVal = userToEdit.firstName
-        - var lastNameVal = userToEdit.lastName
-        - var emailVal = userToEdit.email
-        - var schoolSel = userToEdit.SchoolId
-        - var groupSel = userToEdit.GroupId
-        - var languageSel = userToEdit.LanguageId
+        - usernameVal = userToEdit.username
+        - passwordPh= user_page.password_placeholder
+        - firstNameVal = userToEdit.firstName
+        - lastNameVal = userToEdit.lastName
+        - emailVal = userToEdit.email
+        - schoolSel = userToEdit.SchoolId
+        - groupSel = userToEdit.GroupId
+        - languageSel = userToEdit.LanguageId
 
     div(style="width:50%; margin:auto")
         if message
@@ -114,3 +114,4 @@ block content
                 $('#password_confirm').attr('required', false);
             }
         });
+        $("#username").focus();

@@ -7,6 +7,8 @@ var apiReq = require(appRoot + '/bin/ah_api/req_device');
 var Api = require(appRoot + "/models/api");
 var Error = require(appRoot + '/routes/error');
 
+
+//======================= RENDER CLASSROOMS =======================//
 function renderClassroom(filterString, schoolList, req, res){
     Classroom.findAll(filterString, null, function (err, classroomList) {
         if (err) {
@@ -27,8 +29,12 @@ function renderClassroom(filterString, schoolList, req, res){
 }
 
 module.exports = function (router, isAuthenticated) {
-    /* GET classroom Page */
-    router.get('/classroom/', isAuthenticated, function (req, res, next) {
+    //===============================================================//
+    //============================ ROUTES ===========================//
+    //===============================================================//
+
+    //======================= LIST CLASSROOMS =======================//
+    router.get('/classroom/$', isAuthenticated, function (req, res, next) {
         School.getAll(null, function (err, schoolList) {
             if (err){
                 Error.render(err, "classroom", req, res);
@@ -45,7 +51,7 @@ module.exports = function (router, isAuthenticated) {
                             // Update the Device information for devices (request to ALL configured API for this school)
                             apiReq.getDevices(apiList[i], function (err, devices) {
                                 if (err) {
-                                    Error.render(err, "classroom", req);
+                                    Error.render(err, "classroom", req, res);
                                 } else {
                                     deviceList = deviceList.concat(devices);
                                     apiNum++;

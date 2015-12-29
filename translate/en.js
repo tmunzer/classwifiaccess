@@ -56,7 +56,7 @@ module.exports.config_user_page = {
     language:"Language",
     password:"Password",
     confirm_password:"Confirm password",
-    password_placeholder:"Not changed",
+    password_placeholder:"Password not changed",
     new_user_button:"New user"
 };
 
@@ -71,7 +71,8 @@ module.exports.config_school_page = {
     ssh_warning: "Warning: This server has to be able to contact each Access Point IP Address.",
     ssh_account: "SSH admin login",
     ssh_password: "SSH admin password",
-    ssh_password_confirm: "Confirm SSH admin password"
+    ssh_password_confirm: "Confirm SSH admin password",
+    password_placeholder:"Password not changed",
 };
 
 module.exports.buttons = {

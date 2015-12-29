@@ -1,14 +1,14 @@
 extends layout_admin
 
 block content
-    - var action = "/classroom/" + displayedClassroom + "/lesson/new/"
+    - var action = "/classroom/" + classroomId + "/lesson/new/"
     - var activationDate = ""
     - var activationDateClass = ""
     - var manualDeactivation = true
     - var deactivationAt = ""
     - var deactivationAtDate = ""
     if currentLesson != null
-        - action = "/classroom/" + displayedClassroom + "/lesson/edit/?LessonId=" + currentLesson.id
+        - action = "/classroom/" + classroomId + "/lesson/" + currentLesson.id + "/edit/"
         - activationDate = currentLesson.startDate
         if currentLesson.endDateTs != 0
             - manualDeactivation = false
@@ -68,7 +68,7 @@ block content
 
 
             hr
-            a(href="/classroom/" + displayedClassroom + "/lesson/", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
+            a(href="/classroom/" + classroomId + "/lesson/", class='btn btn-danger', type='button', style="margin:0.2em 1em 2em 1em")= buttons.cancel_button
             if classroomList || currentClassroom
                 button(class='btn btn-primary', type='submit', style="margin:0.2em 1em 2em 1em")= buttons.save_button
             else

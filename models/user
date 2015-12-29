@@ -80,17 +80,17 @@ createUser = function(userFromDB, callback){
     user.password = userFromDB.password;
     user.userEnable = userFromDB.userEnable;
     user.GroupId = userFromDB.GroupId;
-    Group.findById(user.GroupId, null, function(err, group){
+    Group.findById(user.GroupId, null, null, function(err, group){
         if (group){
             user.groupName = group.groupName;
         }
         user.SchoolId = userFromDB.SchoolId;
-        School.findById(user.SchoolId, null, function(err, school){
+        School.findById(user.SchoolId, null, null, function(err, school){
             if (school) {
                 user.schoolName = school.schoolName;
             }
             user.LanguageId = userFromDB.LanguageId;
-            UiLanguage.findById(user.LanguageId, null, function(err, uiLanguage){
+            UiLanguage.findById(user.LanguageId, null, null, function(err, uiLanguage){
                 if (uiLanguage){
                     user.language = uiLanguage.language;
                 }
@@ -112,8 +112,8 @@ findOne = function(filters, options, callback){
     });
 };
 
-findById = function(rowId, options, callback){
-    db.findById("User", rowId, options, function(err, userFromDB){
+findById = function(rowId, filters, options, callback){
+    db.findById("User", rowId, filters, options, function(err, userFromDB){
         if (err) callback(err);
         else if (!userFromDB) callback(null, null);
         else {

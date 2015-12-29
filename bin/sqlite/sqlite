@@ -33,7 +33,6 @@ var Sqlite = function(){
             db.run("CREATE TABLE UserGroup (id integer primary key," +
                 "groupName VARCHAR(30))");
             db.run("CREATE TABLE Device (id integer primary key," +
-                "deviceId VARCHAR(15) NOT NULL UNIQUE," +
                 "ownerId INTEGER, " +
                 "macAddress VARCHAR(16), " +
                 "hostname VARCHAR(60), " +
@@ -107,12 +106,16 @@ Sqlite.prototype.updateDB = function(table, rowId, entries, callback){
     var updateString = "";
     var fieldNumber = 0;
     for (var entry in entries) {
-        if (entry == 'password') {
+        if (entry == 'password' || entry == "sshPassword") {
             if (entries[entry] != "") {
                 if (fieldNumber != 0) {
                     updateString += ",  ";
                 }
-                updateString += entry + "='" + createHash(entries[entry]) + "'";
+                if (entry == 'sshPassword'){
+                    updateString += entry + "='" + entries[entry] + "'";
+                } else {
+                    updateString += entry + "='" + createHash(entries[entry]) + "'";
+                }
                 fieldNumber++;
             }
         } else {
@@ -247,7 +250,7 @@ Sqlite.prototype.findAll = function(table, filters, options, callback){
     });
 };
 
-Sqlite.prototype.findById = function(table, rowId, options, callback){
+Sqlite.prototype.findById = function(table, rowId, filters, options, callback){
     /**
      Get one row by its ID
      Table: Table to request
@@ -257,8 +260,11 @@ Sqlite.prototype.findById = function(table, rowId, options, callback){
      */
     if (rowId >= 0){
         var rOptions = processOptions(options);
-        var getString = "SELECT " + rOptions.columns + " FROM " + table + " WHERE id = " + rowId;
-        logger.debug(getString);
+        filters = filters || {};
+        filters['id'] = rowId;
+        var filterString = processFilters(filters);
+        var getString = "SELECT " + rOptions.columns + " FROM " + table + filterString;
+        logger.debug("FindById: " +getString);
         this.db.get(getString, function(err, ret){
             if (err){
                 logger.error(err);

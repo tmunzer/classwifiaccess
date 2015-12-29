@@ -35,8 +35,8 @@ findOne = function(filters, options, callback){
     });
 };
 
-findById = function(rowId, options, callback){
-    db.findById("School", rowId, options, function(err, school){
+findById = function(rowId, filters, options, callback){
+    db.findById("School", rowId, filters, options, function(err, school){
         callback(err, school);
     });
 };

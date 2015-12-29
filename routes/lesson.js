@@ -7,10 +7,10 @@ var Control = require(appRoot + '/bin/device_control');
 var Device = require(appRoot + "/models/device");
 var Error = require(appRoot + '/routes/error');
 
-function renderLessons(req, res, displayedClassroom, currentClassroom) {
+function renderLessons(req, res) {
     var filterString = {SchoolId: req.session.SchoolId};
-    if (displayedClassroom > 0) {
-        filterString = {SchoolId: req.session.SchoolId, ClassroomId: displayedClassroom};
+    if (req.classroomId > 0) {
+        filterString = {SchoolId: req.session.SchoolId, ClassroomId: req.classroomId};
     }
     School.getAll(null, function (err, schoolList) {
         Lesson.findAll(filterString, null, function (err, lessonList) {
@@ -20,11 +20,11 @@ function renderLessons(req, res, displayedClassroom, currentClassroom) {
                 res.render('lesson', {
                     user: req.user,
                     current_page: 'lesson',
-                    displayedClassroom: displayedClassroom,
+                    displayedClassroom: req.classroomFromDB,
                     lessonList: lessonList,
                     schoolList: schoolList,
                     session: req.session,
-                    currentClassroom: currentClassroom,
+                    classroomId: req.classroomId,
                     lesson_page: req.translationFile.lesson_page,
                     user_button: req.translationFile.user_button,
                     buttons: req.translationFile.buttons
@@ -33,15 +33,15 @@ function renderLessons(req, res, displayedClassroom, currentClassroom) {
         });
     });
 }
-
-function renderActivation(req, res, displayedClassroom, activation, classroomList, currentClassroom, currentLesson) {
+function renderActivation(message, activation, currentLesson, req, res) {
     res.render("lesson_activation", {
         user: req.user,
         current_page: "lesson",
-        displayedClassroom: displayedClassroom,
+        classroomId: req.classroomId,
+        message: message,
         activation: activation,
-        classroomList: classroomList,
-        currentClassroom: currentClassroom,
+        classroomList: req.classroomListFromDB,
+        currentClassroom: req.classroomFromDB,
         currentLesson: currentLesson,
         activation_page: req.translationFile.activation_page,
         user_button: req.translationFile.user_button,
@@ -51,7 +51,7 @@ function renderActivation(req, res, displayedClassroom, activation, classroomLis
 
 
 function saveLesson(req, classroomId, LessonId, callback) {
-    Classroom.findById(classroomId, null, function (err, classroom) {
+    Classroom.findById(classroomId, {SchoolId: req.session.SchoolId}, null, function (err, classroom) {
         if (err) {
             callback(err);
         } else {
@@ -81,9 +81,13 @@ function saveLesson(req, classroomId, LessonId, callback) {
                     if (err) callback(err);
                     else if (lesson.startDateTs > new Date().getTime()) callback(null);
                     else {
-                        Control.enableWiFi(classroom.DeviceId, lesson.SchoolId, LessonId, function (err) {
+                        if (classroom.DeviceId > 0) {
+                            Control.enableWiFi(classroom.DeviceId, lesson.SchoolId, LessonId, function (err) {
+                                callback(err);
+                            })
+                        } else {
                             callback(err);
-                        })
+                        }
                     }
                 });
             } else {
@@ -91,9 +95,14 @@ function saveLesson(req, classroomId, LessonId, callback) {
                     if (err) callback(err);
                     else if (lesson.startDateTs > new Date().getTime()) callback(null);
                     else {
-                        Control.enableWiFi(classroom.DeviceId, lesson.SchoolId, LessonId, function (err) {
+                        if (classroom.DeviceId > 0) {
+
+                            Control.enableWiFi(classroom.DeviceId, lesson.SchoolId, LessonId, function (err) {
+                                callback(err);
+                            });
+                        } else {
                             callback(err);
-                        });
+                        }
                     }
                 });
             }
@@ -107,7 +116,7 @@ function disableLesson(req, lesson, callback) {
     lessonToDB.updateDB(lesson.id, function (err) {
         if (err) callback(err);
         else {
-            Classroom.findById(lesson.ClassroomId, null, function (err, classroom) {
+            Classroom.findById(lesson.ClassroomId, {SchoolId: req.session.SchoolId}, null, function (err, classroom) {
                 if (err) callback(err);
                 else {
                     Control.disableWiFi(classroom.DeviceId, req.session.SchoolId, lesson.id, function (err) {
@@ -120,56 +129,70 @@ function disableLesson(req, lesson, callback) {
 }
 
 module.exports = function (router, isAuthenticated) {
-    /* GET Home Page */
-    router.get('/classroom/:ClassroomId/lesson/', isAuthenticated, function (req, res) {
-        var displayedClassroom = req.params.ClassroomId;
-        if (displayedClassroom > 0) {
-            Classroom.findById(displayedClassroom, null, function (err, currentClassroom) {
-                if (err) {
-                    Error.render(err, "lesson", req, res);
-                } else {
-                    renderLessons(req, res, displayedClassroom, currentClassroom);
+    //=========================================================//
+    //========================= PARAM =========================//
+    //=========================================================//
+
+    router.param("lessonClassroomId", function (req, res, next, lessonClassroomId) {
+        if (req.user){
+            req.classroomId = lessonClassroomId;
+            if (lessonClassroomId > 0) {
+                Classroom.findById(lessonClassroomId, {SchoolId: req.session.SchoolId}, null, function (err, classroom) {
+                    if (err) Error.render(err, "classroom", req, res);
+                    else {
+                        req.classroomFromDB = classroom;
+                        return next();
+                    }
+                });
+            } else {
+                Classroom.findAll({SchoolId: req.session.SchoolId}, null, function (err, classroomList) {
+                    if (err) Error.render(err, "classroom", req, res);
+                    else {
+                        req.classroomListFromDB = classroomList;
+                        return next();
+                    }
+                })
+            }
+        } else return next();
+
+    });
+    router.param("lessonId", function (req, res, next, lessonId) {
+        if (req.user) {
+            req.lessonId = lessonId;
+            Lesson.findById(lessonId, {SchoolId: req.session.SchoolId}, null, function (err, lesson) {
+                if (err) Error.render(err, "classroom", req, res);
+                else {
+                    req.lessonFromDB = lesson;
+                    return next();
                 }
             });
-        } else {
-            renderLessons(req, res, displayedClassroom, null);
-        }
+        } else return next();
+    });
+    //===============================================================//
+    //============================ ROUTES ===========================//
+    //===============================================================//
+
+    //========================= LIST LESSON =========================//
+    router.get('/classroom/:lessonClassroomId/lesson/$', isAuthenticated, function (req, res) {
+        renderLessons(req, res);
     });
 
-    //========================= NEW LESSON =========================//
-    router.get("/classroom/:ClassroomId/lesson/new/", isAuthenticated, function (req, res) {
+    //========================= NEW LESSON > DISPLAY =========================//
+    router.get("/classroom/:lessonClassroomId/lesson/new/$", isAuthenticated, function (req, res) {
         var activation = "";
-        var displayedClassroom = req.params.ClassroomId;
         if (req.query.hasOwnProperty("when")) {
             activation = req.query.when;
         }
-        if (displayedClassroom > 0) {
-            Classroom.findById(displayedClassroom, null, function (err, currentClassroom) {
-                if (err) {
-                    Error.render(err, "lesson", req, res);
-                } else {
-                    renderActivation(req, res, displayedClassroom, activation, null, currentClassroom);
-                }
-            })
-        } else {
-            Classroom.findAll({SchoolId: req.session.SchoolId}, null, function (err, classroomList) {
-                if (err) {
-                    Error.render(err, "lesson", req, res);
-                } else {
-                    renderActivation(req, res, displayedClassroom, activation, classroomList, null);
-                }
-            })
-
-        }
+        renderActivation(null, activation, null, req, res);
     });
-    router.post("/classroom/:ClassroomId/lesson/new/", isAuthenticated, function (req, res) {
-        var displayedClassroomId = req.params.ClassroomId;
+    //========================= NEW LESSON > SAVE =========================//
+    router.post("/classroom/:lessonClassroomId/lesson/new/", isAuthenticated, function (req, res) {
         if (req.body.hasOwnProperty("ClassroomId") && req.body.hasOwnProperty('wifiActivation')) {
             saveLesson(req, req.body.ClassroomId, null, function (err) {
                 if (err) {
                     Error.render(err, "lesson", req, res);
                 } else {
-                    res.redirect("/classroom/" + displayedClassroomId + "/lesson/");
+                    res.redirect("/classroom/" + req.classroomId + "/lesson/");
                 }
             });
         } else {
@@ -180,16 +203,16 @@ module.exports = function (router, isAuthenticated) {
     //========================= ENABLE LESSON =========================//
     router.post("/lesson/enable/", isAuthenticated, function (req, res) {
         if (req.body.hasOwnProperty("ClassroomId") && req.body.hasOwnProperty('wifiActivation')) {
-                saveLesson(req, req.body.ClassroomId, null, function (err) {
-                    if (err) {
-                        Error.render(err, "lesson", req, res);
-                    } else {
-                        res.redirect("back");
-                    }
-                });
-            } else {
-                res.redirect("back");
-            }
+            saveLesson(req, req.body.ClassroomId, null, function (err) {
+                if (err) {
+                    Error.render(err, "lesson", req, res);
+                } else {
+                    res.redirect("back");
+                }
+            });
+        } else {
+            res.redirect("back");
+        }
     });
     //========================= DELETE LESSON =========================//
     router.get("/lesson/delete/", isAuthenticated, function (req, res) {
@@ -206,39 +229,19 @@ module.exports = function (router, isAuthenticated) {
         }
     });
 
-    //========================= EDIT LESSON =========================//
-    router.get("/classroom/:ClassroomId/lesson/edit/", isAuthenticated, function (req, res) {
-        var displayedClassroom = req.params.ClassroomId;
-        if (req.query.hasOwnProperty('LessonId')) {
-            Lesson.findById(req.query.LessonId, null, function (err, currentLesson) {
-                if (err) {
-                    Error.render(err, "classroom", req, res);
-                } else {
-                    Classroom.findById(currentLesson.ClassroomId, null, function (err, currentClassroom) {
-                        if (err) {
-                            Error.render(err, "lesson", req, res);
-                        } else {
-                            renderActivation(req, res, displayedClassroom, null, null, currentClassroom, currentLesson);
-                        }
-                    })
-                }
-            })
-        } else res.redirect("/classromm/" + displayedClassroom + "/lesson/");
+    //========================= EDIT LESSON > DISPLAY =========================//
+    router.get("/classroom/:lessonClassroomId/lesson/:lessonId/edit/$", isAuthenticated, function (req, res) {
+        renderActivation(null, null, req.lessonFromDB, req, res);
     });
-    router.post("/classroom/:ClassroomId/lesson/edit/", isAuthenticated, function (req, res) {
-        console.log(req.body);
-        var displayedClassroom = req.params.ClassroomId;
-        if (req.query.hasOwnProperty('LessonId') && req.body.hasOwnProperty("ClassroomId")) {
-            saveLesson(req, req.body.ClassroomId, req.query.LessonId, function (err) {
-                console.log(err);
-                if (err) Error.render(err, "lesson", req, res);
-                else {
-                    res.redirect("/classroom/" + displayedClassroom + "/lesson/");
-                }
-            });
-        } else {
-            res.redirect("back");
-        }
+    //========================= EDIT LESSON > SAVE =========================//
+
+    router.post("/classroom/:ClassroomId/lesson/:lessonId/edit/$", isAuthenticated, function (req, res) {
+        saveLesson(req, req.body.ClassroomId, req.lessonId, function (err) {
+            if (err) Error.render(err, "lesson", req, res);
+            else {
+                res.redirect("/classroom/" + res.classroomId + "/lesson/");
+            }
+        });
     });
 
 
@@ -273,7 +276,7 @@ module.exports = function (router, isAuthenticated) {
             // Request from lessons list page (disable a specified lesson)
             else if (req.query.hasOwnProperty('LessonId')) {
                 var lessonId = req.query.LessonId;
-                Lesson.findById(lessonId, null, function (err, lesson) {
+                Lesson.findById(lessonId, {SchoolId: req.session.SchoolId}, null, function (err, lesson) {
                     if (err) {
                         Error.render(err, "classroom", req, res);
                     } else {
@@ -287,7 +290,5 @@ module.exports = function (router, isAuthenticated) {
                 res.redirect("back");
             }
         }
-    )
-    ;
-}
-;
+    );
+};

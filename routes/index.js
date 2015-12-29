@@ -14,7 +14,6 @@ var isAuthenticated = function (req, res, next) {
 
 //===============MIDDLEWARE=================
 var translate = require('./../translate/translate');
-var Api = require("./../models/api");
 
 var isAdmin = function (req, res, next) {
     if (req.user.GroupId == 1) {
@@ -90,7 +89,7 @@ module.exports = function(passport){
     require("./admin")(router, isAuthenticated, isAdmin);
 
     router.get("*", function(req, res, next){
-        res.redirect("/classroom");
+        res.redirect("/classroom/");
     });
     return router;
 

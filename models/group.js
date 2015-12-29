@@ -18,8 +18,8 @@ findOne = function(filters, options, callback){
     });
 };
 
-findById = function(rowId, options, callback){
-    db.findById("UserGroup", rowId, options, function(err, group){
+findById = function(rowId, filters, options, callback){
+    db.findById("UserGroup", rowId, filters, options, function(err, group){
         if (err) callback(err);
         else callback(err, group);
     });

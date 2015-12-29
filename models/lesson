@@ -71,7 +71,7 @@ function getClassroomName(cId, callback){
     var Classroom = require(appRoot + "/models/classroom");
     var classroomName = "";
     if (cId > 0) {
-        Classroom.findById(cId, null, function (err, classroom) {
+        Classroom.findById(cId, null, null, function (err, classroom) {
             if (err){
                 classroomName ="";
             } else if (classroom){
@@ -87,7 +87,7 @@ function getClassroomName(cId, callback){
 function getUserUsername(uId, callback){
     var username = "";
     if (uId > 0){
-        User.findById(uId, null, function (err, user){
+        User.findById(uId, null, null, function (err, user){
             if (user) username = user.username;
             callback(username)
         });
@@ -97,7 +97,7 @@ function getUserUsername(uId, callback){
 function getSchoolName(sId, callback){
     var schoolName = "";
     if (sId > 0){
-        School.findById(sId, null, function (err, school){
+        School.findById(sId, null, null, function (err, school){
             if (school) schoolName = school.schoolName;
             callback(schoolName)
         });
@@ -261,8 +261,8 @@ findOne = function (filters, options, callback) {
     });
 };
 
-findById = function (rowId, options, callback) {
-    db.findById("Lesson", rowId, options, function (err, lessonFromDB) {
+findById = function (rowId, filters, options, callback) {
+    db.findById("Lesson", rowId, filters, options, function (err, lessonFromDB) {
         if (err) {
             return err;
         }

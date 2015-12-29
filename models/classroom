@@ -45,7 +45,7 @@ function getDevice(DeviceId, SchoolId, callback) {
 function getSchoolName(SchoolId, callback) {
     var schoolName = "";
     if (SchoolId > 0) {
-        School.findById(SchoolId, null, function (err, school) {
+        School.findById(SchoolId, null, null, function (err, school) {
             if (school) {
                 schoolName = school.schoolName;
             }
@@ -155,8 +155,8 @@ findOne = function (filters, options, callback) {
     });
 };
 
-findById = function (rowId, options, callback) {
-    db.findById("Classroom", rowId, options, function (err, classroomFromDB) {
+findById = function (rowId, filters, options, callback) {
+    db.findById("Classroom", rowId, filters, options, function (err, classroomFromDB) {
         if (err) callback(err);
         else if (!classroomFromDB) callback(null, null);
         else createClassroom(classroomFromDB, function (classroom) {

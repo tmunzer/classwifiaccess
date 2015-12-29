@@ -2,7 +2,7 @@ var UILanguage = require(appRoot + '/models/UiLanguage');
 
 module.exports = function(language, req, callback){
     if (language != null){
-        UILanguage.findById(language, {columns:["code"]}, function(err, language) {
+        UILanguage.findById(language, null, {columns:["code"]}, function(err, language) {
             callback(locateTranslation(language.code));
         });
     } else {

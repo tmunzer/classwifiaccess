@@ -64,7 +64,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //===============SQLITE=================
 
-var database = require('./bin/sqlite/sqlite');
+var database = require(appRoot + '/bin/sqlite/sqlite');
 var db = new database();
 module.exports.db = db;
 
@@ -87,7 +87,7 @@ initPassport(passport);
 
 //===============ROUTES=================
 
-var routes = require('./routes/index')(passport);
+var routes = require(appRoot + '/routes/index')(passport);
 app.use('/', routes);
 
 //===============ERRORS=================

@@ -67,7 +67,7 @@ createAPI = function(apiFromDB, callback){
     api.expireAt = new Date(apiFromDB.expireAt);
     api.SchoolId = apiFromDB.SchoolId;
     if (api.SchoolId > 0){
-        School.findById(api.SchoolId, null, function(err, school){
+        School.findById(api.SchoolId, null, null, function(err, school){
             if (school){
                 api.schoolName = school.schoolName;
             }
@@ -130,8 +130,8 @@ findAll = function(filters, options, callback){
     });
 };
 
-findById = function(rowId, options, callback){
-    db.findById("API", rowId, options, function(err, apiFromDB){
+findById = function(rowId, filters, options, callback){
+    db.findById("API", rowId, filters, options, function(err, apiFromDB){
         if (err) callback(err);
         else if (!apiFromDB) callback(null, null);
         else {

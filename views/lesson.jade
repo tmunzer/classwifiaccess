@@ -4,7 +4,7 @@ mixin lesson_status(lesson)
     - var statusAttributes = ""
     - var statusText = ""
     - var powerButtonStatus = ""
-    - var powerButtonAction = ""
+    - var removeButtonStatus = ""
     - var editButtonStatus = ""
     case lesson.lessonStatus
         when 'past'
@@ -15,7 +15,7 @@ mixin lesson_status(lesson)
         when "present"
             - statusAttributes = "label label-success"
             - statusText = lesson_page.inProgress
-            - powerButtonAction = "disableWifiForClassroom('" + lesson.id+"')"
+            - removeButtonStatus = "not-active"
         when "future"
             - statusAttributes = "label label-primary"
             - statusText = lesson_page.notStarted
@@ -31,9 +31,9 @@ mixin lesson_status(lesson)
             div(style="float:right")
                 a(href="#" class=powerButtonStatus style="margin:0em 1em;" onclick="disableWifiForClassroom('" + lesson.classroomName + "', '"+lesson.id+"')")
                     i(class="fa fa-power-off" )
-                a(href="/classroom/"+ displayedClassroom + "/lesson/edit/?LessonId=" + lesson.id class=editButtonStatus type='button' style="margin:auto 0.5em")
+                a(href="/classroom/"+ classroomId + "/lesson/" + lesson.id + "/edit/" class=editButtonStatus type='button' style="margin:auto 0.5em")
                     i(class="fa fa-edit")
-                a(href="#" type='button' style="margin:auto 0.5em" onclick="confirm_delete('"+lesson.id+"')")
+                a(href="#" class=removeButtonStatus type='button' style="margin:auto 0.5em" onclick="confirm_delete('"+lesson.id+"')")
                     i(class="fa fa-remove")
 
 block content
@@ -69,33 +69,29 @@ block content
                             button(class='btn btn-primary', type='submit')= buttons.deactivate_button
 
         div(style="float:left; width:100%; padding: 0px")
-            if currentClassroom
-                h4= lesson_page.classroomTitle + currentClassroom.classroomName
+            if displayedClassroom
+                h4= lesson_page.classroomTitle + displayedClassroom.classroomName
             else
                 h4= lesson_page.genericTitle
             div(style="display: inline-flex;float: left;")
-                form(action="/classroom/"+ displayedClassroom + "/lesson/new/" method="GET")
-                    if currentClassroom
-                        input(type='hidden' name="ClassroomId" value=currentClassroom.id)
+                form(action="/classroom/"+ classroomId + "/lesson/new/" method="GET")
                     input(type='hidden' name='when' value="now")
                     button(class='btn btn-primary' type="submit" style="margin:0.2em 1em 2em 1em")= lesson_page.activateNow
-                form(action="/classroom/"+ displayedClassroom + "/lesson/new/" method="GET")
-                    if currentClassroom
-                        input(type='hidden' name="ClassroomId" value=currentClassroom.id)
+                form(action="/classroom/"+ classroomId + "/lesson/new/" method="GET")
                     input(type='hidden' name='when' value="later")
                     button(class='btn btn-primary' type="submit" style="margin:0.2em 1em 2em 1em")= lesson_page.activateLater
             section(id="classroom")
-                if lessonList
-                    table.table.table-hover
-                        thead
-                            tr
-                                th= lesson_page.classroom
-                                th= lesson_page.startDate
-                                th= lesson_page.endDate
-                                th= lesson_page.status
-                                th= lesson_page.teacher
-                                th= lesson_page.action
-                        tbody
+                table.table.table-hover
+                    thead
+                        tr
+                            th= lesson_page.classroom
+                            th= lesson_page.startDate
+                            th= lesson_page.endDate
+                            th= lesson_page.status
+                            th= lesson_page.teacher
+                            th= lesson_page.action
+                    tbody
+                        if lessonList
                             for item in lessonList
                                 +lesson_status(item)
 

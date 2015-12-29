@@ -21,8 +21,8 @@ findOne = function(filters, options, callback){
     });
 };
 
-findById = function(rowId, options, callback){
-    db.findById("UILanguage", rowId, options, function(err, uiLanguage){
+findById = function(rowId, filters, options, callback){
+    db.findById("UILanguage", rowId, filters, options, function(err, uiLanguage){
         if (err){
             return err;
         }

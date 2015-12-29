@@ -33,7 +33,7 @@ module.exports = function (router, isAuthenticated, isAdmin) {
             var api_uri = req.body.api_uri;
             Api.findAll({SchoolId: req.session.SchoolId}, null, function (err, apiList) {
                 School.getAll(null, function (err, schoolList) {
-                    Api.findById(api_req, null, function (err, api) {
+                    Api.findById(api_req, null, null, function (err, api) {
                         if (api) {
                             apiDev(api, api_uri, function (err, result) {
                                 if (err) {
