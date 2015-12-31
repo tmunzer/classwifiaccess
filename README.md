@@ -24,7 +24,7 @@ To run this App, you need NodeJS and NodeJS packages:
 
     By default (if you are not changing the server listening port), the redirectUrl should be     `https://127.0.0.1:3443/conf/api/reg`
 4. Once done, you can start the APP. Go to `root_folder/bin/`and execute "www". If `node`is not in your $PATH, you may have to start the server from a terminal: `path_to_node/node ./bin/www`
-
+5. Go to https://127.0.0.1:3443/login
 
 ##First Login
 The default credentials are:
