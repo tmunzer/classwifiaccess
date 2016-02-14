@@ -1,5 +1,5 @@
-# ClassWIFIAccessSch
-[![GitHub version](https://badge.fury.io/gh/tmunzer%2FSchoolControl.svg)](https://badge.fury.io/gh/tmunzer%2FSchoolControl)
+# ClassWIFIAccess
+[![GitHub version](https://badge.fury.io/gh/tmunzer%2FClassWIFIAccess.svg)](https://badge.fury.io/gh/tmunzer%2FClassWIFIAccess.svg)
 
 ![ClassWIFIAccess](http://imgur.com/V4k9M7k.png)
 
