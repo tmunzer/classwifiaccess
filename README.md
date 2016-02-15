@@ -1,7 +1,7 @@
-# SchoolControl
-[![GitHub version](https://badge.fury.io/gh/tmunzer%2FSchoolControl.svg)](https://badge.fury.io/gh/tmunzer%2FSchoolControl)
+# ClassWIFIAccess
+[![GitHub version](https://badge.fury.io/gh/tmunzer%2FClassWIFIAccess.svg)](https://badge.fury.io/gh/tmunzer%2FClassWIFIAccess.svg)
 
-![SchoolControl](http://imgur.com/V4k9M7k.png)
+![ClassWIFIAccess](http://imgur.com/V4k9M7k.png)
 
 
 #Notice
@@ -37,9 +37,9 @@ Once you are logged in for the first time, you still need a few steps:
 
 - Go to the Configuration Page ![ConfigurationPage](http://i.imgur.com/weyxtOc.png)
     - Go to "School Management"
-        - Click "New School" to create a new School. You'll be able to select the access method (used by SchoolControl to control Aerohive Access Points). **Currently, only SSH is available**, the API access method will be available as soon as Aerohive Control APIs are available. 
+        - Click "New School" to create a new School. You'll be able to select the access method (used by ClassWIFIAccess to control Aerohive Access Points). **Currently, only SSH is available**, the API access method will be available as soon as Aerohive Control APIs are available. 
     - Go to "API Configuration"
-        - Click "Register APP": this will allow SchoolControl to get the needed credentials to request Aerohive HiveManager NG API
+        - Click "Register APP": this will allow ClassWIFIAccess to get the needed credentials to request Aerohive HiveManager NG API
         - On the "API Configuration" page, under the "School" column, click on "None" to assign the new API parameters to one of the configured School
     - Go to "Classrooms Management"
         - Click "New Classroom" to create a new classroom and assign a device. A classroom can have only one device, but a device can be assigned to several classrooms.
@@ -57,7 +57,7 @@ Once you are logged in for the first time, you still need a few steps:
     - This page will list all the devices connected to HiveManager NG. All the information are retrieved through Aerohive APIs.
     - This page is only accessible for admin and operators
 - ![ConfigurationPage](http://i.imgur.com/weyxtOc.png) **Configuration Page**:
-    - This page will give access to SchoolControl configuration:
+    - This page will give access to ClassWIFIAccess configuration:
         - Users management
         - Classrooms management
         - Schools management
