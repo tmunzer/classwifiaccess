@@ -18,25 +18,25 @@
         <h1>Schoolcontrol</h1>
         <p></p>
 
-        <p class="view"><a href="https://github.com/tmunzer/SchoolControl">View the Project on GitHub <small>tmunzer/SchoolControl</small></a></p>
+        <p class="view"><a href="https://github.com/tmunzer/ClassWIFIAccess">View the Project on GitHub <small>tmunzer/ClassWIFIAccess</small></a></p>
 
 
         <ul>
-          <li><a href="https://github.com/tmunzer/SchoolControl/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/tmunzer/SchoolControl/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/tmunzer/SchoolControl">View On <strong>GitHub</strong></a></li>
+          <li><a href="https://github.com/tmunzer/ClassWIFIAccess/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/tmunzer/ClassWIFIAccess/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/tmunzer/ClassWIFIAccess">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
       <section>
         <h1>
-<a id="schoolcontrol" class="anchor" href="#schoolcontrol" aria-hidden="true"><span class="octicon octicon-link"></span></a>SchoolControl</h1>
+<a id="classwifiaccess" class="anchor" href="#classwifiaccess" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ClassWIFIAccess</h1>
 
-<p><a href="https://badge.fury.io/gh/tmunzer%2FSchoolControl"><img src="https://badge.fury.io/gh/tmunzer%2FSchoolControl.svg" alt="GitHub version"></a></p>
+<p><a href="https://badge.fury.io/gh/tmunzer%2FClassWIFIAccess.svg"><img src="https://badge.fury.io/gh/tmunzer%2FClassWIFIAccess.svg" alt="GitHub version"></a></p>
 
-<p><img src="http://imgur.com/V4k9M7k.png" alt="SchoolControl"></p>
+<p><img src="http://imgur.com/V4k9M7k.png" alt="ClassWIFIAccess"></p>
 
 <h1>
-<a id="notice" class="anchor" href="#notice" aria-hidden="true"><span class="octicon octicon-link"></span></a>Notice</h1>
+<a id="notice" class="anchor" href="#notice" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Notice</h1>
 
 <p>This is a Free web app build to work with Aerohive APIs. This app is designed to provide a quick and easy way for teachers to enable or disable Wi-Fi on Aerohive Devices.</p>
 
@@ -45,10 +45,10 @@
 <p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
 
 <h1>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h1>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h1>
 
 <h2>
-<a id="first-run" class="anchor" href="#first-run" aria-hidden="true"><span class="octicon octicon-link"></span></a>First Run</h2>
+<a id="first-run" class="anchor" href="#first-run" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>First Run</h2>
 
 <p>To run this App, you need NodeJS and NodeJS packages:</p>
 
@@ -57,26 +57,35 @@
 </li>
 <li>From the project root folder, run 
 npm install</li>
-<li>Configure the app with your <a href="https://developer.aerohive.com/">Aerohive Developer information</a>:
+<li>
+<p>Configure the app with your <a href="https://developer.aerohive.com/">Aerohive Developer information</a>:</p>
 
 <ul>
 <li>Copy/Paste the file <code>/bin/ah_api/config_example</code> to <code>/bin/ah_api/config</code>
 </li>
 <li>Edit the file <code>/bin/ah_api/config</code> to match your developer credentials</li>
 </ul>
+
+<p>By default (if you are not changing the server listening port), the redirectUrl should be     <code>https://127.0.0.1:3443/conf/api/reg</code></p>
+</li>
+<li>Once done, you can start the APP. Go to <code>root_folder/bin/</code>and execute "www". If <code>node</code>is not in your $PATH, you may have to start the server from a terminal: <code>path_to_node/node ./bin/www</code>
+</li>
+<li>Go to <a href="https://127.0.0.1:3443/login">https://127.0.0.1:3443/login</a>
 </li>
 </ol>
 
 <h2>
-<a id="first-login" class="anchor" href="#first-login" aria-hidden="true"><span class="octicon octicon-link"></span></a>First Login</h2>
+<a id="first-login" class="anchor" href="#first-login" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>First Login</h2>
 
 <p>The default credentials are:</p>
 
-<p>login: admin
-password: aerohive</p>
+<ul>
+<li>login: admin</li>
+<li>password: aerohive</li>
+</ul>
 
 <h2>
-<a id="initial-configuration" class="anchor" href="#initial-configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Initial Configuration</h2>
+<a id="initial-configuration" class="anchor" href="#initial-configuration" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Initial Configuration</h2>
 
 <p>Once you are logged in for the first time, you still need a few steps:</p>
 
@@ -87,13 +96,13 @@ password: aerohive</p>
 <li>Go to "School Management"
 
 <ul>
-<li>Click "New School" to create a new School. You'll be able to select the access method (used by SchoolControl to control Aerohive Access Points). <strong>Currently, only SSH is available</strong>, the API access method will be available as soon as Aerohive Control APIs are available. </li>
+<li>Click "New School" to create a new School. You'll be able to select the access method (used by ClassWIFIAccess to control Aerohive Access Points). <strong>Currently, only SSH is available</strong>, the API access method will be available as soon as Aerohive Control APIs are available. </li>
 </ul>
 </li>
 <li>Go to "API Configuration"
 
 <ul>
-<li>Click "Register APP": this will allow SchoolControl to get the needed credentials to request Aerohive HiveManager NG API</li>
+<li>Click "Register APP": this will allow ClassWIFIAccess to get the needed credentials to request Aerohive HiveManager NG API</li>
 <li>On the "API Configuration" page, under the "School" column, click on "None" to assign the new API parameters to one of the configured School</li>
 </ul>
 </li>
@@ -108,7 +117,7 @@ password: aerohive</p>
 </ul>
 
 <h1>
-<a id="menus" class="anchor" href="#menus" aria-hidden="true"><span class="octicon octicon-link"></span></a>Menus</h1>
+<a id="menus" class="anchor" href="#menus" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Menus</h1>
 
 <ul>
 <li>
@@ -141,7 +150,7 @@ password: aerohive</p>
 <img src="http://i.imgur.com/weyxtOc.png" alt="ConfigurationPage"> <strong>Configuration Page</strong>:
 
 <ul>
-<li>This page will give access to SchoolControl configuration:
+<li>This page will give access to ClassWIFIAccess configuration:
 
 <ul>
 <li>Users management</li>
