@@ -5,7 +5,7 @@
 
 
 #Notice
-This is a Free web app build to work with Aerohive APIs. This app is designed to provide a quick and easy way for teachers to enable or disable Wi-Fi on Aerohive Devices.
+This is a Free web app built to work with Aerohive APIs. This app is designed to provide a quick and easy way for teachers to enable or disable Wi-Fi on Aerohive Devices.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
