@@ -1,4 +1,4 @@
-var UILanguage = require(appRoot + '/models/UiLanguage');
+var UILanguage = require(appRoot + '/models/uiLanguage');
 
 module.exports = function(language, req, callback){
     if (language != null){
