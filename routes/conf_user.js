@@ -1,6 +1,6 @@
 var User = require(appRoot + "/models/user");
 var Group = require(appRoot + "/models/group");
-var UILanguage = require(appRoot + '/models/UiLanguage');
+var UILanguage = require(appRoot + '/models/uiLanguage');
 var School = require(appRoot + '/models/school');
 var Error = require(appRoot + '/routes/error');
 
