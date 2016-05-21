@@ -1,5 +1,5 @@
 var bCrypt = require('bcrypt');
-var file = appRoot + "/bin/sqlite/local.db";
+var file = appRoot + "/bin/sqlite/db/local.db";
 var sqlite3 = require("sqlite3").verbose();
 var fs = require("fs");
 var logger = require(appRoot + "/app").logger;
