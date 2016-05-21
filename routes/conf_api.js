@@ -34,8 +34,9 @@ module.exports = function (router, isAuthenticated, isAdmin) {
 
     //========================== LIST API ===========================//
     router.get('/conf/api/reg', isAuthenticated, isAdmin, function (req, res) {
+	    console.log("=======TEST=========");
         if (req.query.hasOwnProperty('error')) {
-            Error.render(err, "conf", req, res);
+            Error.render(req.query.error, "conf", req, res);
         } else {
             var authCode = req.query.authCode;
             var api = new Api();
