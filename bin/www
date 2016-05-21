@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-var httpPort = '3080';
+var httpPort = '3000';
 
 //===============DEPENDENCIES=================
 
