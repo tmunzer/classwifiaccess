@@ -1,0 +1,49 @@
+.time-date {
+    font-size: 12px !important;
+}
+
+.full-title {
+    background-color: white !important;
+    color: rgb(30,136,229) !important;
+    font-size: 14px !important;
+}
+.date-control .title {
+    font-size: 14px !important;
+}
+.time-date > .control > .slider > .date-control > .headers > .day-cell {
+    height: 1rem !important;
+}
+.time-date button, .time-date .button {
+    color: rgb(30,136,229) !important;
+}
+.time-date > .control > .slider > .date-control > .days .day-cell.selected {
+    color: #fff !important;
+    background-color: rgb(30,136,229) !important;
+}
+.time-date > .control > .slider > .date-control > .days .day-cell:hover, .time-date > .control > .slider > .date-control > .days .day-cell:active {
+    color: #e6e6e6 !important;
+    background-color: rgb(30,136,229) !important;
+}
+.time-date > .control {
+    height: 19rem !important;
+}
+.time-date > .control > .slider > .date-control, .time-date > .control > .slider > .time-control, .time-date > .control > .slider > .switch-control {
+    height: 16rem !important;
+}
+.time-date.full-mode > .buttons {
+    background-color: #fff !important;
+    padding: 0 0.7rem !important;
+    text-align: center !important;
+}
+.time-date.full-mode > .buttons > button {
+    color: #000 !important;
+}
+.time-date > .control > .slider > .time-control > .time-inputs > input {
+    font-size: 5.5rem !important;
+}
+.time-date > .control > .slider > .date-control .day-cell {
+    font-size: 1rem !important;
+}
+.time-date > .control > .slider > .date-control .day-cell {
+    height: 2rem !important;
+}

@@ -25,9 +25,9 @@ findById = function(rowId, filters, options, callback){
     });
 };
 
-getAll = function(options, callback){
+findAll = function(filters, options, callback){
     var rOptions = options || {"orderBy":"id"};
-    db.findAll("UserGroup", null, rOptions, function (err, groups) {
+    db.findAll("UserGroup", filters, rOptions, function (err, groups) {
         if (err) callback(err);
         else callback(err, groups);
     });
@@ -36,5 +36,5 @@ getAll = function(options, callback){
 module.exports = Group;
 module.exports.findOne = findOne;
 module.exports.findById = findById;
-module.exports.getAll = getAll;
+module.exports.findAll = findAll;
 module.exports.GroupSerializer = GroupSerializer;

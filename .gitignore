@@ -3,3 +3,4 @@ bin/ah_api/config
 node_modules/
 *.db
 *.log
+bower_components/

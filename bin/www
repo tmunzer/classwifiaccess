@@ -1,6 +1,5 @@
 #!/usr/bin/env node
-var httpPort = '3080';
-var httpsPort = '3443';
+var httpPort = '3000';
 
 //===============DEPENDENCIES=================
 
@@ -19,22 +18,6 @@ httpServer.listen(httpPort);
 httpServer.on('error', onError);
 httpServer.on('listening', onListening);
 
-//===============HTTPS SERVER=================
-
-var https = require('https');
-var fs = require('fs');
-
-var https_options = {
-  key: fs.readFileSync(appRoot + '/cert/server.key'),
-  cert: fs.readFileSync(appRoot + '/cert/server.pem')
-};
-
-var httpsPort = normalizePort(process.env.PORT || httpsPort);
-var httpsServer = https.createServer(https_options, app);
-
-httpsServer.listen(httpsPort);
-httpsServer.on('error', onError);
-httpsServer.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.

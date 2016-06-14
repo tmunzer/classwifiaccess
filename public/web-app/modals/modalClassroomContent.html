@@ -1,0 +1,37 @@
+<md-dialog aria-label="List dialog" style="min-width: 300px; width: 600px;">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2 translate="settings.classroom.modal_title"></h2>
+        </div>
+    </md-toolbar>
+    <div ng-show="!isWorking"
+         style="background-color: rgb(76,175,80); height: 5px; width: 100%"></div>
+    <md-progress-linear ng-show="isWorking" md-mode="indeterminate"
+                        class="md-accent"></md-progress-linear>
+    <md-content layout="column" layout-padding>
+        <md-input-container>
+            <label for="classroomName"><span translate="settings.classroom.classroomName"></span><span style="color: red">*</span></label>
+            <input id="classroomName" ng-model="classroom.classroomName" ng-required="required"/>
+        </md-input-container>
+        <md-input-container ng-show="schools.length > 1">
+            <label for="SchoolId"><span translate="settings.classroom.school"></span><span style="color: red">*</span></label>
+            <md-select id="SchoolId" ng-model="classroom.SchoolId"
+                       ng-required ng-disabled="isWorking">
+                <md-option ng-repeat="school in schools | orderBy: 'schoolName'" value="{{school.id}}">{{school.schoolName}}</md-option>
+            </md-select>
+        </md-input-container>
+        <md-input-container>
+            <label for="DeviceId"><span translate="settings.classroom.device"></span></label>
+            <md-select id="DeviceId" ng-model="classroom.DeviceId"
+                       ng-disabled="isWorking">
+                <md-option ng-repeat="device in devices | orderBy: 'hostName'" value="{{device.deviceId}}"
+                           ng-show="device.SchoolId == classroom.SchoolId">{{device.hostName}}</md-option>
+            </md-select>
+        </md-input-container>
+    </md-content>
+    <md-dialog-actions layout="row">
+        <md-button translate="button.cancel_button" aria-label="cancel" ng-click="cancel()" ng-disabled="isWorking"></md-button>
+        <md-button class="md-raised md-primary" translate="button.save_button" aria-label="save" ng-disabled="isWorking || isNotValid()"
+                   ng-click="save()"></md-button>
+    </md-dialog-actions>
+</md-dialog>

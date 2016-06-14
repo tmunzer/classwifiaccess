@@ -7,11 +7,11 @@ module.exports = function(passport){
     passport.serializeUser(function(user, done) {
         //console.log('serializing user: ');
         //console.log(user);
-        done(null, user.id);
+        done(null, user);
     });
 
-    passport.deserializeUser(function(id, done) {
-        User.findById(id, null, null, function(err, user) {
+    passport.deserializeUser(function(user, done) {
+        User.findById(user.id, null, null, function(err, user) {
             //console.log('deserializing user:',user);
             done(err, user);
         });

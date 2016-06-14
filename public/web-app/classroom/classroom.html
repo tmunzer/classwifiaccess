@@ -1,0 +1,65 @@
+<div layout-margin>
+    <div md-whiteframe="1" layout="column" layout-gt-sm="row">
+        <md-input-container md-no-float class="md-block search-tool" style="text-align: center; margin: 0">
+            <md-checkbox ng-model="showNotConfigured" ng-change="changeFilter()" aria-label="notConfigured">
+                {{"classroom.notConfigured" | translate }}
+            </md-checkbox>
+        </md-input-container>
+        <md-input-container md-no-float class="md-block search-tool" style="text-align: center; margin: 0">
+            <md-checkbox ng-model="showNotConnected" ng-change="changeFilter()" aria-label="notConnected">
+                {{"classroom.notConnected" | translate }}
+            </md-checkbox>
+        </md-input-container>
+        <md-input-container class="md-block search-tool" style="text-align: center; margin: 0">
+            <md-icon class="material-icons search-tool">search</md-icon>
+            <label for="filter" translate="button.filter" style="bottom: 60px"></label>
+            <input ng-model="table.filter" id="filter" ng-change="changeFilter()">
+        </md-input-container>
+    </div>
+
+    <div style="padding-bottom: 15px;" layout="column">
+        <div layout-gt-md="row" layout="column">
+            <section ng-show="schoolSelected() == false" flex="100">
+                <article layout-padding md-whiteframe="5" style="background-color: whitesmoke;">
+                    <h1 style="text-align: center" translate="button.select_school"></h1>
+                </article>
+            </section>
+
+            <section flex="100" ng-show="schoolSelected() == true">
+                <div layout-gt-sm="row" layout="column" layout-align="space-around" ng-show="!isLoaded()">
+                    <md-progress-circular md-mode="indeterminate" class="md-accent">
+                    </md-progress-circular>
+                </div>
+                <md-content class="md-padding" ng-show="isLoaded()">
+                    <md-grid-list
+                            md-cols-xs="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="4"
+                            md-row-height="200px"
+                            md-gutter="20px" md-gutter-gt-sm="20px">
+                        <md-grid-tile ng-repeat="classroom in classroomsFiltered | orderBy: 'classroomName'"
+                                      md-whiteframe="5" style="background-color: rgb(30,136,229);">
+                            <md-grid-tile-header>
+                                <div class="md-toolbar-tools">
+                                    <h2>{{classroom.classroomName}}</h2>
+                                </div>
+                            </md-grid-tile-header>
+                            <div style="width:100%; padding: 5px">
+                                <div class="big-badge" ng-bind-html="classroom.wifiEnabled | classroomWifiStatus"></div>
+                                <md-divider></md-divider>
+                                <div ng-bind-html="classroom | classroomDeviceStatus"></div>
+                            </div>
+                            <md-grid-tile-footer>
+                                <md-dialog-actions layout="row">
+                                    <md-button class="md-raised" translate="button.plan" aria-label="plan"></md-button>
+                                <md-button class="md-raised" ng-show="!classroom.wifiEnabled" translate="button.enable" ng-click="activation(classroom)" aria-label="enable"></md-button>
+                                <md-button class="md-raised" ng-show="classroom.wifiEnabled" translate="button.disable" ng-click="deactivation(classroom)" aria-label="disable"></md-button>
+                                    </md-dialog-actions>
+                            </md-grid-tile-footer>
+                        </md-grid-tile>
+                    </md-grid-list>
+
+                </md-content>
+            </section>
+
+        </div>
+    </div>
+</div>

@@ -1,5 +1,5 @@
 var bCrypt = require('bcrypt');
-var file = appRoot + "/bin/sqlite/local.db";
+var file = appRoot + "/bin/sqlite/db/local.db";
 var sqlite3 = require("sqlite3").verbose();
 var fs = require("fs");
 var logger = require(appRoot + "/app").logger;
@@ -64,12 +64,12 @@ var Sqlite = function(){
                 'accessMethod VARCHAR(3), ' +
                 'sshAdmin VARCHAR(32), ' +
                 'sshPassword VARCHAR(64))');
-            db.run("INSERT INTO User VALUES (1, '', '', '', 'admin', '"+createHash("aerohive")+"', 'true', '', '1', '', '1')");
+            db.run("INSERT INTO User VALUES (1, '', '', '', 'admin', '"+createHash("aerohive")+"', 'true', '', 1, 1, 1)");
             db.run("INSERT INTO UserGroup VALUES (1, 'Administrator')");
             db.run("INSERT INTO UserGroup VALUES (2, 'Operator')");
             db.run("INSERT INTO UserGroup VALUES (3, 'Teacher')");
             db.run("INSERT INTO UserGroup VALUES (4, 'Monitor')");
-            db.run("INSERT INTO School VALUES (1, 'All')");
+            db.run("INSERT INTO School VALUES (1, 'None', '', '', '')");
             db.run("INSERT INTO UILanguage VALUES (1, 'English', 'en')");
             db.run("INSERT INTO UILanguage VALUES (2, 'Francais', 'fr')");
         }
@@ -197,10 +197,9 @@ processFilters = function(filters){
     if (filters != null) {
         var filterNum = 0;
         for (var filterName in filters){
-            if (filterNum != 0){
-                filterString += " AND "
-            }
-            filterString += filterName + "='" + filters[filterName] +"'";
+            if (filterNum != 0) filterString += " AND ";
+            if (typeof filters[filterName] != "object") filterString += filterName + "='" + filters[filterName] +"'";
+            else filterString += filterName + filters[filterName][0] + filters[filterName][1];
             filterNum ++;
         }
         filterString = " WHERE (" + filterString + ")";

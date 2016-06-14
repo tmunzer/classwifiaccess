@@ -1,0 +1,88 @@
+<md-dialog aria-label="List dialog" style="min-width: 300px; width: 600px;">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2 translate="settings.user.modal_title"></h2>
+        </div>
+    </md-toolbar>
+    <div ng-show="!isWorking"
+         style="background-color: rgb(76,175,80); height: 5px; width: 100%"></div>
+    <md-progress-linear ng-show="isWorking" md-mode="indeterminate"
+                        class="md-accent"></md-progress-linear>
+    <md-content layout="column" layout-padding>
+        <form id="search">
+            <md-input-container class="md-block tight">
+                <label for="username"><span translate="settings.user.username"></span><span
+                        style="color: red">*</span></label>
+                <input type="text" id="username" ng-model="user.username" autocomplete="off"/>
+            </md-input-container>
+
+            <md-input-container class="md-block tight" ng-show="user.id > 0">
+                <md-input>
+                    <md-checkbox id="changePassword" ng-model="changePassword" aria-label="changePassword"><span
+                            translate="settings.user.changePassword"></span></md-checkbox>
+                </md-input>
+            </md-input-container>
+            <div layout-gt-sm="row" ng-show="changePassword || ! user.id > 0">
+                <md-input-container class="md-block tight" flex-gt-sm>
+                    <label for="password"><span translate="settings.user.password"></span>
+                        <span style="color: red">*</span></label>
+                    <input type="password" id="password" ng-model="user.password" autocomplete="off"/>
+                </md-input-container>
+
+                <md-input-container class="md-block tight" flex-gt-sm ng-show="showPasswordConfirm()">
+                    <label for="password_confirm"><span translate="settings.user.confirm_password"></span>
+                        <span style="color: red">*</span></label>
+                    <input type="password" id="password_confirm" ng-model="password_confirm" autocomplete="off"/>
+                </md-input-container>
+            </div>
+
+
+            <div layout-gt-sm="row">
+                <md-input-container class="md-block tight" flex-gt-sm>
+                    <label for="firstName"><span translate="settings.user.firstName"></span></label>
+                    <input type="text" id="firstName" ng-model="user.firstName"/>
+                </md-input-container>
+                <md-input-container class="md-block tight" flex-gt-sm>
+                    <label for="lastName"><span translate="settings.user.lastName"></span></label>
+                    <input type="text" id="lastName" ng-model="user.lastName"/>
+                </md-input-container>
+            </div>
+
+
+            <md-input-container class="md-block tight">
+                <label for="email"><span translate="settings.user.email"></span></label>
+                <input type="email" id="email" ng-model="user.email"/>
+            </md-input-container>
+
+            <md-input-container ng-disabled="self.uid == user.id" ng-show="self.gid <=2" class="md-block">
+                <label for="group"><span translate="settings.user.group"></span>
+                    <span style="color: red">*</span></label>
+                <md-select id="group" ng-model="user.GroupId">
+                    <md-option ng-repeat="group in groups" ng-value="group.id">{{group.groupName}}</md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container ng-show="self.gid == 1 && user.GroupId > 1" class="md-block">
+                <label for="school"><span translate="settings.user.school"></span>
+                    <span style="color: red">*</span></label>
+                <md-select id="school" ng-model="user.SchoolId">
+                    <md-option ng-repeat="school in schools" ng-value="school.id">{{school.schoolName}}</md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block tight">
+                <md-input>
+                    <md-checkbox id="enable" ng-model="user.userEnable" aria-label="user enable"><span
+                            translate="settings.user.enable"></span></md-checkbox>
+                </md-input>
+            </md-input-container>
+        </form>
+    </md-content>
+    <md-dialog-actions layout="row">
+        <md-button translate="button.cancel_button" aria-label="cancel" ng-click="cancel()"
+                   ng-disabled="isWorking"></md-button>
+        <md-button class="md-raised md-primary" translate="button.save_button" aria-label="save"
+                   ng-disabled="isWorking || isNotValid()"
+                   ng-click="save()"></md-button>
+    </md-dialog-actions>
+</md-dialog>

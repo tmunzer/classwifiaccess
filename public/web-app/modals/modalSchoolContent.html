@@ -1,0 +1,53 @@
+<md-dialog aria-label="List dialog" style="min-width: 300px; width: 600px;">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2 translate="settings.school.modal_title"></h2>
+        </div>
+    </md-toolbar>
+    <div ng-show="!isWorking"
+         style="background-color: rgb(76,175,80); height: 5px; width: 100%"></div>
+    <md-progress-linear ng-show="isWorking" md-mode="indeterminate"
+                        class="md-accent"></md-progress-linear>
+    <md-content layout="column" layout-padding>
+        <md-input-container>
+            <label for="schoolName"><span translate="settings.school.schoolName"></span><span
+                    style="color: red">*</span></label>
+            <input id="schoolName" ng-model="school.schoolName" ng-required=""/>
+        </md-input-container>
+        <md-input-container>
+            <label for="accessMethod"><span translate="settings.school.access_method"></span><span
+                    style="color: red">*</span></label>
+            <md-select id="accessMethod" ng-model="school.accessMethod" ng-required>
+                <md-option value="api">API</md-option>
+                <md-option value="ssh">SSH</md-option>
+            </md-select>
+        </md-input-container>
+
+        <div class="alert-danger" ng-show="school.accessMethod == 'ssh'">
+            <md-icon class="material-icons" style="color: #a94442;">warning</md-icon>
+            <span translate="settings.school.ssh_warning"></span>
+        </div>
+        <md-input-container class="md-block" ng-show="school.accessMethod == 'ssh'">
+            <label for="sshAdmin"><span translate="settings.school.ssh_account"></span></label>
+            <input id="sshAdmin" ng-model="school.sshAdmin" ng-required="school.accessMethod == 'ssh'">
+        </md-input-container>
+        <div layout-gt-sm="row">
+            <md-input-container ng-show="school.accessMethod == 'ssh'" flex="50" layout-padding>
+                <label for="sshPassword"><span translate="settings.school.ssh_password"></span></label>
+                <input type="password" id="sshPassword" ng-model="school.sshPassword"
+                       ng-required="school.ssh_password == 'ssh'">
+            </md-input-container>
+            <md-input-container ng-show="school.accessMethod == 'ssh'" flex="50" layout-padding>
+                <label for="sshPasswordConfirm"><span translate="settings.school.ssh_password_confirm"></span></label>
+                <input type="password" id="sshPasswordConfirm" ng-model="school.sshPasswordConfirm"
+                       ng-required="school.ssh_password == 'ssh'">
+            </md-input-container>
+        </div>
+    </md-content>
+    <md-dialog-actions layout="row">
+        <md-button translate="button.cancel_button" aria-label="cancel" ng-click="cancel()"></md-button>
+        <md-button class="md-raised md-primary" translate="button.save_button" aria-label="save"
+                   ng-disabled="isNotValid()"
+                   ng-click="save()"></md-button>
+    </md-dialog-actions>
+</md-dialog>

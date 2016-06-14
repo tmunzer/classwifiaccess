@@ -1,0 +1,9 @@
+.tm-selected, tbody .md-row:hover {
+    background-color: #eee;
+}
+
+.tm-action-button {
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+}
