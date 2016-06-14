@@ -59,7 +59,6 @@ function User(){
     this.lastName="";
     this.email="";
     this.username="";
-    this.password="";
     this.userEnable=true;
     this.GroupId="";
     this.groupName="";
@@ -71,6 +70,51 @@ function User(){
 
 createUser = function(userFromDB, callback){
     var user = new User();
+    user.id = userFromDB.id;
+    user.lastLogin = new Date(userFromDB.lastLogin);
+    user.firstName = userFromDB.firstName;
+    user.lastName = userFromDB.lastName;
+    user.email = userFromDB.email;
+    user.username = userFromDB.username;
+    user.userEnable = userFromDB.userEnable;
+    user.GroupId = userFromDB.GroupId;
+    Group.findById(user.GroupId, null, null, function(err, group){
+        if (group){
+            user.groupName = group.groupName;
+        }
+        user.SchoolId = userFromDB.SchoolId;
+        School.findById(user.SchoolId, null, null, function(err, school){
+            if (school) {
+                user.schoolName = school.schoolName;
+            }
+            user.LanguageId = userFromDB.LanguageId;
+            UiLanguage.findById(user.LanguageId, null, null, function(err, uiLanguage){
+                if (uiLanguage){
+                    user.language = uiLanguage.language;
+                }
+                callback(user);
+            });
+        });
+    });
+};
+function UserWithPwd(){
+    this.id=null;
+    this.lastLogin="";
+    this.firstName="";
+    this.lastName="";
+    this.email="";
+    this.username="";
+    this.password="";
+    this.userEnable=true;
+    this.GroupId="";
+    this.groupName="";
+    this.SchoolId="";
+    this.schoolName="";
+    this.LanguageId="";
+    this.language="";
+}
+createUserWithPwd = function(userFromDB, callback){
+    var user = new UserWithPwd();
     user.id = userFromDB.id;
     user.lastLogin = new Date(userFromDB.lastLogin);
     user.firstName = userFromDB.firstName;
@@ -97,6 +141,17 @@ createUser = function(userFromDB, callback){
                 callback(user);
             });
         });
+    });
+};
+findOneForLogin = function(filters, options, callback){
+    db.findOne("User", filters, options, function(err, userFromDB){
+        if (err)callback(err);
+        else if (!userFromDB) callback(null, null);
+        else {
+            createUserWithPwd(userFromDB, function (user) {
+                callback(err, user);
+            });
+        }
     });
 };
 
@@ -169,3 +224,4 @@ module.exports.getAll = getAll;
 module.exports.findAll = findAll;
 module.exports.UserSerializer = UserSerializer;
 module.exports.deleteById = deleteByID;
+module.exports.findOneForLogin = findOneForLogin;

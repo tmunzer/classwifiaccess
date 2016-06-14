@@ -1,24 +1,53 @@
-doctype html
+doctype html5
 html
-   head
-      title= title
-      meta(name="viewport" content="width=device-width, initial-scale=1")
-      script(type='text/javascript' src='./javascripts/jquery-2.1.1.min.js')
-      script(type='text/javascript' src='./javascripts/bootstrap.min.js')
-      link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
-   body(style="background-image: url('/images/background.jpg'); background-size:100%")
-      div.container
-         div.row
-            div.col-sm-6.col-md-4.col-md-offset-4
-               div(class="text-center login-title" style="padding:1em; background-color: rgba(247, 247, 247, 0.97);").box-shadow
-                  h1(class="text-center login-title")= text.login_message
-                  div.account-wall
-                     img(class='profile-img', src='https://ssl.gstatic.com/accounts/ui/avatar_2x.png', style="border-radius: 50%; width: 25%; margin:1em")
-                     form(class='form-signin', action='/login', method='POST')
-                        input(type='text', name='username' class='form-control', placeholder=text.username,required, autofocus)
-                        input(type='password', name='password' class='form-control', placeholder=text.password, required)
-                        button(class='btn btn-lg btn-primary btn-block', type='submit')= text.login_button
-                        span.clearfix
-                  #message
-                  if message
-                     h4.text-center.error-message #{message}
+    head
+        title= title
+        meta(name="viewport" content="width=device-width, initial-scale=1")
+
+        script(src="/i18n/login/en.js")
+        script(src="/i18n/login/fr.js")
+
+        link(rel='stylesheet' href='/css/ah-tm.tags.css')
+        link(rel="stylesheet" href="/bower_components/angular-material/angular-material.min.css")
+        link(rel='stylesheet' href='/css/ah-tm.login.css')
+
+        script(src="/bower_components/angular/angular.min.js")
+        script(src="/bower_components/angular-aria/angular-aria.js")
+        script(src="/bower_components/angular-animate/angular-animate.min.js")
+        script(src="/bower_components/angular-material/angular-material.js")
+        script(src="/bower_components/angular-messages/angular-messages.js")
+        script(src="/bower_components/angular-route/angular-route.min.js")
+        script(src="/bower_components/angular-messages/angular-messages.js")
+        script(src="/bower_components/angular-translate/angular-translate.min.js")
+        script(src="/web-app/ng-sanitize.js")
+        script(src="/web-app/login.js")
+
+
+    body(ng-app="login")
+        div(style="border-top: 2px solid rgb(255, 195, 15);" class="user-home-wrap" ng-controller="LoginCtrl")
+        img(src="/images/logo.png" alt="Aerohive" class="ah-logo")
+        div.page-footer
+            span(style="border: none;") © 2016 Aerohive Networks. All Rights Reserved.
+
+
+        div(layout="column" layout-align="center center" layout-gt-sm="row" layout-align-gt-sm="center start")
+
+            div(style="width: 450px;" layout-margin)
+                div.inside(md-whiteframe="5" style="width: 100%" )
+                    md-toolbar
+                        div.md-toolbar-tools
+                            h2(translate="LOGIN.TITLE")
+                    md-content(layout="column" layout-padding)
+                        img(src="/images/logo.png" alt="Aerohive" class="ah-logo" style="text-align:center")
+                        form(id="login" action="/login/" method="post")
+                            md-input-container.md-block.flex-gt-sm
+                                label(for="username" translate="LOGIN.USERNAME")
+                                input(required="required" id="username" name="username" type="text")
+                            md-input-container.md-block.flex-gt-sm
+                                label(for="password" translate="LOGIN.PASSWORD")
+                                input(required="required" id="password" name="password" type="password")
+                            div(style="float: right")
+                                md-button.md-raised.md-primary(type="submit" translate="LOGIN.LOGIN" aria-label="connect Token")
+
+
+

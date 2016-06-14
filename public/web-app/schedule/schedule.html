@@ -1,0 +1,81 @@
+<div style="padding-bottom: 15px;" layout="column">
+    <div layout-gt-md="row" layout="column">
+        <section ng-show="schoolSelected() == false" flex="100">
+            <article layout-padding md-whiteframe="5" style="background-color: whitesmoke;">
+                <h1 style="text-align: center" translate="button.select_school"></h1>
+            </article>
+        </section>
+
+        <section flex="100" ng-show="schoolSelected() == true">
+            <md-content>
+                <md-button class="md-raised md-primary" translate="button.activateNow"
+                           aria-label="activateNow" ng-click="activation()"></md-button>
+                <md-button class="md-raised md-primary" translate="button.activateLater"
+                           aria-label="activateLater" ng-click="planSchedule()"></md-button>
+            </md-content>
+            <md-table-container>
+                <table md-table md-progress="requestForSchedule">
+                    <thead md-head md-order="table.order">
+                    <tr md-row>
+                        <th md-column style="width: 15%" md-order-by='classroom'>
+                            {{"schedule.classroom" | translate}}
+                        </th>
+                        <th md-column style="width: 30%" md-order-by='startDate'>
+                            {{"schedule.startDate" | translate}}
+                        </th>
+                        <th md-column style="width: 30%" md-order-by='endDate'>
+                            {{"schedule.endDate" | translate}}
+                        </th>
+                        <th md-column style="width: 5%" md-order-by='status'>
+                            {{"schedule.status" | translate}}
+                        </th>
+                        <th md-column style="width: 10%" md-order-by='teacher'>
+                            {{"schedule.teacher" | translate}}
+                        </th>
+                        <th md-column style="width: 10%" md-order-by='action'>
+                            {{"schedule.action" | translate}}
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody md-body>
+                    <tr md-row
+                        ng-repeat="lesson in lessons | orderBy: table.order | limitTo: itemsByPage: (currentPage - 1) * itemsByPage">
+                        <td md-cell>
+                            <div>{{lesson.classroomName}}</div>
+                        </td>
+                        <td md-cell>
+                            <div>{{lesson.startDate | date: 'short'}}</div>
+                        </td>
+                        <td md-cell>
+                            <div>{{lesson.endDate | date: 'short'}}</div>
+                        </td>
+                        <td md-cell>
+                            <div ng-bind-html="lesson.lessonStatus | scheduleStatus"></div>
+                        </td>
+                        <td md-cell>
+                            <div>{{lesson.username}}</div>
+                        </td>
+                        <td md-cell>
+                            <md-button ng-disabled="lesson.lessonStatus != 'present'" class="md-primary tm-action-button"
+                                       ng-click="deactivation(lesson)">
+                                <md-icon class="material-icons">power_settings_new</md-icon>
+                            </md-button>
+                            <md-button ng-disabled="lesson.lessonStatus == 'past'" class="md-primary tm-action-button"
+                                       ng-click="editSchedule(lesson)">
+                                <md-icon class="material-icons">edit</md-icon>
+                            </md-button>
+                            <md-button class="md-warn tm-action-button" ng-click="deleteSchedule(lesson.id)">
+                                <md-icon class="material-icons">delete</md-icon>
+                            </md-button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </md-table-container>
+            <md-table-pagination md-limit="itemsByPage" md-limit-options="[10, 20, 50, 100 ]"
+                                 md-page="currentPage"
+                                 md-total="{{lessons.length}}"></md-table-pagination>
+        </section>
+
+    </div>
+</div>

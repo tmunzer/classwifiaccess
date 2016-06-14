@@ -1,0 +1,238 @@
+<md-content style="padding-bottom: 15px;" layout="column">
+    <md-content layout-margin md-whiteframe="5">
+        <md-tabs md-dynamic-height md-border-bottom>
+            <md-tab label="{{'settings.user.title' | translate}}">
+                <md-content class="md-padding">
+                    <md-button class="md-primary md-raised" translate="settings.user.new_user_button" aria-label="new user" ng-click="newUser()"></md-button>
+                    <md-table-container>
+                        <table md-table md-progress="users.promise">
+                            <thead md-head md-order="userTable.order">
+                            <tr md-row>
+                                <th md-column style="width: 10%" md-order-by='school'>
+                                    {{"settings.user.school" | translate}}
+                                </th>
+                                <th md-column style="width: 15%" md-order-by='username'>
+                                    {{"settings.user.username" | translate}}
+                                </th>
+                                <th md-column style="width: 20%" md-order-by='firstName'>
+                                    {{"settings.user.firstName" | translate}}
+                                </th>
+                                <th md-column style="width: 20%" md-order-by='lastName'>
+                                    {{"settings.user.lastName" | translate}}
+                                </th>
+                                <th md-column style="width: 15%" md-order-by='group'>
+                                    {{"settings.user.group" | translate}}
+                                </th>
+                                <th md-column style="width: 10%" md-order-by='enable'>
+                                    {{"settings.user.enable" | translate}}
+                                </th>
+                                <th md-column style="width: 15%" md-order-by='lastLogin'>
+                                    {{"settings.user.lastLogin" | translate}}
+                                </th>
+                                <th md-column style="width: 5%">
+                                    {{"settings.user.action" | translate}}
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody md-body>
+                            <tr md-row
+                                ng-repeat="user in users | orderBy: userTable.order | limitTo: userItemsByPage: (userCurrentPage - 1) * userItemsByPage">
+                                <td md-cell>
+                                    <div>{{user.schoolName}}</div>
+                                </td>
+                                <td md-cell>
+                                    <div><md-button class="md-primary tm-action-button" ng-click="editUser(user)">{{user.username}}</md-button></div>
+                                </td>
+                                <td md-cell>
+                                    <div>{{user.firstName}}</div>
+                                </td>
+                                <td md-cell>
+                                    <div>{{user.lastName}}</div>
+                                </td>
+                                <td md-cell>
+                                    <div>{{user.groupName}}</div>
+                                </td>
+                                <td md-cell>
+                                    <div ng-bind-html="user.userEnable | userStatus"></div>
+                                </td>
+                                <td md-cell>
+                                    <div>{{user.lastLogin | date: 'short'}}</div>
+                                </td>
+                                <td md-cell>
+                                    <md-button class="md-warn tm-action-button" ng-click="deleteUser(user.id)">
+                                        <md-icon class="material-icons md-18">delete</md-icon>
+                                    </md-button>
+
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </md-table-container>
+                    <md-table-pagination md-limit="userItemsByPage" md-limit-options="[10, 20, 50, 100 ]"
+                                         md-page="userCurrentPage"
+                                         md-total="{{users.length}}"></md-table-pagination>
+                </md-content>
+            </md-tab>
+            <md-tab label="{{'settings.classroom.title' | translate }}">
+                <md-content class="md-padding">
+                    <md-content class="md-padding">
+                        <md-button class="md-primary md-raised" translate="settings.classroom.new_classroom_button" ng-click="newClassroom()" aria-label="new classroom"></md-button>
+                        <md-table-container>
+                            <table md-table  md-progress="classrooms.promise">
+                                <thead md-head md-order="classroomTable.order">
+                                <tr md-row>
+                                    <th md-column style="width: 15%" md-order-by='school'>
+                                        {{"settings.classroom.school" | translate}}
+                                    </th>
+                                    <th md-column style="width: 30%" md-order-by='classroomName'>
+                                        {{"settings.classroom.classroomName" | translate}}
+                                    </th>
+                                    <th md-column style="width: 30%" md-order-by='deviceHostname'>
+                                        {{"settings.classroom.device" | translate}}
+                                    </th>
+                                    <th md-column style="width: 15%" md-order-by='deviceStatus'>
+                                        {{"settings.classroom.deviceStatus" | translate}}
+                                    </th>
+                                    <th md-column style="width: 10%">
+                                        {{"settings.user.action" | translate}}
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody md-body>
+                                <tr md-row
+                                    ng-repeat="classroom in classrooms | orderBy: classroomTable.order | limitTo: classroomItemsByPage: (classroomCurrentPage - 1) * classroomItemsByPage">
+                                    <td md-cell>
+                                        <div>{{classroom.schoolName}}</div>
+                                    </td>
+                                    <td md-cell>
+                                        <div><md-button class="md-primary tm-action-button" ng-click="editClassroom(classroom)">{{classroom.classroomName}}</md-button></div>
+                                    </td>
+                                    <td md-cell>
+                                        <div><span>{{classroom.deviceHostname}}</span></div>
+                                    </td>
+                                    <td md-cell>
+                                        <span ng-bind-html="classroom.deviceConnected | deviceStatus"></span>
+                                    </td>
+                                    <td md-cell>
+                                        <md-button class="md-warn tm-action-button" ng-click="deleteClassroom(classroom.id)">
+                                            <md-icon class="material-icons md-18">delete</md-icon>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </md-table-container>
+                        <md-table-pagination md-limit="classroomItemsByPage" md-limit-options="[10, 20, 50, 100 ]"
+                                             md-page="classroomCurrentPage"
+                                             md-total="{{classrooms.length}}"></md-table-pagination>
+                    </md-content>
+                </md-content>
+            </md-tab>
+            <md-tab label="{{'settings.school.title' | translate }}" ng-if="authorizedLevel(1)">
+                <md-content class="md-padding">
+                    <md-button class="md-primary md-raised" translate="settings.school.new_school_button" ng-click="newSchool()" aria-label="new school"></md-button>
+                    <md-table-container>
+                        <table md-table  md-progress="schools.promise">
+                            <thead md-head md-order="schoolTable.order">
+                            <tr md-row>
+                                <th md-column style="width: 40%" md-order-by='schoolName'>
+                                    {{"settings.school.schoolName" | translate}}
+                                </th>
+                                <th md-column style="width: 50%" md-order-by='access_method'>
+                                    {{"settings.school.access_method" | translate}}
+                                </th>
+                                <th md-column style="width: 10%">
+                                    {{"settings.school.action" | translate}}
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody md-body>
+                            <tr md-row ng-show="school.id > 1"
+                                ng-repeat="school in schools | orderBy: schoolTable.order | limitTo: schoolItemsByPage: (schoolCurrentPage - 1) * schoolItemsByPage">
+                                <td md-cell>
+                                    <div><md-button class="md-primary tm-action-button" ng-click="editSchool(school)">{{school.schoolName}}</md-button></div>
+                                </td>
+                                <td md-cell>
+                                    <div>{{school.accessMethod}}</div>
+                                </td>
+                                <td md-cell>
+                                    <md-button class="md-warn tm-action-button" ng-click="deleteSchool(school.id)">
+                                        <md-icon class="material-icons md-18">delete</md-icon>
+                                    </md-button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </md-table-container>
+                    <md-table-pagination md-limit="schoolItemsByPage" md-limit-options="[10, 20, 50, 100 ]"
+                                         md-page="schoolCurrentPage"
+                                         md-total="{{schools.length}}"></md-table-pagination>
+                </md-content>
+            </md-tab>
+            <md-tab label="{{'settings.api.title' | translate }}"  ng-if="authorizedLevel(2)">
+                <md-content class="md-padding">
+                    <md-button class="md-primary md-raised" href="{{registerLink}}" translate="settings.api.register" aria-label="register api"></md-button>
+                    <md-table-container>
+                        <table md-table  md-progress="api.promise">
+                            <thead md-head md-order="apiTable.order">
+                            <tr md-row>
+                                <th md-column style="width: 15%" md-order-by='school'>
+                                    {{"settings.api.school" | translate}}
+                                </th>
+                                <th md-column style="width: 15%" md-order-by='ownerId'>
+                                    ownerId
+                                </th>
+                                <th md-column style="width: 15%" md-order-by='vhmId'>
+                                    vhmId
+                                </th>
+                                <th md-column style="width: 15%" md-order-by='vpcURL'>
+                                    vpcURL
+                                </th>
+                                <th md-column style="width: 15%" md-order-by='accessToken'>
+                                    accessToken
+                                </th>
+                                <th md-column style="width: 30%" md-order-by='expireAt'>
+                                    {{"settings.api.expireAt" | translate}}
+                                </th>
+                                <th md-column style="width: 10%">
+                                    {{"settings.api.action" | translate}}
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody md-body>
+                            <tr md-row
+                                ng-repeat="api in apis | orderBy: apiTable.order | limitTo: apiItemsByPage: (apiCurrentPage - 1) * apiItemsByPage">
+                                <td md-cell>
+                                    <div><md-button class="md-primary tm-action-button" ng-click="editApi(api)">{{api.schoolName | schoolDisplay}}</md-button> </div>
+                                </td>
+                                <td md-cell>
+                                    <div>{{api.ownerId}}</div>
+                                </td>
+                                <td md-cell>
+                                    <div>{{api.vhmId}}</div>
+                                </td>
+                                <td md-cell>
+                                    <div>{{api.vpcUrl}}</div>
+                                </td>
+                                <td md-cell>
+                                    <div>{{api.accessToken}}</div>
+                                </td>
+                                <td md-cell>
+                                    <div>{{api.expireAt}}</div>
+                                </td>
+                                <td md-cell>
+                                    <md-button class="md-warn tm-action-button" ng-click="deleteApi(api.id)">
+                                        <md-icon class="material-icons md-18">delete</md-icon>
+                                    </md-button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </md-table-container>
+                    <md-table-pagination md-limit="apiItemsByPage" md-limit-options="[10, 20, 50, 100 ]"
+                                         md-page="apiCurrentPage"
+                                         md-total="{{apis.length}}"></md-table-pagination>
+                </md-content>
+            </md-tab>
+        </md-tabs>
+    </md-content>
+</md-content>

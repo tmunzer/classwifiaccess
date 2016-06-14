@@ -285,6 +285,7 @@ deleteByID = function (lessonId, callback) {
     })
 };
 
+
 module.exports = Lesson;
 module.exports.findAll = findAll;
 module.exports.findOne = findOne;

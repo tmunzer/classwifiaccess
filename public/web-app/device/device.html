@@ -1,0 +1,97 @@
+<div layout-margin>
+    <div md-whiteframe="5" layout="column" layout-gt-sm="row">
+        <md-input-container md-no-float class="md-block search-tool" style="text-align: center; margin: 0">
+            <md-checkbox ng-model="showSwitches" ng-change="changeFilter()" aria-label="Switch">
+                {{"device.showSwitch" | translate }}
+            </md-checkbox>
+        </md-input-container>
+        <md-input-container md-no-float class="md-block search-tool" style="text-align: center; margin: 0">
+            <md-checkbox ng-model="showAPs" ng-change="changeFilter()" aria-label="Switch">
+                {{"device.showAP" | translate }}
+            </md-checkbox>
+        </md-input-container>
+        <md-input-container class="md-block search-tool" style="text-align: center; margin: 0">
+            <md-icon class="material-icons search-tool">search</md-icon>
+            <label for="filter" translate="button.filter" style="bottom: 60px"></label>
+            <input ng-model="table.filter" id="filter" ng-change="changeFilter()">
+        </md-input-container>
+    </div>
+
+    <div style="padding-bottom: 15px;" layout="column">
+        <div layout-gt-md="row" layout="column">
+            <section ng-show="schoolSelected() == false" flex="100">
+                <article layout-padding md-whiteframe="5" style="background-color: whitesmoke;">
+                    <h1 style="text-align: center" translate="button.select_school"></h1>
+                </article>
+            </section>
+
+            <section flex="100" ng-show="schoolSelected() == true">
+                <div layout-gt-sm="row" layout="column" layout-align="space-around" ng-show="!isLoaded()">
+                    <md-progress-circular md-mode="indeterminate" class="md-accent">
+                    </md-progress-circular>
+                </div>
+                <md-content class="md-padding" ng-show="isLoaded()">
+                    <md-grid-list
+                            md-cols-xs="1" md-cols-sm="1" md-cols-md="2" md-cols-gt-md="3"
+                            md-row-height="250px"
+                            md-gutter="20px" md-gutter-gt-sm="20px">
+                        <md-grid-tile ng-repeat="device in devicesFitlered | orderBy: 'hostName'"
+                                      md-whiteframe="5">
+                            <md-grid-tile-header style="background-color: rgb(30,136,229);">
+                                <md-toolbar>
+                                    <div class="md-toolbar-tools">
+                                        <h2>{{device.hostName}}</h2>
+                                    </div>
+                                </md-toolbar>
+                            </md-grid-tile-header>
+                            <md-content style="width:100%; padding: 5px">
+                                <table style="text-align: left">
+                                    <tbody>
+                                    <tr>
+                                        <th translate="device.status" style="width: 40%"></th>
+                                        <td>
+                                            <div ng-bind-html="device.connected | deviceStatus"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th translate="device.connectedDevices"></th>
+                                        <td><span class="badge">{{device.activeClients}}</span></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <md-divider></md-divider>
+                                <table style="text-align: left">
+                                    <tr>
+                                        <th translate="device.macAddress" style="width: 40%"></th>
+                                        <td>{{device.macAddress}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th translate="device.serialNumber"></th>
+                                        <td>{{device.serialId}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th translate="device.ipAddress"></th>
+                                        <td>{{device.ip}}</td>
+                                    </tr>
+                                </table>
+                                <md-divider></md-divider>
+                                <table style="text-align: left">
+                                    <tbody>
+                                    <tr>
+                                        <th translate="device.location" style="width: 40%"></th>
+                                        <td>
+                                            <div>{{ device.locations | locationFromArray }}</div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </md-content>
+                        </md-grid-tile>
+                    </md-grid-list>
+
+                </md-content>
+            </section>
+
+        </div>
+    </div>
+</div>

@@ -3,6 +3,7 @@ var School = require(appRoot + '/models/school');
 
 function DeviceSerializer(row) {
     this.device = {};
+    this.device.id = row.deviceId;
     this.device.ownerId = row.ownerId;
     this.device.macAddress = row.macAddress;
     this.device.hostName = row.hostName;
@@ -121,6 +122,29 @@ findAll = function (filters, options, callback) {
     });
 };
 
+findAllAP = function (filters, options, callback){
+    filters["model"]= ["LIKE", 'AP%'];
+    db.findAll("Device", filters, rOptions, function (err, deviceFromDB) {
+        if (err)callback(err);
+        else if (deviceFromDB == null || deviceFromDB.length == 0) callback(null, null);
+        else {
+            if (deviceFromDB) {
+                var insert = 0;
+                var devices = [];
+                for (var i = 0; i < deviceFromDB.length; i++) {
+                    createDevice(deviceFromDB[i], function (device) {
+                        devices.push(device);
+                        insert ++;
+                        if (insert == deviceFromDB.length) {
+                            callback(null, devices);
+                        }
+                    })
+                }
+            }
+        }
+    });
+}
+
 getAll = function(options, callback){
     this.findAll(null, options, function(err, res){
         callback(err, res);
@@ -136,6 +160,7 @@ module.exports = Device;
 module.exports.findOne = findOne;
 module.exports.findById = findById;
 module.exports.findAll = findAll;
+module.exports.findAllAP = findAllAP;
 module.exports.getAll = getAll;
 module.exports.DeviceSerializer = DeviceSerializer;
 module.exports.deleteById = deleteById;

@@ -61,6 +61,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/bower_components',  express.static(appRoot + '/bower_components'));
 
 //===============SQLITE=================
 
@@ -87,9 +88,18 @@ initPassport(passport);
 
 //===============ROUTES=================
 
-var routes = require(appRoot + '/routes/index')(passport);
-app.use('/', routes);
+//var routes = require(appRoot + '/routes/routes')(app, passport);
+var login = require('./routes/login');
+var webapp = require('./routes/web-app');
+var api = require('./routes/api');
 
+app.use('/login/', login);
+app.use('/web-app/', webapp);
+app.use('/api/', api);
+
+app.get('*', function (req, res) {
+    res.redirect('/web-app/');
+});
 //===============ERRORS=================
 
 // catch 404 and forward to error handler

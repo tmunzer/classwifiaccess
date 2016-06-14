@@ -1,0 +1,67 @@
+<md-dialog aria-label="List dialog" style="min-width: 300px; width: 760px;">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2 ng-show="classroom == null" translate="schedule.genericTitle"></h2>
+
+            <h2 ng-show="classroom != null">{{'schedule.classroomTitle' | translate}} {{classroom.classroomName}}</h2>
+        </div>
+    </md-toolbar>
+    <div ng-show="!isWorking"
+         style="background-color: rgb(76,175,80); height: 5px; width: 100%"></div>
+    <md-progress-linear ng-show="isWorking" md-mode="indeterminate"
+                        class="md-accent"></md-progress-linear>
+    <md-content layout="column" layout-padding>
+        <md-input-container ng-show="schedule.id == null" class="md-block">
+            <label for="classroom"><span translate="schedule.classroom"></span>
+                <span style="color: red">*</span></label>
+            <md-select id="classroom" ng-model="schedule.ClassroomId">
+                <md-option ng-repeat="classroom in classrooms" ng-value="classroom.id">{{classroom.classroomName}}</md-option>
+            </md-select>
+        </md-input-container>
+        <div>
+
+            <time-date-picker id="startDate"
+                              ng-model="schedule.startDate"
+                              data-autosave='true'
+                              data-display-mode="full"
+                              data-display-twentyfour="true">
+            </time-date-picker>
+        </div>
+        <md-radio-group ng-model="schedule.activation">
+
+            <md-radio-button value="unlimited" class="md-primary" aria-label="unlimited">
+                <span translate="classroom.unlimited"></span>
+            </md-radio-button>
+
+            <md-radio-button value="duration" class="md-primary" aria-label="duration">
+                <span translate="classroom.timeLimited"></span>
+            </md-radio-button>
+            <div ng-show="schedule.activation == 'duration'">
+                <md-input-container style="width: 100%">
+                    <label translate="classroom.durationValue"></label>
+                    <input type="number" ng-model="schedule.duration" aria-label="duration_value"/>
+                </md-input-container>
+            </div>
+
+            <md-radio-button value="until" class="md-primary" aria-label="until">
+                <span translate="classroom.dateLimited"></span>
+            </md-radio-button>
+            <div ng-show="schedule.activation == 'until'">
+                    <time-date-picker ng-model="schedule.endDate"
+                                      data-autosave='true'
+                                      data-display-mode="full"
+                                      data-display-twentyfour="true"
+                                      data-mindate=minDate>
+                    </time-date-picker>
+            </div>
+
+        </md-radio-group>
+    </md-content>
+    <md-dialog-actions layout="row">
+        <md-button translate="button.cancel_button" aria-label="cancel" ng-click="cancel()"
+                   ng-disabled="isWorking"></md-button>
+        <md-button class="md-raised md-primary" translate="button.save_button" aria-label="save"
+                   ng-disabled="isWorking || isNotValid()"
+                   ng-click="save()"></md-button>
+    </md-dialog-actions>
+</md-dialog>

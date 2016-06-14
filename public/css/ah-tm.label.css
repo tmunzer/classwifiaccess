@@ -1,0 +1,82 @@
+.big-badge {
+    margin-bottom: 15px;text-align: center;
+}
+
+.big-badge > div {
+    margin: auto;width: 95%;
+}
+.big-badge > div > i {
+    margin: 0 10px;line-height: 100%;vertical-align: middle;
+}
+.badge {
+    padding: .3em .6em;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    border-radius: 5px;
+    display: inline-block;
+    min-width: 10px;
+    vertical-align: middle;
+    background-color: #777;
+}
+
+.badge-danger {
+    background-color: #d9534f;
+}
+
+.badge-success {
+    background-color: #5cb85c;
+}
+.badge-primary {
+    background-color: #337ab7;
+}
+.badge-warning {
+    background-color: #f0ad4e;
+}
+.badge-unknown {
+    background-color: #ddd;
+}
+.color-danger {
+    color: #d9534f;
+}
+.color-success {
+    color: #5cb85c;
+}
+.color-primary {
+    color: #337ab7;
+}
+.color-warning {
+    color: #f0ad4e;
+}
+.color-unknown {
+    color: #eeeeee;
+}
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+    margin: 5px auto;
+    padding: 6px;
+    width: 95%;
+    box-shadow: none;
+    font-size: 0.8em;
+    text-align: center;
+    align-self: center;
+}
+.alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+    margin: 5px auto;
+    padding: 6px;
+    width: 95%;
+    box-shadow: none;
+    font-size: 0.8em;
+    text-align: center;
+    align-self: center;
+}
+
+
