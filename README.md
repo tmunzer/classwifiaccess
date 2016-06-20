@@ -17,7 +17,9 @@ To run this App, you need NodeJS and NodeJS packages:
 
 1. Download and Install [NodeJS](https://nodejs.org/en/)
 2. From the project root folder, run 
-    npm install
+    `npm install`
+and 
+    `bower install`
 3. Configure the app with your [Aerohive Developer information](https://developer.aerohive.com/):
     - Copy/Paste the file `/bin/ah_api/config_example` to `/bin/ah_api/config`
     - Edit the file `/bin/ah_api/config` to match your developer credentials
