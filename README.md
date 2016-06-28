@@ -17,12 +17,15 @@ To run this App, you need NodeJS and NodeJS packages:
 
 1. Download and Install [NodeJS](https://nodejs.org/en/)
 2. From the project root folder, run 
-    npm install
+    `npm install`
+and 
+    `bower install`
 3. Configure the app with your [Aerohive Developer information](https://developer.aerohive.com/):
     - Copy/Paste the file `/bin/ah_api/config_example` to `/bin/ah_api/config`
     - Edit the file `/bin/ah_api/config` to match your developer credentials
 
-    By default (if you are not changing the server listening port), the redirectUrl should be     `https://127.0.0.1:3443/conf/api/reg`
+    By default, the redirectUrl should be     `https://<server_IP_Address_or_FQDN>/conf/api/reg`
+    
 4. Once done, you can start the APP. Go to `root_folder/bin/`and execute "www". If `node`is not in your $PATH, you may have to start the server from a terminal: `path_to_node/node ./bin/www`
 5. Go to https://127.0.0.1:3443/login
 
