@@ -48,7 +48,7 @@ module.exports.logger.stream = {
 };
 
 logger.debug("Overriding 'Express' logger");
-app.use(require('morgan')({ "stream": logger.stream }));
+app.use(require('morgan')("default", { "stream": logger.stream }));
 //===============CONF APP=================
 
 // view engine setup
@@ -73,7 +73,11 @@ module.exports.db = db;
 //===============PASSPORT=================
 var passport = require('passport');
 var expressSession = require('express-session');
-app.use(expressSession({secret: 'mySecretKey'}));
+app.use(expressSession({
+    secret: 'mySecretKey',
+    resave: true,
+    saveUninitialized: true
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
