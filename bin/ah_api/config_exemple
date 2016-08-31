@@ -1,5 +1,9 @@
 //move this file to ./bin/ah_api/config
 
-module.exports.redirectUrl = "put_here_your_redirectURL/conf/api/reg";
+//These parameters has to be the same as the parameters configured on the Aerohive developper account
+
+//redirectUrl has to be HTTPS
+//redirectUrl has to end with /api/oauth
+module.exports.redirectUrl = "https://<server>/api/oauth";
 module.exports.secret = "put_here_your_secret";
 module.exports.clientId = "put_here_your_clientID";
