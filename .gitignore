@@ -1,6 +1,7 @@
 bin/ah_api/config
 .idea/*
 node_modules/
-*.db
+local.db
 *.log
 bower_components/
+.DS_Store
