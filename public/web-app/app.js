@@ -109,11 +109,10 @@ cwa.controller("HeaderCtrl", function ($scope, $rootScope, $location, $mdDialog,
             $rootScope.schools = promise.schools;
         }
     });
-    $rootScope.$watch("schools", function(){
+    $rootScope.$watch("schools", function () {
         $scope.schools = $rootScope.schools;
     });
 
-    $scope.schoolId = 2;
 
     $scope.$watch('schoolId', function(){
         $rootScope.schoolId = $scope.schoolId;

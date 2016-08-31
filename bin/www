@@ -1,23 +1,42 @@
 #!/usr/bin/env node
-var httpPort = '3000';
 
-//===============DEPENDENCIES=================
+/**
+ * Module dependencies.
+ */
 
-var app = require('./../app');
-var logger = require(appRoot + "/app").logger;
-var debug = require('debug')('SchoolControl:server');
+var app = require('../app');
+
+
 
 //===============HTTP SERVER=================
 
+
 var http = require('http');
 
-var httpPort = normalizePort(process.env.PORT || httpPort);
+var httpPort = normalizePort(process.env.PORT || '3080');
 var httpServer = http.createServer(app);
 
 httpServer.listen(httpPort);
 httpServer.on('error', onError);
 httpServer.on('listening', onListening);
 
+
+//===============HTTPS SERVER=================
+
+var https = require('https');
+var fs = require('fs');
+
+var https_options = {
+  key: fs.readFileSync('./../cert/server.key'),
+  cert: fs.readFileSync('./../cert/server.pem')
+};
+
+var httpsPort = normalizePort(process.env.PORT || '3443');
+var httpsServer = https.createServer(https_options, app);
+
+httpsServer.listen(httpsPort);
+httpsServer.on('error', onError);
+httpsServer.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
@@ -55,11 +74,11 @@ function onError(error) {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      logger.error(bind + ' requires elevated privileges');
+      console.log(bind + ' requires elevated privileges');
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      logger.error(bind + ' is already in use');
+      console.log(bind + ' is already in use');
       process.exit(1);
       break;
     default:
@@ -76,5 +95,5 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  console.log('Listening on ' + bind);
 }
