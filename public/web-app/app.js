@@ -107,6 +107,9 @@ cwa.controller("HeaderCtrl", function ($scope, $rootScope, $location, $mdDialog,
         if (promise && promise.error) $scope.$broadcast("apiError", promise.error);
         else {
             $rootScope.schools = promise.schools;
+            if ($rootScope.schools.length == 1) {
+                $scope.schoolId = $rootScope.schools[0].id;
+            }
         }
     });
     $rootScope.$watch("schools", function () {

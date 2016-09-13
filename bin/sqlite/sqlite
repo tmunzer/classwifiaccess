@@ -40,7 +40,7 @@ var Sqlite = function(){
                 "model VARCHAR(10), " +
                 "ip VARCHAR(12), " +
                 "simType VARCHAR(10), " +
-                "location VARCHAR(60)," +
+                "locations VARCHAR(60)," +
                 "SchoolId INTEGER, " +
                 "connected BOOL, " +
                 "ApiId INTEGER)");
