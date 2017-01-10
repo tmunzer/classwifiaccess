@@ -99,16 +99,6 @@ html
                         md-icon.material-icons.md-24 wifi
                         div(translate="layout.devices")
                     md-button(href="#!/settings/" ng-class="{cur: nav.isActive('settings')}" ng-if="authorizedLevel(2)")
-                    md-button(href="classroom" ng-class="{cur: nav.isActive('classroom')}")
-                        md-icon.material-icons.md-24 school
-                        div(translate="layout.classrooms")
-                    md-button(href="schedules" ng-class="{cur: nav.isActive('schedules')}")
-                        md-icon.material-icons.md-24 date_range
-                        div(translate="layout.schedules")
-                    md-button(href="devices" ng-class="{cur: nav.isActive('devices')}" ng-if="authorizedLevel(2)")
-                        md-icon.material-icons.md-24 wifi
-                        div(translate="layout.devices")
-                    md-button(href="settings" ng-class="{cur: nav.isActive('settings')}" ng-if="authorizedLevel(2)")
                         md-icon.material-icons.md-24 settings
                         div(translate="layout.settings")
         div(id="main")
