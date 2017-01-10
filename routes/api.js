@@ -43,7 +43,7 @@ function refreshDevices(filterString, callback) {
 //===============================================================//
 //============================ OAUTH ===========================//
 //===============================================================//
-router.get('/oauth', function (req, res) {
+router.get('/oauth/reg', function (req, res) {
     if (req.session.hasOwnProperty('passport')) {
         if (req.query.hasOwnProperty('error')) {
             Error.render(req.query.error, "conf", req, res);
@@ -61,7 +61,7 @@ router.get('/oauth', function (req, res) {
                                 if (err) {
                                     Error.render(err, "conf", req, res);
                                 } else {
-                                    res.redirect('/settings');
+                                    res.redirect('web-app/#!/settings');
                                 }
                             });
                         }
