@@ -52,7 +52,7 @@ function disableWiFi(DeviceId, SchoolId, LessonId, callback) {
                             //TODO sent a error message telling SSH is not configured for this school
                             else if (school == null) callback(null);
                             else try {
-                                    if (device && device.hasOwnProperty("ip")) {
+                                    if (device && device.ip) {
                                         ssh.execute(device.ip, ['disableWiFi'], school.sshAdmin, school.sshPassword, function (err) {
                                             if (err) callback(err);
                                             else lessonDisableDone(LessonId, function (err) {
@@ -87,7 +87,7 @@ function enableWiFi(DeviceId, SchoolId, LessonId, callback) {
                 //TODO sent a error message telling SSH is not configured for this school
                 else if (school == null) callback(null);
                 else try {
-                        if (device && device.hasOwnProperty("ip")) {
+                        if (device && device.ip) {
                             ssh.execute(device.ip, ['enableWiFi'], school.sshAdmin, school.sshPassword, function (err) {
                                 if (err) callback(err);
                                 else lessonEnableDone(LessonId, function (err) {

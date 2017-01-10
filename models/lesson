@@ -4,12 +4,12 @@ var User = require(appRoot + "/models/user");
 
 function LessonSeralizer(row) {
     this.lesson = {};
-    if (row.hasOwnProperty("startDateTs")){
+    if (row.startDateTs){
         this.lesson.startDate = row.startDateTs;
     } else {
         this.lesson.startDate = row.startDate;
     }
-    if (row.hasOwnProperty("endDateTs")){
+    if (row.endDateTs){
         this.lesson.endDate = row.endDateTs;
     } else {
         this.lesson.endDate = row.endDate;
@@ -17,12 +17,12 @@ function LessonSeralizer(row) {
     this.lesson.ClassroomId = row.ClassroomId;
     this.lesson.UserId = row.UserId;
     this.lesson.SchoolId = row.SchoolId;
-    if (row.hasOwnProperty("startDone")){
+    if (row.startDone){
         this.lesson.startDone = row.startDone;
     } else {
         this.lesson.startDone = "false";
     }
-    if (row.hasOwnProperty("endDone")){
+    if (row.endDone){
         this.lesson.endDone = row.endDone;
     } else {
         this.lesson.endDone = "false";

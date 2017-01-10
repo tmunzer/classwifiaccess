@@ -172,7 +172,7 @@ processOptions = function(rOptions){
     var columnsString = "";
     var orderByString = "";
     var optionNumber = 0;
-    if (options.hasOwnProperty("columns")){
+    if (options.columns){
         optionNumber = 0;
         for (var column in options['columns']){
             if (optionNumber != 0){
@@ -184,7 +184,7 @@ processOptions = function(rOptions){
     } else {
         columnsString = "*";
     }
-    if (options.hasOwnProperty("orderBy")){
+    if (options.orderBy){
         orderByString = " ORDER BY " + options['orderBy'];
     } else {
         orderByString = "";

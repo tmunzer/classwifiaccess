@@ -102,15 +102,15 @@ angular.module("Modals").controller("DialogApiController", function ($scope, $ro
 });
 angular.module("Modals").controller("DialogSchoolController", function ($scope, $rootScope, $mdDialog, settingsSchoolsService, items) {
     $scope.school = angular.copy(items.school);
-    if (items.hasOwnProperty('schoolId')) $scope.schoolId = items.schoolId;
+    if (items.schoolId) $scope.schoolId = items.schoolId;
     else $scope.schoolId = null;
 
     $scope.isWorking = false;
 
     $scope.isNotValid = function () {
-        if (!$scope.school.hasOwnProperty('schoolName')) return true;
+        if (!$scope.school.schoolName) return true;
         else if ($scope.school.schoolName == "") return true;
-        else if (!$scope.school.hasOwnProperty('accessMethod')) return true;
+        else if (!$scope.school.accessMethod) return true;
         else return false;
     };
 
@@ -131,9 +131,9 @@ angular.module("Modals").controller("DialogSchoolController", function ($scope, 
 angular.module("Modals").controller("DialogClassroomController", function ($scope, $rootScope, $mdDialog, settingsClassroomsService, settingsSchoolsService, deviceService, items) {
     $scope.schools = [];
     $scope.devices = [];
-    if (items.hasOwnProperty('classroom')) $scope.classroom = angular.copy(items.classroom);
+    if (items.classroom) $scope.classroom = angular.copy(items.classroom);
     else $scope.classroom = {};
-    if (items.hasOwnProperty('classroomId')) $scope.classroomId = items.classroomId;
+    if (items.classroomId) $scope.classroomId = items.classroomId;
     else $scope.classroomId = null;
 
     $scope.isWorking = true;
@@ -156,9 +156,9 @@ angular.module("Modals").controller("DialogClassroomController", function ($scop
     });
 
     $scope.isNotValid = function () {
-        if (!$scope.classroom.hasOwnProperty("classroomName")) return true;
+        if (!$scope.classroom.classroomName) return true;
         else if ($scope.classroom.classroomName == "") return true;
-        else if (!$scope.classroom.hasOwnProperty("SchoolId")) return true;
+        else if (!$scope.classroom.SchoolId) return true;
         else if ($scope.classroom.SchoolId == 1) return true;
         else return false
     };
@@ -185,7 +185,7 @@ angular.module("Modals").controller("DialogUserController", function ($scope, $r
     $scope.classrooms = [];
     $scope.groups = [];
     $scope.self = {};
-    if (items.hasOwnProperty('user')) {
+    if (items.user) {
         $scope.user = angular.copy(items.user);
         $scope.user.userEnable = $scope.user.userEnable == "true";
     }
@@ -199,7 +199,7 @@ angular.module("Modals").controller("DialogUserController", function ($scope, $r
         SchoolId: "",
         userEnable: true
     };
-    if (items.hasOwnProperty('user')) $scope.userId = angular.copy(items.userId);
+    if (items.user) $scope.userId = angular.copy(items.userId);
     else $scope.userId = null;
 
 
@@ -207,7 +207,7 @@ angular.module("Modals").controller("DialogUserController", function ($scope, $r
 
 
     $scope.showPasswordConfirm = function () {
-        if ($scope.user.hasOwnProperty('password') && $scope.user.password != "") return true;
+        if ($scope.user.password && $scope.user.password != "") return true;
         else return false;
     };
 
@@ -305,7 +305,7 @@ angular.module("Modals").controller("DialogMyAccountController", function ($scop
 
 
     $scope.showPasswordConfirm = function () {
-        if ($scope.user.hasOwnProperty('password') && $scope.user.password != "") return true;
+        if ($scope.user.password && $scope.user.password != "") return true;
         else return false;
     };
 
@@ -338,7 +338,7 @@ angular.module("Modals").controller("DialogMyAccountController", function ($scop
 angular.module("Modals").controller("DialogEnableController", function ($scope, $rootScope, $mdDialog, scheduleService, settingsClassroomsService, items) {
     $scope.classrooms;
 
-    if (items.hasOwnProperty('classroom')) {
+    if (items.classroom) {
         $scope.classroom = items.classroom;
         $scope.schedule = {
             action: "enable",

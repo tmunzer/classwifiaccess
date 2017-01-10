@@ -6,7 +6,7 @@ var School = require(appRoot + "/models/school");
 
 
 router.get('/', function(req, res, next) {
-    if (req.session.hasOwnProperty('passport')) {
+    if (req.session.passport) {
         if (req.session.passport.user.GroupId <= 2){
             var School = require(appRoot + "/models/school");
             School.getAll(null, function (err, schoolList) {
