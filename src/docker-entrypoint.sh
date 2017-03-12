@@ -1,5 +1,6 @@
 #!/bin/sh
-
+cd /app
+npm install sqlite3
 cd /app/bin
 if [ "$1" ]
 then

@@ -1,4 +1,4 @@
-bin/ah_api/config
+config
 .idea/*
 node_modules/
 local.db
