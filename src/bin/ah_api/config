@@ -1,0 +1,3 @@
+module.exports.redirectUrl = "https://education.ah-lab.fr/api/oauth";
+module.exports.secret = "cd09b17154c3b5679ddf01b0fbc2efc1";
+module.exports.clientId = "5ce232a0";
