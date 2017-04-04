@@ -1,54 +1,66 @@
-//var EventEmitter = require("events").EventEmitter;
-//var messenger = new EventEmitter();
+const express = require('express');
+const path = require('path');
+const morgan = require('morgan')
+const parseurl = require('parseurl');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
+const favicon = require('serve-favicon');
 
-var express = require('express');
-var path = require('path');
-//var favicon = require('serve-favicon');
 var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-
-//===============CREATE ROOT PATH=================
-
-var path = require('path');
-global.appRoot = path.resolve(__dirname);
 
 //===============CREATE APP=================
+const app = express();
+app.use(morgan('\x1b[32minfo\x1b[0m: :remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length]', {
+  skip: function (req, res) { return res.statusCode < 400 && req.url != "/" && req.originalUrl.indexOf("/api") < 0 }
+}));
 
-var app = express();
 
-//=============CREATE LOGGER===============
-var winston = require('winston');
-winston.emitErrs = true;
-var logger = new winston.Logger({
-    transports: [
-        new winston.transports.File({
-            level: 'info',
-            filename: __dirname + '/logs/all-logs.log',
-            handleExceptions: true,
-            json: true,
-            maxsize: 5242880, //5MB
-            maxFiles: 5,
-            colorize: false
-        }),
-        new winston.transports.Console({
-            level: 'debug',
-            handleExceptions: true,
-            json: false,
-            colorize: true
-        })
-    ],
-    exitOnError: false
+//===============MONGODB=================
+const mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
+const mongoConfig = require('./config').mongoConfig;
+global.db = mongoose.connection;
+
+db.on('error', console.error.bind(console, '\x1b[31mERROR\x1b[0m: unable to connect to mongoDB on ' + mongoConfig.host + ' server'));
+db.once('open', function () {
+  console.info("\x1b[32minfo\x1b[0m:", "Connected to mongoDB on " + mongoConfig.host + " server");
+  const refreshAcsToken = require("./bin/refreshAcsToken").auto();
+  const monitor = require("./bin/monitor");
+  monitor.devices();
 });
 
-module.exports.logger = logger;
-module.exports.logger.stream = {
-    write: function(message, encoding){
-        logger.info(message);
-    }
-};
+mongoose.connect('mongodb://' + mongoConfig.host + '/' + mongoConfig.base);
 
-logger.debug("Overriding 'Express' logger");
-app.use(require('morgan')({ "stream": logger.stream }));
+
+//===============PASSPORT=================
+app.use(session({
+  secret: 'f0rEYf6m9n08dtrdLnhYVnvQ2XM5',
+  resave: true,
+  store: new MongoDBStore({
+    uri: 'mongodb://' + mongoConfig.host + '/express-session',
+    collection: 'wifiswitch'
+  }),
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 30 * 60 * 1000 // 30 minutes
+  }
+}));
+
+var passport = require('passport');
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Using the flash middleware provided by connect-flash to store messages in session
+// and displaying in templates
+var flash = require('connect-flash');
+app.use(flash());
+
+// Initialize Passport
+var initPassport = require('./passport/init');
+initPassport(passport);
+
+
 //===============CONF APP=================
 
 // view engine setup
@@ -63,38 +75,16 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components',  express.static(appRoot + '/bower_components'));
 
-//===============SQLITE=================
-
-var database = require(appRoot + '/bin/sqlite/sqlite');
-var db = new database();
-module.exports.db = db;
-
-
-//===============PASSPORT=================
-var passport = require('passport');
-var expressSession = require('express-session');
-app.use(expressSession({secret: 'mySecretKey'}));
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Using the flash middleware provided by connect-flash to store messages in session
-// and displaying in templates
-var flash = require('connect-flash');
-app.use(flash());
-
-// Initialize Passport
-var initPassport = require('./passport/init');
-initPassport(passport);
 
 //===============ROUTES=================
 
 //var routes = require(appRoot + '/routes/routes')(app, passport);
-var login = require('./routes/login');
-var webapp = require('./routes/web-app');
-var api = require('./routes/api');
 
+var login = require('./routes/login');
 app.use('/login/', login);
+var webapp = require('./routes/web-app');
 app.use('/web-app/', webapp);
+var api = require('./routes/api');
 app.use('/api/', api);
 
 app.get('*', function (req, res) {

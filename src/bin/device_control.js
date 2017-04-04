@@ -1,13 +1,13 @@
-var ssh = require(appRoot + '/bin/ssh/ssh');
-var Classroom = require(appRoot + "/models/classroom");
-var School = require(appRoot + "/models/school");
-var Device = require(appRoot + "/models/device");
-var Lesson = require(appRoot + "/models/lesson");
-var logger = require(appRoot + "/app").logger;
+var ssh = require('./ssh/ssh');
+var Classroom = require("./models/classroom");
+var School = require("./models/school");
+var Device = require("./models/device");
+var Lesson = require("./models/lesson");
+
 
 
 function lessonDisableDone(LessonId, callback) {
-    Lesson.findById(LessonId, null, null, function (err, lesson) {
+    Lesson.findById(LessonId, function (err, lesson) {
         if (err) callback(err);
         else {
             lesson.endDone = "true";
