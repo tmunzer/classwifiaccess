@@ -84,8 +84,20 @@ var login = require('./routes/login');
 app.use('/login/', login);
 var webapp = require('./routes/web-app');
 app.use('/web-app/', webapp);
-var api = require('./routes/api');
-app.use('/api/', api);
+var apis = require('./routes/api.apis');
+app.use('/api/apis/', apis);
+var classrooms = require('./routes/api.classrooms');
+app.use('/api/classrooms/', classrooms);
+var devices = require('./routes/api.devices');
+app.use('/api/devices/', devices);
+var schedules = require('./routes/api.schedules');
+app.use('/api/schedules/', schedules);
+var schools = require('./routes/api.schools');
+app.use('/api/schools/', schools);
+var users = require('./routes/api.users');
+app.use('/api/users/', users);
+var oauth = require('./routes/api.oauth');
+app.use('/api/oauth/', oauth);
 
 app.get('*', function (req, res) {
     res.redirect('/web-app/');

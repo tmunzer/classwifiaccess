@@ -8,7 +8,7 @@ angular.module('Settings').factory("settingsUsersService", function ($http, $q, 
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/settings/groups",
+            url: "/api/users/groups",
             method: "GET",
             timeout: canceller.promise
         });
@@ -44,7 +44,7 @@ angular.module('Settings').factory("settingsUsersService", function ($http, $q, 
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/settings/users",
+            url: "/api/users",
             method: "GET",
             params: {schoolId: $rootScope.schoolId},
             timeout: canceller.promise
@@ -81,7 +81,7 @@ angular.module('Settings').factory("settingsUsersService", function ($http, $q, 
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/settings/myAccount",
+            url: "/api/users/myAccount",
             method: "GET",
             timeout: canceller.promise
         });
@@ -116,7 +116,7 @@ angular.module('Settings').factory("settingsUsersService", function ($http, $q, 
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/settings/user",
+            url: "/api/users",
             method: "DELETE",
             params: {id: id},
             timeout: canceller.promise
@@ -148,7 +148,7 @@ angular.module('Settings').factory("settingsUsersService", function ($http, $q, 
         if (promise) promise.abort();
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/settings/user",
+            url: "/api/users",
             method: "POST",
             data: {userId: userId, user: user},
             timeout: canceller.promise
@@ -201,7 +201,7 @@ angular.module('Settings').factory("settingsClassroomsService", function ($http,
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/settings/classrooms",
+            url: "/api/classrooms",
             method: "GET",
             params: {schoolId: $rootScope.schoolId},
             timeout: canceller.promise
@@ -237,7 +237,7 @@ angular.module('Settings').factory("settingsClassroomsService", function ($http,
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/settings/classroom",
+            url: "/api/classrooms",
             method: "DELETE",
             params: {id: id},
             timeout: canceller.promise
@@ -269,7 +269,7 @@ angular.module('Settings').factory("settingsClassroomsService", function ($http,
         if (promise) promise.abort();
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/settings/classroom",
+            url: "/api/classrooms",
             method: "POST",
             data: {classroomId: classroomId, classroom: classroom},
             timeout: canceller.promise
@@ -321,7 +321,7 @@ angular.module('Settings').factory("settingsSchoolsService", function ($http, $q
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/settings/schools",
+            url: "/api/schools",
             method: "GET",
             timeout: canceller.promise
         });
@@ -355,7 +355,7 @@ angular.module('Settings').factory("settingsSchoolsService", function ($http, $q
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/settings/school",
+            url: "/api/schools",
             method: "DELETE",
             params: {id: id},
             timeout: canceller.promise
@@ -387,7 +387,7 @@ angular.module('Settings').factory("settingsSchoolsService", function ($http, $q
         if (promise) promise.abort();
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/settings/school",
+            url: "/api/schools",
             method: "POST",
             data: {schoolId: schoolId, school: school},
             timeout: canceller.promise
@@ -439,7 +439,7 @@ angular.module('Settings').factory("settingsApisService", function ($http, $q, $
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/settings/apis",
+            url: "/api/apis",
             method: "GET",
             params: {schoolId: $rootScope.schoolId},
             timeout: canceller.promise
@@ -475,7 +475,7 @@ angular.module('Settings').factory("settingsApisService", function ($http, $q, $
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/settings/api",
+            url: "/api/apis",
             method: "DELETE",
             params: {id: id},
             timeout: canceller.promise
@@ -508,7 +508,7 @@ angular.module('Settings').factory("settingsApisService", function ($http, $q, $
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/settings/api",
+            url: "/api/apis",
             method: "PUT",
             params: {id: id, schoolId: schoolId},
             timeout: canceller.promise

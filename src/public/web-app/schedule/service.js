@@ -9,7 +9,7 @@ angular.module('Schedule').factory("scheduleService", function ($http, $q, $root
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/schedule",
+            url: "/api/schedules",
             method: "GET",
             params: {schoolId: $rootScope.schoolId},
             timeout: canceller.promise
@@ -48,7 +48,7 @@ angular.module('Schedule').factory("scheduleService", function ($http, $q, $root
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/schedule",
+            url: "/api/schedules",
             method: "POST",
             data: schedule,
             timeout: canceller.promise
@@ -87,7 +87,7 @@ angular.module('Schedule').factory("scheduleService", function ($http, $q, $root
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/schedule",
+            url: "/api/schedules",
             method: "POST",
             data: {action: "disable", SchoolId: SchoolId, ClassroomId: ClassroomId},
             timeout: canceller.promise
@@ -125,7 +125,7 @@ angular.module('Schedule').factory("scheduleService", function ($http, $q, $root
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/schedule",
+            url: "/api/schedules",
             method: "POST",
             data: {action: "disable", SchoolId: SchoolId, LessonId: ScheduleId},
             timeout: canceller.promise
@@ -163,7 +163,7 @@ angular.module('Schedule').factory("scheduleService", function ($http, $q, $root
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/schedule",
+            url: "/api/schedules",
             method: "DELETE",
             params: {LessonId: id},
             timeout: canceller.promise
@@ -196,7 +196,7 @@ angular.module('Schedule').factory("scheduleService", function ($http, $q, $root
 
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/schedule",
+            url: "/api/schedules",
             method: "POST",
             data: {lessonId: lessonId, lesson: lesson},
             timeout: canceller.promise

@@ -4,7 +4,7 @@ angular.module("Modals").factory("selfService", function($http, $q, $rootScope){
     function getSelf(){
         var canceller = $q.defer();
         var request = $http({
-            url: "/api/settings/self",
+            url: "/api/users/self",
             method: "GET",
             timeout: canceller.promise
         });
