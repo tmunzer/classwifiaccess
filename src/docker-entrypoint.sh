@@ -1,5 +1,6 @@
 #!/bin/sh
 cd /app
+rm -rf node_modules/sqlite3
 npm install sqlite3
 cd /app/bin
 if [ "$1" ]
