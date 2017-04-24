@@ -43,8 +43,8 @@ function refreshDevices(filterString, callback) {
 //============================ OAUTH ===========================//
 //===============================================================//
 router.get('/oauth/reg', function (req, res) {
-    if (req.session.hasOwnProperty('passport')) {
-        if (req.query.hasOwnProperty('error')) {
+    if (req.session.passport) {
+        if (req.query.error) {
             Error.render(req.query.error, "conf", req, res);
         } else {
             var authCode = req.query.authCode;
@@ -52,7 +52,7 @@ router.get('/oauth/reg', function (req, res) {
             api.registerApp(authCode, function (apiDataString) {
                 if (apiDataString) {
                     var apiDataJSON = JSON.parse(apiDataString);
-                    if (apiDataJSON.hasOwnProperty("data")) {
+                    if (apiDataJSON.data) {
                         for (var owner in apiDataJSON.data) {
                             var apiReg = new Api.ApiSerializer(apiDataJSON.data[owner]);
                             apiReg.SchoolId = 1;
@@ -64,7 +64,7 @@ router.get('/oauth/reg', function (req, res) {
                                 }
                             });
                         }
-                    } else if (apiDataJSON.hasOwnProperty('error')) {
+                    } else if (apiDataJSON.error) {
                         var apiError = new Api.ApiErrorSerializer(apiDataJSON.error);
                         Error.render(apiError, "conf", req);
                     }
@@ -79,12 +79,12 @@ router.get('/oauth/reg', function (req, res) {
 //============================ classrooms ===========================//
 //===============================================================//
 router.get('/classrooms', function (req, res, next) {
-    if (req.session.hasOwnProperty('passport')) {
+    if (req.session.passport) {
         var filterString;
         //if user is not an admin (only admin can view all schools)
         if (req.session.passport.user.GroupId > 1) filterString = {SchoolId: req.session.passport.user.SchoolId};
         // else if request is filtered on a school
-        else if (req.query.hasOwnProperty('schoolId') && req.query.schoolId > 1) filterString = {SchoolId: req.query.schoolId};
+        else if (req.query.schoolId && req.query.schoolId > 1) filterString = {SchoolId: req.query.schoolId};
 
         refreshDevices(filterString, function (err) {
             if (err) res.json({error: err});
@@ -101,8 +101,8 @@ router.get('/classrooms', function (req, res, next) {
 //========================== CREATE/UPDATE classrooms ===========================//
 router.post("/settings/classroom", function (req, res, next) {
     var ClassroomSerializer;
-    if (req.session.hasOwnProperty('passport')) {
-        if (req.body.hasOwnProperty('classroomId') && req.body.classroomId > 0 && req.body.hasOwnProperty("classroom")) {
+    if (req.session.passport) {
+        if (req.body.ClassroomId && req.body.classroomId > 0 && req.body.classroom) {
             ClassroomSerializer = new Classroom.ClassroomSeralizer(req.body.classroom);
             //if user is not an admin (only admin can edit all schools)
             if (req.session.passport.user.GroupId > 1) ClassroomSerializer.SchoolId = req.session.passport.user.SchoolId;
@@ -111,7 +111,7 @@ router.post("/settings/classroom", function (req, res, next) {
                 if (err) res.json({error: err});
                 else res.json({});
             });
-        } else if (req.body.hasOwnProperty("classroom")) {
+        } else if (req.body.classroom) {
             // serialize the classroom
             ClassroomSerializer = new Classroom.ClassroomSeralizer(req.body.classroom);
             //if user is not an admin (only admin can edit all schools)
@@ -126,8 +126,8 @@ router.post("/settings/classroom", function (req, res, next) {
 });
 //========================== DELETE classrooms ===========================//
 router.delete('/settings/classroom', function (req, res) {
-    if (req.session.hasOwnProperty('passport')) {
-        if (req.query.hasOwnProperty("id")) {
+    if (req.session.passport) {
+        if (req.query.id) {
             var classroomId = req.query.id;
             Classroom.deleteById(classroomId, function (err) {
                 if (err) res.json({error: err});
@@ -140,12 +140,12 @@ router.delete('/settings/classroom', function (req, res) {
 //============================ devices ===========================//
 //===============================================================//
 router.get('/devices', function (req, res, next) {
-    if (req.session.hasOwnProperty('passport')) {
+    if (req.session.passport) {
         var filterString;
         //if user is not an admin (only admin can view all schools)
         if (req.session.passport.user.GroupId > 1) filterString = {SchoolId: req.session.passport.user.SchoolId};
         // else if request is filtered on a school
-        else if (req.query.hasOwnProperty('schoolId') && req.query.schoolId > 1) filterString = {SchoolId: req.query.schoolId};
+        else if (req.query.schoolId && req.query.schoolId > 1) filterString = {SchoolId: req.query.schoolId};
 
         Api.findAll(filterString, null, function (err, apiList) {
             if (err) res.json({error: err});
@@ -176,15 +176,15 @@ router.get('/devices', function (req, res, next) {
 
 //========================== GET schedule ===========================//
 router.get("/schedule", function (req, res, next) {
-    if (req.session.hasOwnProperty('passport')) {
-        if (req.query.hasOwnProperty('schoolId')) {
+    if (req.session.passport) {
+        if (req.query.schoolId) {
             var filterString;
             //if user is not an admin (only admin can view all schools)
             if (req.session.passport.user.GroupId > 1) filterString = {SchoolId: req.session.passport.user.SchoolId};
             // else if request is filtered on a school
-            else if (req.query.hasOwnProperty('schoolId') && req.query.schoolId > 1) filterString = {SchoolId: req.query.schoolId};
+            else if (req.query.schoolId && req.query.schoolId > 1) filterString = {SchoolId: req.query.schoolId};
 
-            if (req.query.hasOwnProperty('classroomId') && req.query.classroomId > 0) {
+            if (req.query.classroomId && req.query.classroomId > 0) {
                 Classroom.findById(req.query.classroomId, filterString, null, function (err, classroom) {
                     if (err) res.json({error: err});
                     else {
@@ -229,7 +229,7 @@ function saveLesson(req, classroomId, LessonId, callback) {
             lesson.ClassroomId = classroomId;
             lesson.UserId = req.user.id;
             lesson.SchoolId = req.body.SchoolId;
-            if (req.body.hasOwnProperty("startDate")) {
+            if (req.body.startDate) {
                 lesson.startDateTs = new Date(req.body.startDate).getTime();
             } else {
                 lesson.startDateTs = new Date().getTime();
@@ -299,8 +299,8 @@ function disableLesson(req, lesson, callback) {
 
 //========================= DELETE LESSON =========================//
 router.delete("/schedule", function (req, res) {
-    if (req.session.hasOwnProperty('passport')) {
-        if (req.query.hasOwnProperty("LessonId")) {
+    if (req.session.passport) {
+        if (req.query.LessonId) {
             Lesson.deleteById(req.query.LessonId, function (err) {
                 if (err) res.json({error: err});
                 else res.json({});
@@ -310,14 +310,14 @@ router.delete("/schedule", function (req, res) {
 });
 
 router.post("/schedule", function (req, res) {
-    if (req.session.hasOwnProperty('passport')) {
+    if (req.session.passport) {
         // Create the lesson from the "Classroom Page"
-        if (req.body.hasOwnProperty("SchoolId")) {
+        if (req.body.schoolId) {
             if (req.session.passport.user.GroupId == 1 || req.session.passport.user.SchoolId == req.body.SchoolId) {
-                if (req.body.hasOwnProperty('action')) {
+                if (req.body.action) {
                     if (req.body.action == 'enable') {
 
-                        if (req.body.hasOwnProperty("ClassroomId")) {
+                        if (req.body.ClassroomId) {
                             saveLesson(req, req.body.ClassroomId, null, function (err) {
                                 if (err) res.json({error: err});
                                 else res.json({});
@@ -326,7 +326,7 @@ router.post("/schedule", function (req, res) {
 
 
                     } else if (req.body.action == "disable") {
-                        if (req.body.hasOwnProperty('ClassroomId')) {
+                        if (req.body.ClassroomId) {
                             Lesson.findActive(req.body.ClassroomId, req.body.SchoolId, function (err, ret) {
                                 if (err) res.json({error: err});
                                 else {
@@ -348,7 +348,7 @@ router.post("/schedule", function (req, res) {
                         }
 
                         // Request from lessons list page (disable a specified lesson)
-                        else if (req.body.hasOwnProperty('LessonId')) {
+                        else if (req.body.LessonId) {
                             Lesson.findById(req.body.LessonId, {SchoolId: req.body.SchoolId}, null, function (err, lesson) {
                                 if (err) {
                                     Error.render(err, "classroom", req, res);
@@ -367,7 +367,7 @@ router.post("/schedule", function (req, res) {
             } else res.json({error: "You don't have enough permission to create a schedule for this school"});
 
             // Edit the lesson
-        } else if (req.body.hasOwnProperty("lesson") && req.body.hasOwnProperty("lessonId")) {
+        } else if (req.body.lesson && req.body.LessonId) {
             var LessonToDb = new Lesson.LessonSeralizer(req.body.lesson);
             LessonToDb.updateDB(req.body.lessonId, function (err) {
                 if (err) res.json({error: err});
@@ -385,7 +385,7 @@ router.post("/schedule", function (req, res) {
 //========================== GET info for the current connected user ===========================//
 
 router.get("/settings/self", function (req, res, next) {
-    if (req.session.hasOwnProperty("passport")) {
+    if (req.session.passport) {
         res.json({
             uid: req.session.passport.user.id,
             gid: req.session.passport.user.GroupId
@@ -394,7 +394,7 @@ router.get("/settings/self", function (req, res, next) {
 });
 //========================== GET my account info ===========================//
 router.get("/settings/myAccount", function (req, res, next) {
-    if (req.session.hasOwnProperty('passport')) {
+    if (req.session.passport) {
             User.findOne({id: req.session.passport.user.id}, null, function (err, myAccount) {
                 if (err) res.json({error: err});
                 else res.json({myAccount: myAccount});
@@ -403,12 +403,12 @@ router.get("/settings/myAccount", function (req, res, next) {
 });
 //========================== GET USERS list ===========================//
 router.get("/settings/users", function (req, res, next) {
-    if (req.session.hasOwnProperty('passport')) {
+    if (req.session.passport) {
         var filterString;
         //if user is not an admin (only admin can view all schools)
         if (req.session.passport.user.GroupId > 1) filterString = {SchoolId: req.session.passport.user.SchoolId};
         // else if request is filtered on a school
-        else if (req.query.hasOwnProperty('schoolId') && req.query.schoolId > 1) filterString = {SchoolId: req.query.schoolId};
+        else if (req.query.schoolId && req.query.schoolId > 1) filterString = {SchoolId: req.query.schoolId};
         User.findAll(filterString, null, function (err, users) {
             if (err) res.json({error: err});
             else res.json({users: users});
@@ -418,7 +418,7 @@ router.get("/settings/users", function (req, res, next) {
 
 //========================== GET GROUPS list ===========================//
 router.get("/settings/groups", function (req, res, next) {
-    if (req.session.hasOwnProperty('passport')) {
+    if (req.session.passport) {
         Group.findAll({id: [">=", req.session.passport.user.GroupId]}, null, function (err, groups) {
             if (err) res.json({error: err});
             else res.json({groups: groups});
@@ -429,8 +429,8 @@ router.get("/settings/groups", function (req, res, next) {
 //========================= NEW USER > SAVE =========================//
 router.post("/settings/user", function (req, res, next) {
     var userToDB;
-    if (req.session.hasOwnProperty('passport') && req.body.hasOwnProperty("user")) {
-        if (req.body.hasOwnProperty('userId') && req.body.userId > 1) {
+    if (req.session.passport && req.body.user) {
+        if (req.body.userId && req.body.userId > 1) {
             if ((req.session.passport.user.id == req.body.userId) || (req.session.passport.user.GroupId <= 2)) {
                 // serialize the user
                 userToDB = new User.UserSerializer(req.body.user);
@@ -460,8 +460,8 @@ router.post("/settings/user", function (req, res, next) {
 
 //========================= DELETE USER =========================//
 router.delete('/settings/user', function (req, res) {
-    if (req.session.hasOwnProperty('passport')) {
-        if (req.query.hasOwnProperty("id")) {
+    if (req.session.passport) {
+        if (req.query.id) {
             var userId = req.query.id;
             User.deleteById(userId, function (err) {
                 if (err) res.json({error: err});
@@ -475,12 +475,12 @@ router.delete('/settings/user', function (req, res) {
 //============================ settings CLASS===========================//
 //===============================================================//
 router.get("/settings/classrooms", function (req, res, next) {
-    if (req.session.hasOwnProperty('passport')) {
+    if (req.session.passport) {
         var filterString;
         //if user is not an admin (only admin can view all schools)
         if (req.session.passport.user.GroupId > 1) filterString = {SchoolId: req.session.passport.user.SchoolId};
         // else if request is filtered on a school
-        else if (req.query.hasOwnProperty('schoolId') && req.query.schoolId > 1) filterString = {SchoolId: req.query.schoolId};
+        else if (req.query.schoolId && req.query.schoolId > 1) filterString = {SchoolId: req.query.schoolId};
         Classroom.findAll(filterString, null, function (err, classrooms) {
             if (err) res.json({error: err});
             else res.json({classrooms: classrooms});
@@ -493,12 +493,12 @@ router.get("/settings/classrooms", function (req, res, next) {
 
 //========================== GET SCHOOLS ===========================//
 router.get("/settings/schools", function (req, res, next) {
-    if (req.session.hasOwnProperty('passport')) {
+    if (req.session.passport) {
         var filterString;
         //if user is not an admin (only admin can view all schools)
         if (req.session.passport.user.GroupId > 1) filterString = {id: req.session.passport.user.SchoolId};
         // else if request is filtered on a school
-        else if (req.query.hasOwnProperty('schoolId') && req.query.schoolId > 1) filterString = {id: req.query.schoolId};
+        else if (req.query.schoolId && req.query.schoolId > 1) filterString = {id: req.query.schoolId};
         School.findAll(filterString, null, function (err, schools) {
             if (err) res.json({error: err});
             else res.json({schools: schools});
@@ -508,8 +508,8 @@ router.get("/settings/schools", function (req, res, next) {
 //========================== CREATE/UPDATE SCHOOL ===========================//
 router.post("/settings/school", function (req, res, next) {
     var SchoolSerializer;
-    if (req.session.hasOwnProperty('passport')) {
-        if (req.body.hasOwnProperty('schoolId') && req.body.schoolId > 1 && req.body.hasOwnProperty("school")) {
+    if (req.session.passport) {
+        if (req.body.schoolId && req.body.schoolId > 1 && req.body.school) {
             SchoolSerializer = new School.SchoolSerializer(req.body.school);
             //if user is not an admin (only admin can edit all schools)
             if (req.session.passport.user.GroupId > 1) SchoolSerializer.SchoolId = req.session.passport.user.SchoolId;
@@ -518,7 +518,7 @@ router.post("/settings/school", function (req, res, next) {
                 if (err) res.json({error: err});
                 else res.json({});
             });
-        } else if (req.body.hasOwnProperty("school")) {
+        } else if (req.body.school) {
             // serialize the school
             SchoolSerializer = new School.SchoolSerializer(req.body.school);
             //if user is not an admin (only admin can edit all schools)
@@ -533,8 +533,8 @@ router.post("/settings/school", function (req, res, next) {
 });
 //========================== DELETE SCHOOL ===========================//
 router.delete('/settings/school', function (req, res) {
-    if (req.session.hasOwnProperty('passport')) {
-        if (req.query.hasOwnProperty("id")) {
+    if (req.session.passport) {
+        if (req.query.id) {
             var schoolId = req.query.id;
             School.deleteById(schoolId, function (err) {
                 if (err) res.json({error: err});
@@ -571,12 +571,12 @@ function removeDevicesWhenApiIsUnasigned(api, callback) {
 
 //========================== GET API ===========================//
 router.get("/settings/apis", function (req, res, next) {
-    if (req.session.hasOwnProperty('passport')) {
+    if (req.session.passport) {
         var filterString;
         //if user is not an admin (only admin can view all schools)
         if (req.session.passport.user.GroupId > 1) filterString = {SchoolId: req.session.passport.user.SchoolId};
         // else if request is filtered on a school
-        else if (req.query.hasOwnProperty('schoolId') && req.query.schoolId > 1) filterString = {SchoolId: req.query.schoolId};
+        else if (req.query.schoolId && req.query.schoolId > 1) filterString = {SchoolId: req.query.schoolId};
         Api.findAll(filterString, null, function (err, apis) {
             if (err) res.json({error: err});
             else res.json({apis: apis});
@@ -585,8 +585,8 @@ router.get("/settings/apis", function (req, res, next) {
 });
 //========================== DELETE API ===========================//
 router.delete('/settings/api', function (req, res) {
-    if (req.session.hasOwnProperty('passport')) {
-        if (req.query.hasOwnProperty("id")) {
+    if (req.session.passport) {
+        if (req.query.id) {
             var apiId = req.query.id;
             Api.deleteById(apiId, function (err) {
                 if (err) res.json({error: err});
@@ -598,7 +598,7 @@ router.delete('/settings/api', function (req, res) {
 //========================== UPDATE API ===========================//
 //===   Called when a API configuration is assigned to a School ===//
 router.put("/settings/api", function (req, res, next) {
-    if (req.session.hasOwnProperty('passport')) {
+    if (req.session.passport) {
         var apiIdToEdit = req.query.id;
         Api.findById(apiIdToEdit, null, null, function (err, apiFromDB) {
             if (err) res.json({error: err});
