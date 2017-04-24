@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Devices = reqiuire('./device');
+const Devices = require('./device');
 const School = require('./school');
 
 const ClassroomSchema = new mongoose.Schema({

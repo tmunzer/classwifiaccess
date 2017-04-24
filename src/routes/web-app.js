@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var Api = require("../bin/models/api");
+var Api = require("../bin/models/account");
 
 var School = require("../bin/models/school");
 

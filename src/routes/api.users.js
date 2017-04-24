@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var User = require("../bin/models/user");
-var Group = require("../bin/models/group");
+var Group = require("../bin/models/userGroup");
 
 
 //===============================================================//

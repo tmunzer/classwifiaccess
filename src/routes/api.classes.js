@@ -6,7 +6,7 @@ var Classroom = require('../bin/models/classroom');
 //===============================================================//
 //============================ settings CLASS===========================//
 //===============================================================//
-router.get("/settings/classrooms", function (req, res, next) {
+router.get("/", function (req, res, next) {
     if (req.session.passport) {
         var filterString;
         //if user is not an admin (only admin can view all schools)

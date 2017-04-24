@@ -108,9 +108,9 @@ function enableWiFi(DeviceId, SchoolId, LessonId, callback) {
 }
 
 function checkLessons() {
-    logger.info("New CRON turn -- " + new Date() + " -- Checking lessons.");
-    School.getAll(null, function (err, schools) {
-        if (err) logger.warn("CheckLessons (0): " + err);
+    console.info("\x1b[32minfo\x1b[0m:", "New CRON turn -- " + new Date() + " -- Checking lessons.");
+    School.find({}, function (err, schools) {
+        if (err) console.info("\x1b[32minfo\x1b[0m:", "CheckLessons (0): " + err);
         else {
 
 
@@ -119,11 +119,11 @@ function checkLessons() {
 
                 Lesson.findActiveButNotEnabled(school.id, function (err, lessons) {
 
-                    if (err) logger.warn("CheckLessons  " + this.school.schoolName + "(1.0): " + err);
+                    if (err) console.info("\x1b[32minfo\x1b[0m:", "CheckLessons  " + this.school.schoolName + "(1.0): " + err);
                     for (var lnum in lessons) {
                         var lesson = lessons[lnum];
                         enableWiFi(lesson.DeviceId, this.school.id, lesson.id, function (err) {
-                            if (err) logger.warn("CheckLessons for classroom " + this.lesson.classroomName + " (1.1): " + err);
+                            if (err) console.info("\x1b[32minfo\x1b[0m:", "CheckLessons for classroom " + this.lesson.classroomName + " (1.1): " + err);
                         }.bind({lesson: lesson}))
                     }
 
@@ -132,11 +132,11 @@ function checkLessons() {
 
                 Lesson.findPassedButNotDisabled(school.id, function (err, lessons) {
 
-                    if (err) logger.warn("CheckLessons for school " + this.school.schoolName + " (2.0): " + err);
+                    if (err) console.info("\x1b[32minfo\x1b[0m:", "CheckLessons for school " + this.school.schoolName + " (2.0): " + err);
                     for (var lnum in lessons) {
                         var lesson = lessons[lnum];
                         disableWiFi(lesson.DeviceId, this.school.id, lesson.id, function (err) {
-                            if (err) logger.warn("CheckLessons for classroom " + this.lesson.classroomName + " (2.1): " + err);
+                            if (err) console.info("\x1b[32minfo\x1b[0m:", "CheckLessons for classroom " + this.lesson.classroomName + " (2.1): " + err);
                         }.bind({lesson: lesson}))
                     }
 

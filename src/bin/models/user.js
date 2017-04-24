@@ -1,10 +1,9 @@
-
 const mongoose = require('mongoose');
 const School = require('./school');
 const Language = require('./language');
 const UserGroup = require('./userGroup');
 
-const bCrypt = require('bcrypt');
+const bCrypt = require('bcryptjs');
 
 function cryptPassword (password){
     return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
@@ -36,6 +35,7 @@ const UserSchema = new mongoose.Schema({
     updated_at    : { type: Date }
 });
 
+const User = mongoose.model('User', UserSchema);
 User.newLogin = function(email, password, callback){
     this.findOne({email: email})
         .exec(function(err, user){
@@ -55,7 +55,6 @@ User.newLogin = function(email, password, callback){
     })
 };
 
-const User = mongoose.model('User', UserSchema);
 
 
 
@@ -70,4 +69,3 @@ UserSchema.pre('save', function(next) {
 });
 
 module.exports = User;
-eForLogin;

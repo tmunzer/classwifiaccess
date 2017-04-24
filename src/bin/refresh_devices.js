@@ -1,5 +1,5 @@
 
-var Api = require("../bin/models/api");
+var Api = require("../bin/models/account");
 
 var apiReq = require('../bin/ah_api/req_device');
 

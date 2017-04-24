@@ -1,5 +1,5 @@
 var apiRequest = require("./req").apiRequest;
-var Device = require("../../models/device");
+var Device = require("../models/device");
 
 
 module.exports.getDevices = function (api, callback) {

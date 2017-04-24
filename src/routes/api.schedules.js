@@ -12,7 +12,7 @@ var Control = require('../bin/device_control');
 //===============================================================//
 
 //========================== GET schedule ===========================//
-router.get("/schedule", function (req, res, next) {
+router.get("/", function (req, res, next) {
     if (req.session.passport) {
         if (req.query.schoolId) {
             var filterString;
@@ -135,7 +135,7 @@ function disableLesson(req, lesson, callback) {
 }
 
 //========================= DELETE LESSON =========================//
-router.delete("/schedule", function (req, res) {
+router.delete("/", function (req, res) {
     if (req.session.passport) {
         if (req.query.LessonId) {
             Lesson.deleteById(req.query.LessonId, function (err) {
@@ -146,7 +146,7 @@ router.delete("/schedule", function (req, res) {
     } else res.status(403).send('Unknown session');
 });
 
-router.post("/schedule", function (req, res) {
+router.post("/", function (req, res) {
     if (req.session.passport) {
         // Create the lesson from the "Classroom Page"
         if (req.body.schoolId) {

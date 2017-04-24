@@ -7,7 +7,7 @@ var Classroom = require('../bin/models/classroom');
 //===============================================================//
 //============================ classrooms ===========================//
 //===============================================================//
-router.get('/classrooms', function (req, res, next) {
+router.get('/', function (req, res, next) {
     if (req.session.passport) {
         var filterString;
         //if user is not an admin (only admin can view all schools)
@@ -28,7 +28,7 @@ router.get('/classrooms', function (req, res, next) {
     } else res.status(403).send('Unknown session');
 });
 //========================== CREATE/UPDATE classrooms ===========================//
-router.post("/settings/classroom", function (req, res, next) {
+router.post("/", function (req, res, next) {
     var ClassroomSerializer;
     if (req.session.passport) {
         if (req.body.ClassroomId && req.body.classroomId > 0 && req.body.classroom) {
@@ -54,7 +54,7 @@ router.post("/settings/classroom", function (req, res, next) {
     } else res.status(403).send('Unknown session');
 });
 //========================== DELETE classrooms ===========================//
-router.delete('/settings/classroom', function (req, res) {
+router.delete('/', function (req, res) {
     if (req.session.passport) {
         if (req.query.id) {
             var classroomId = req.query.id;

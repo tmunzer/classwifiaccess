@@ -2,14 +2,14 @@ var express = require('express');
 var router = express.Router();
 
 var apiReq = require('../bin/ah_api/req_device');
-var Api = require("../bin/models/api");
+var Api = require("../bin/models/account");
 
 
 
 //===============================================================//
 //============================ devices ===========================//
 //===============================================================//
-router.get('/devices', function (req, res, next) {
+router.get('/', function (req, res, next) {
     if (req.session.passport) {
         var filterString;
         //if user is not an admin (only admin can view all schools)

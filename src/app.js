@@ -148,7 +148,7 @@ try {
             start: true
         });
 }catch(ex) {
-    logger.warn("cron pattern not valid");
+    console.info("\x1b[32minfo\x1b[0m:", "cron pattern not valid");
 }
 
 module.exports = app;

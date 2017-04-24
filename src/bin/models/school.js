@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Classroom = require('./classroom');
 const User = require('./user');
-const School = require('./school');
 
 const SchoolSchema = new mongoose.Schema({
     name:  {type: String, required: true},

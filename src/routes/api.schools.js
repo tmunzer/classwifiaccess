@@ -8,7 +8,7 @@ var School = require("../bin/models/school");
 //===============================================================//
 
 //========================== GET SCHOOLS ===========================//
-router.get("/settings/schools", function (req, res, next) {
+router.get("/", function (req, res, next) {
     if (req.session.passport) {
         var filterString;
         //if user is not an admin (only admin can view all schools)
@@ -22,7 +22,7 @@ router.get("/settings/schools", function (req, res, next) {
     } else res.status(403).send('Unknown session');
 });
 //========================== CREATE/UPDATE SCHOOL ===========================//
-router.post("/settings/school", function (req, res, next) {
+router.post("/", function (req, res, next) {
     var SchoolSerializer;
     if (req.session.passport) {
         if (req.body.schoolId && req.body.schoolId > 1 && req.body.school) {
@@ -48,7 +48,7 @@ router.post("/settings/school", function (req, res, next) {
     } else res.status(403).send('Unknown session');
 });
 //========================== DELETE SCHOOL ===========================//
-router.delete('/settings/school', function (req, res) {
+router.delete('/', function (req, res) {
     if (req.session.passport) {
         if (req.query.id) {
             var schoolId = req.query.id;
