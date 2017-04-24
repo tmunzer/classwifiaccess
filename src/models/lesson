@@ -1,6 +1,6 @@
 var db = require(appRoot + "/app").db;
-var School = require(appRoot + "/models/school");
-var User = require(appRoot + "/models/user");
+var School = require(appRoot + "/bin/models/school");
+var User = require(appRoot + "/bin/models/user");
 
 function LessonSeralizer(row) {
     this.lesson = {};
@@ -68,7 +68,7 @@ sortLesson = function (lessonA, lessonB) {
 };
 
 function getClassroomName(cId, callback){
-    var Classroom = require(appRoot + "/models/classroom");
+    var Classroom = require(appRoot + "/bin/models/classroom");
     var classroomName = "";
     if (cId > 0) {
         Classroom.findById(cId, null, null, function (err, classroom) {

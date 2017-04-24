@@ -1,7 +1,7 @@
 var db = require(appRoot + "/app").db;
 var apiAuth = require(appRoot + "/bin/ah_api/auth");
 var apiConf = require(appRoot + "/bin/ah_api/config");
-var School = require(appRoot + "/models/school");
+var School = require(appRoot + "/bin/models/school");
 
 function ApiSerializer(row){
     this.api = {};

@@ -1,7 +1,7 @@
 var db = require(appRoot + "/app").db;
-var School = require(appRoot + "/models/school");
-var Device = require(appRoot + "/models/device");
-var Lesson = require(appRoot + "/models/lesson");
+var School = require(appRoot + "/bin/models/school");
+var Device = require(appRoot + "/bin/models/device");
+var Lesson = require(appRoot + "/bin/models/lesson");
 
 function ClassroomSeralizer(row) {
     this.classroom = {};

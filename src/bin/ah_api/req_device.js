@@ -1,5 +1,5 @@
 var apiRequest = require(appRoot + "/bin/ah_api/req").apiRequest;
-var Device = require(appRoot + "/models/device");
+var Device = require(appRoot + "/bin/models/device");
 
 
 module.exports.getDevices = function (api, callback) {

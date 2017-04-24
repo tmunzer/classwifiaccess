@@ -1,15 +1,15 @@
 var express = require('express');
 var router = express.Router();
-var User = require(appRoot + "/models/user");
-var Group = require(appRoot + "/models/group");
+var User = require(appRoot + "/bin/models/user");
+var Group = require(appRoot + "/bin/models/group");
 var api = require(appRoot + '/bin/ah_api/req');
 var Classroom = require(appRoot + '/models/classroom');
-var School = require(appRoot + "/models/school");
-var Lesson = require(appRoot + "/models/lesson");
+var School = require(appRoot + "/bin/models/school");
+var Lesson = require(appRoot + "/bin/models/lesson");
 var apiReq = require(appRoot + '/bin/ah_api/req_device');
-var Api = require(appRoot + "/models/api");
+var Api = require(appRoot + "/bin/models/api");
 var Error = require(appRoot + '/routes/error');
-var Device = require(appRoot + "/models/device");
+var Device = require(appRoot + "/bin/models/device");
 var Control = require(appRoot + '/bin/device_control');
 var logger = require(appRoot + "/app").logger;
 

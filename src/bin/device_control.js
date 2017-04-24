@@ -1,8 +1,8 @@
 var ssh = require(appRoot + '/bin/ssh/ssh');
-var Classroom = require(appRoot + "/models/classroom");
-var School = require(appRoot + "/models/school");
-var Device = require(appRoot + "/models/device");
-var Lesson = require(appRoot + "/models/lesson");
+var Classroom = require(appRoot + "/bin/models/classroom");
+var School = require(appRoot + "/bin/models/school");
+var Device = require(appRoot + "/bin/models/device");
+var Lesson = require(appRoot + "/bin/models/lesson");
 var logger = require(appRoot + "/app").logger;
 
 
