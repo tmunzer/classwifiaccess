@@ -1,7 +1,6 @@
 var LocalStrategy = require('passport-local').Strategy;
-var User = require(appRoot + '/models/user');
+var User = require('../models/user');
 var bCrypt = require('bcryptjs');
-var logger = require(appRoot + "/app").logger;
 
 module.exports = function(passport){
 
@@ -17,16 +16,16 @@ module.exports = function(passport){
                             return done(err);
                         // Username does not exist, log the error and redirect back
                         if ((!user) || (!isValidPassword(user, password))) {
-                            logger.warn("User "+ username + ': Wrong login or password');
+                            console.info("\x1b[32minfo\x1b[0m:","User "+ username + ': Wrong login or password');
                             return done(null, false, req.flash('message', "error_login_password"));
                         }
                         if (user.userEnable == "false") {
-                            logger.warn("User " + username + ": User disabled");
+                            console.info("\x1b[32minfo\x1b[0m:","User " + username + ": User disabled");
                             return done(null, false, req.flash("message", "error_login_password"));
                         }
                         // User and password both match, return user from done method
                         // which will be treated like success
-                        logger.info("User " + user.username + " is now logged in");
+                        console.info("\x1b[32minfo\x1b[0m:","User " + user.username + " is now logged in");
                         User.newLogin(user.id, function (err) {
                             if (err) {
                                 console.log(err);

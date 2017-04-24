@@ -1,5 +1,4 @@
 var https = require('https');
-var logger = require(appRoot + "/app").logger;
 
 module.exports.getPermanentToken = function (authCode, redirectUrl, secret, clientId, callback) {
     var options = {
@@ -15,8 +14,8 @@ module.exports.getPermanentToken = function (authCode, redirectUrl, secret, clie
     };
     console.log(options);
     var req = https.request(options, function (res) {
-        logger.info('STATUS: ' + res.statusCode);
-        logger.info('HEADERS: ' + JSON.stringify(res.headers));
+        console.info("\x1b[32minfo\x1b[0m:",'STATUS: ' + res.statusCode);
+        console.info("\x1b[32minfo\x1b[0m:",'HEADERS: ' + JSON.stringify(res.headers));
         res.setEncoding('utf8');
         res.on('data', function (data) {
             callback(data);

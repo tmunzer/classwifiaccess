@@ -73,12 +73,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/bower_components',  express.static(appRoot + '/bower_components'));
+app.use('/bower_components',  express.static('./bower_components'));
 
 
 //===============ROUTES=================
 
-//var routes = require(appRoot + '/routes/routes')(app, passport);
+//var routes = require('./routes/routes')(app, passport);
 
 var login = require('./routes/login');
 app.use('/login/', login);

@@ -1,17 +1,16 @@
 var express = require('express');
 var router = express.Router();
-var User = require(appRoot + "/models/user");
-var Group = require(appRoot + "/models/group");
-var api = require(appRoot + '/bin/ah_api/req');
-var Classroom = require(appRoot + '/models/classroom');
-var School = require(appRoot + "/models/school");
-var Lesson = require(appRoot + "/models/lesson");
-var apiReq = require(appRoot + '/bin/ah_api/req_device');
-var Api = require(appRoot + "/models/api");
-var Error = require(appRoot + '/routes/error');
-var Device = require(appRoot + "/models/device");
-var Control = require(appRoot + '/bin/device_control');
-var logger = require(appRoot + "/app").logger;
+var api = require('../bin/ah_api/req');
+var apiReq = require('../bin/ah_api/req_device');
+var Error = require('../routes/error');
+var User = require("../bin/models/user");
+var Group = require("../bin/models/group");
+var Classroom = require('../bin/models/classroom');
+var School = require("../bin/models/school");
+var Lesson = require("../bin/models/lesson");
+var Api = require("../bin/models/api");
+var Device = require("../bin/models/device");
+var Control = require('../bin/device_control');
 
 function refreshDevices(filterString, callback) {
     Api.findAll(filterString, null, function (err, apiList) {
@@ -549,7 +548,7 @@ router.delete('/settings/school', function (req, res) {
 //============================ settings API===========================//
 //===============================================================//
 function removeDevicesWhenApiIsUnasigned(api, callback) {
-    logger.warn("Removing devices linked to VHM " + api.vhmId);
+    console.info("\x1b[32minfo\x1b[0m:","Removing devices linked to VHM " + api.vhmId);
     Device.findAll({ApiId: api.id}, null, function (err, devices) {
         if (err) callback(err);
         else if (devices == null) callback(null);
@@ -618,7 +617,7 @@ router.put("/settings/api", function (req, res, next) {
                             if (err) res.json({error: err});
                             else {
                                 // Retrieve the devices linked to this API and assigned them to the new school
-                                logger.warn("Retrieving devices linked to VHM " + apiFromDB.vhmId);
+                                console.info("\x1b[32minfo\x1b[0m:","Retrieving devices linked to VHM " + apiFromDB.vhmId);
                                 apiReq.getDevices(apiFromDB, function (err) {
                                     if (err) res.json({error: err});
                                     else res.json({});

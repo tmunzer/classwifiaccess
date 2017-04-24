@@ -1,4 +1,3 @@
-var logger = require(appRoot + "/app").logger;
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
@@ -24,7 +23,7 @@ router.post('/', passport.authenticate('login', {
 
 /* Handle Logout */
 router.get('/logout/', function (req, res) {
-    logger.info("User " + req.user.username + " is now logged out.");
+    console.info("\x1b[32minfo\x1b[0m:","User " + req.user.username + " is now logged out.");
     req.logout();
     req.session.destroy();
     res.redirect('/login/');

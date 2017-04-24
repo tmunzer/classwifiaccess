@@ -1,25 +1,24 @@
 var Client = require('ssh2').Client;
 var EventEmitter = require('events').EventEmitter;
-var logger = require(appRoot + "/app").logger;
 
 
 function connect(host, port, username, password, sshEvent) {
     var conn = new Client();
     conn.on('ready', function () {
-        logger.info('SSH >> Client :: ready :: ' + host);
+        console.info("\x1b[32minfo\x1b[0m:",'SSH >> Client :: ready :: ' + host);
         conn.shell(function (err, stream) {
             if (err) {
                 conn.end();
                 sshEvent.emit("error", err);
             }
             stream.on('close', function (code, signal) {
-                logger.info('SSH >> Stream :: close :: code: ' + code + ', signal: ' + signal);
+                console.info("\x1b[32minfo\x1b[0m:",'SSH >> Stream :: close :: code: ' + code + ', signal: ' + signal);
                 conn.end();
                 sshEvent.emit("end");
             }).on('data', function (data) {
                 sshEvent.emit("data", data.toString(), stream);
             }).stderr.on('data', function (data) {
-                    logger.error('SSH >> STDERR: ' + data);
+                    console.info("\x1b[32minfo\x1b[0m:",'SSH >> STDERR: ' + data);
                 });
         });
     }).on('error', function(err) {
@@ -63,11 +62,11 @@ module.exports.execute = function (deviceIP, commands, login, password, callback
     var commandData = -1;
     sshEvent.on("ready", function (stream) {
         if (commandReady < 0) {
-            logger.info("SSH >> READY -- init -- console page 0");
+            console.info("\x1b[32minfo\x1b[0m:","SSH >> READY -- init -- console page 0");
             stream.write("console page 0\n");
             commandReady = 0;
         } else if (0 <= commandReady && commandReady < commands.length) {
-            logger.info("SSH >> READY -- command " + commandReady + " -- " + commands[commandReady]);
+            console.info("\x1b[32minfo\x1b[0m:","SSH >> READY -- command " + commandReady + " -- " + commands[commandReady]);
             if (commands[commandReady] == "enableWiFi") {
                 stream.write("show running-config | include ssid\n");
             } else if (commands[commandReady] == "disableWiFi") {
@@ -76,16 +75,16 @@ module.exports.execute = function (deviceIP, commands, login, password, callback
             commandData = commandReady;
         }
     }).on("exit", function(stream){
-        logger.info("SSH >> READY -- EXIT -- console page 22");
+        console.info("\x1b[32minfo\x1b[0m:","SSH >> READY -- EXIT -- console page 22");
         stream.write("console page 22\n");
-        logger.info("SSH >> READY -- EXIT");
+        console.info("\x1b[32minfo\x1b[0m:","SSH >> READY -- EXIT");
         stream.write("exit\n");
     }).on("data", function (data, stream) {
         if (data.indexOf("#") == (data.length - 1)) {
 
             if (0 <= commandData && commandData < commands.length) {
                 if (commands[commandData] == "enableWiFi") {
-                    logger.info("SSH >> event 'data' > " + commands[commandData]);
+                    console.info("\x1b[32minfo\x1b[0m:","SSH >> event 'data' > " + commands[commandData]);
                     var ssidList = parseSSID(data);
                     var commandString = "";
                     for (var ssid in ssidList) {
@@ -100,7 +99,7 @@ module.exports.execute = function (deviceIP, commands, login, password, callback
                         sshEvent.emit("exit", stream);
                     });
                 } else if (commands[commandData] == "disableWiFi") {
-                    logger.info("SSH >> event 'data' > " + commands[commandData]);
+                    console.info("\x1b[32minfo\x1b[0m:","SSH >> event 'data' > " + commands[commandData]);
                     var ssidList = parseSSID(data);
                     var commandString = "";
                     for (var ssid in ssidList) {

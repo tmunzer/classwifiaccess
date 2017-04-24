@@ -1,14 +1,13 @@
 var express = require('express');
 var router = express.Router();
-var Api = require(appRoot + "/models/api");
+var Api = require("../bin/models/api");
 
-var School = require(appRoot + "/models/school");
+var School = require("../bin/models/school");
 
 
 router.get('/', function(req, res, next) {
     if (req.session.passport) {
         if (req.session.passport.user.GroupId <= 2){
-            var School = require(appRoot + "/models/school");
             School.getAll(null, function (err, schoolList) {
                 if (err) {
                     Error.render(err, "classroom", req, res);
