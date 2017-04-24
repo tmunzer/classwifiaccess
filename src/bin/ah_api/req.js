@@ -1,5 +1,5 @@
 var https = require('https');
-var apiDB = require(appRoot + '/models/api');
+var apiDB = require(appRoot + '/bin/models/api');
 var logger = require(appRoot + "/app").logger;
 
 

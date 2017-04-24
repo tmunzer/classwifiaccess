@@ -1,5 +1,5 @@
 var db = require(appRoot + "/app").db;
-var School = require(appRoot + '/models/school');
+var School = require(appRoot + '/bin/models/school');
 
 function DeviceSerializer(row) {
     this.device = {};

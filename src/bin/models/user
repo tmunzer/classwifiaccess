@@ -1,7 +1,7 @@
 var db = require(appRoot + "/app").db;
-var Group = require(appRoot + '/models/group');
-var School = require(appRoot + '/models/school');
-var UiLanguage = require(appRoot + '/models/uiLanguage');
+var Group = require(appRoot + '/bin/models/group');
+var School = require(appRoot + '/bin/models/school');
+var UiLanguage = require(appRoot + '/bin/models/uiLanguage');
 
 /////////////////////////////// Update the lastLogin entry ///////////////////////////////
 newLogin = function(userId, callback){
