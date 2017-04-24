@@ -26,8 +26,6 @@ db.on('error', console.error.bind(console, '\x1b[31mERROR\x1b[0m: unable to conn
 db.once('open', function () {
   console.info("\x1b[32minfo\x1b[0m:", "Connected to mongoDB on " + mongoConfig.host + " server");
   const refreshAcsToken = require("./bin/refreshAcsToken").auto();
-  const monitor = require("./bin/monitor");
-  monitor.devices();
 });
 
 mongoose.connect('mongodb://' + mongoConfig.host + '/' + mongoConfig.base);
@@ -73,7 +71,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/bower_components',  express.static('./bower_components'));
+app.use('/bower_components',  express.static('../bower_components'));
 
 
 //===============ROUTES=================

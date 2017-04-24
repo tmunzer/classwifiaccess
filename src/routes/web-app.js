@@ -7,7 +7,7 @@ var School = require("../bin/models/school");
 
 router.get('/', function(req, res, next) {
     if (req.session.passport) {
-        if (req.session.passport.user.GroupId <= 2){
+        if (req.session.passport.user.GroupId.value <= 2){
             School.getAll(null, function (err, schoolList) {
                 if (err) {
                     Error.render(err, "classroom", req, res);

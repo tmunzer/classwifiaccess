@@ -62,7 +62,7 @@
                 </md-select>
             </md-input-container>
 
-            <md-input-container ng-show="self.gid == 1 && user.GroupId > 1" class="md-block">
+            <md-input-container ng-show="self.gid == 1 && user.GroupId.value > 1" class="md-block">
                 <label for="school"><span translate="settings.user.school"></span>
                     <span style="color: red">*</span></label>
                 <md-select id="school" ng-model="user.SchoolId">

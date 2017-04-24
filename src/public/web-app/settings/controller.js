@@ -233,7 +233,7 @@ angular.module('Settings').controller("SettingsCtrl", function ($scope, $rootSco
         })
     }
 
-    $scope.deleteApi = function (apiId) {
+    $scope.deleteApi = function (accountId) {
         $mdDialog.show({
             controller: "DialogConfirmController",
             templateUrl: "modals/modalConfirmContent.html",
@@ -243,7 +243,7 @@ angular.module('Settings').controller("SettingsCtrl", function ($scope, $rootSco
                 }
             }
         }).then(function(){
-            requestForApis = settingsApisService.deleteApi(apiId);
+            requestForApis = settingsApisService.deleteApi(accountId);
             requestForApis.then(function (promise) {
                 if (promise && promise.error) $scope.$broadcast("apiError", promise.error);
                 else getApis();
@@ -257,7 +257,7 @@ angular.module('Settings').controller("SettingsCtrl", function ($scope, $rootSco
             templateUrl: 'modals/modalApiContent.html',
             locals: {
                 items: {
-                    apiId: api.id,
+                    accountId: api.id,
                     schoolId: api.SchoolId,
                     schools: $scope.schools
                 }

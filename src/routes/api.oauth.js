@@ -10,7 +10,6 @@ router.get('/oauth/reg', function (req, res) {
             Error.render(req.query.error, "conf", req, res);
         } else {
             var authCode = req.query.authCode;
-            var api = new Api();
             api.registerApp(authCode, function (apiDataString) {
                 if (apiDataString) {
                     var apiDataJSON = JSON.parse(apiDataString);

@@ -81,14 +81,14 @@ angular.module('Modals').controller('DialogConfirmController', function ($scope,
     }
 });
 angular.module("Modals").controller("DialogApiController", function ($scope, $rootScope, $mdDialog, settingsApisService, items) {
-    $scope.apiId = items.apiId;
+    $scope.accountId = items.accountId;
     $scope.schools = items.schools;
     $scope.schoolId = items.schoolId;
     $scope.isWorking = false;
 
     $scope.save = function () {
         $scope.isWorking = true;
-        var updateApi = settingsApisService.assignApi($scope.apiId, $scope.schoolId);
+        var updateApi = settingsApisService.assignApi($scope.accountId, $scope.schoolId);
         updateApi.then(function (promise) {
             $scope.isWorking = false;
             if (promise && promise.error) $rootScope.$broadcast("apiWarning", promise.error);
@@ -268,8 +268,8 @@ angular.module("Modals").controller("DialogUserController", function ($scope, $r
         else if ($scope.user.password == "") return true;
         else if ($scope.password_confirm == "") return true;
         else if ($scope.user.password != $scope.password_confirm) return true;
-        else if (!$scope.user.GroupId > 0) return true;
-        else if ($scope.user.GroupId > 1 && !$scope.user.SchoolId > 0) return true;
+        else if (!$scope.user.GroupId.value > 0) return true;
+        else if ($scope.user.GroupId.value > 1 && !$scope.user.SchoolId > 0) return true;
         else return false;
     };
     $scope.save = function () {
@@ -315,8 +315,8 @@ angular.module("Modals").controller("DialogMyAccountController", function ($scop
         else if ($scope.user.password == "") return true;
         else if ($scope.password_confirm == "") return true;
         else if ($scope.user.password != $scope.password_confirm) return true;
-        else if (!$scope.user.GroupId > 0) return true;
-        else if ($scope.user.GroupId > 1 && !$scope.user.SchoolId > 0) return true;
+        else if (!$scope.user.GroupId.value > 0) return true;
+        else if ($scope.user.GroupId.value > 1 && !$scope.user.SchoolId > 0) return true;
         else return false;
     };
     $scope.save = function () {

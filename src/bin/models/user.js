@@ -5,11 +5,11 @@ const UserGroup = require('./userGroup');
 
 const bCrypt = require('bcryptjs');
 
-function cryptPassword (password){
+function cryptPassword(password) {
     return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
 }
 
-function capitalize (val){
+function capitalize(val) {
     if (typeof val !== 'string') val = '';
     return val.charAt(0).toUpperCase() + val.substring(1);
 }
@@ -21,48 +21,58 @@ function validateEmail(email) {
 
 const UserSchema = new mongoose.Schema({
     name: {
-        first: {type: String, set: capitalize, trim: true, default: ""},
-        last: {type: String, set: capitalize, trim: true, default: ""}
+        first: { type: String, set: capitalize, trim: true, default: "" },
+        last: { type: String, set: capitalize, trim: true, default: "" }
     },
-    email: {type: String, required: true, unique: true, validator: validateEmail},
-    password:  {type: String, required: true},
-    enable:  {type: Boolean, default: false},
-    userGroup_id:  {type: mongoose.Schema.ObjectId, ref:"UserGroup"},
-    language_id:  {type: mongoose.Schema.ObjectId, ref:"Language"},
-    school_id:  {type: mongoose.Schema.ObjectId, ref:"School"},
+    email: { type: String, required: true, unique: true, validator: validateEmail },
+    password: { type: String, required: true },
+    enable: { type: Boolean, default: false },
+    GroupId: { type: mongoose.Schema.ObjectId, ref: "UserGroup" },
+    LanguageId: { type: mongoose.Schema.ObjectId, ref: "Language" },
+    SchoolId: { type: mongoose.Schema.ObjectId, ref: "School" },
     lastLogin: Date,
-    created_at    : { type: Date },
-    updated_at    : { type: Date }
+    created_at: { type: Date },
+    updated_at: { type: Date }
 });
 
 const User = mongoose.model('User', UserSchema);
-User.newLogin = function(email, password, callback){
-    this.findOne({email: email})
-        .exec(function(err, user){
-        if (err) callback(err, null);
-        else if  (!user) callback(null, false);
-        else {
-            Password.findOne({user: user}, function(err, userPassword){
-                if (err) callback(err, null);
-                else if (user.enabled && bCrypt.compareSync(password, userPassword.password)){
-                    user.lastLogin = new Date();
-                    user.save();
-                    callback(null, user);
-                }
-                else callback(null, false);
-            })
-        }
-    })
+User.find = function (filters, callback) {
+    this.find(filters)
+        .populate('GroupId')
+        .exec(function (err, users) { callback(err, users) })
+}
+User.findById = function (id, callback) {
+    this.findById(id)
+        .populate('GroupId')
+        .exec(function (err, user) { callback(err, user) })
+}
+User.newLogin = function (email, password, callback) {
+    this.findOne({ email: email })
+        .exec(function (err, user) {
+            if (err) callback(err, null);
+            else if (!user) callback(null, false);
+            else {
+                Password.findOne({ user: user }, function (err, userPassword) {
+                    if (err) callback(err, null);
+                    else if (user.enabled && bCrypt.compareSync(password, userPassword.password)) {
+                        user.lastLogin = new Date();
+                        user.save();
+                        callback(null, user);
+                    }
+                    else callback(null, false);
+                })
+            }
+        })
 };
 
 
 
 
 // Pre save
-UserSchema.pre('save', function(next) {
+UserSchema.pre('save', function (next) {
     const now = new Date();
     this.updated_at = now;
-    if ( !this.created_at ) {
+    if (!this.created_at) {
         this.created_at = now;
     }
     next();
