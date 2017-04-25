@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const School = require('./school');
-const Language = require('./language');
-const UserGroup = require('./userGroup');
+const Group = require('./group');
 
 const bCrypt = require('bcryptjs');
 
@@ -25,10 +24,9 @@ const UserSchema = new mongoose.Schema({
         last: { type: String, set: capitalize, trim: true, default: "" }
     },
     email: { type: String, required: true, unique: true, validator: validateEmail },
-    password: { type: String, required: true },
+    password: { type: String, required: true, set: cryptPassword },
     enable: { type: Boolean, default: false },
-    GroupId: { type: mongoose.Schema.ObjectId, ref: "UserGroup" },
-    LanguageId: { type: mongoose.Schema.ObjectId, ref: "Language" },
+    GroupId: { type: mongoose.Schema.ObjectId, ref: "Group" },
     SchoolId: { type: mongoose.Schema.ObjectId, ref: "School" },
     lastLogin: Date,
     created_at: { type: Date },
@@ -36,33 +34,40 @@ const UserSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model('User', UserSchema);
-User.find = function (filters, callback) {
+User.findWithGroup = function (filters, callback) {
     this.find(filters)
         .populate('GroupId')
         .exec(function (err, users) { callback(err, users) })
 }
-User.findById = function (id, callback) {
+User.findByIdWithGroup = function (id, callback) {
     this.findById(id)
         .populate('GroupId')
         .exec(function (err, user) { callback(err, user) })
 }
+User.findOneWithGroup = function (filters, callback) {
+    this.findOne(filters)
+        .populate('GroupId')
+        .exec(function (err, user) { callback(err, user) })
+}
 User.newLogin = function (email, password, callback) {
-    this.findOne({ email: email })
-        .exec(function (err, user) {
-            if (err) callback(err, null);
-            else if (!user) callback(null, false);
+    this.findOneWithGroup({ email: email }, function (err, user) {
+        if (err) callback(err, null);
+        else if (!user) {
+            console.log("no user");
+            callback(null, false);
+        }
+        else {
+            if (user.enabled == false) callback(null, false);
+            else if (!bCrypt.compareSync(password, user.password)) callback(null, false);
             else {
-                Password.findOne({ user: user }, function (err, userPassword) {
-                    if (err) callback(err, null);
-                    else if (user.enabled && bCrypt.compareSync(password, userPassword.password)) {
-                        user.lastLogin = new Date();
-                        user.save();
-                        callback(null, user);
-                    }
-                    else callback(null, false);
-                })
+                user.lastLogin = new Date();
+                user.save(function (err) {
+                    console.log(err);
+                    callback(null, user);
+                });
             }
-        })
+        }
+    })
 };
 
 

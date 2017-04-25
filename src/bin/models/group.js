@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const UserGroupSchema = new mongoose.Schema({
+const GroupSchema = new mongoose.Schema({
     name: { type: String, required: true, unique: true },
     value: { type: String, required: true, unique: true },
     created_at: { type: Date },
@@ -8,11 +8,11 @@ const UserGroupSchema = new mongoose.Schema({
 });
 
 
-const UserGroup = mongoose.model('UserGroup', UserGroupSchema);
+const Group = mongoose.model('Group', GroupSchema);
 
 
 // Pre save
-UserGroupSchema.pre('save', function (next) {
+GroupSchema.pre('save', function (next) {
     const now = new Date();
     this.updated_at = now;
     if (!this.created_at) {
@@ -21,5 +21,5 @@ UserGroupSchema.pre('save', function (next) {
     next();
 });
 
-module.exports = UserGroup;
+module.exports = Group;
 

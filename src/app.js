@@ -25,6 +25,7 @@ global.db = mongoose.connection;
 db.on('error', console.error.bind(console, '\x1b[31mERROR\x1b[0m: unable to connect to mongoDB on ' + mongoConfig.host + ' server'));
 db.once('open', function () {
   console.info("\x1b[32minfo\x1b[0m:", "Connected to mongoDB on " + mongoConfig.host + " server");
+  const initDb = require("./bin/initDB")(); 
   const refreshAcsToken = require("./bin/refreshAcsToken").auto();
 });
 

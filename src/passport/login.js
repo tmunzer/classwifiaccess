@@ -14,35 +14,19 @@ module.exports = function (passport) {
                 if (err)
                     return done(err);
                 // Username does not exist, log the error and redirect back
-                if ((!user) || (!isValidPassword(user, password))) {
+                else if (!user) {
                     console.info("\x1b[32minfo\x1b[0m:", "User " + username + ': Wrong login or password');
                     return done(null, false, req.flash('message', "error_login_password"));
                 }
-                if (user.userEnable == "false") {
+                else if (user.userEnable == "false") {
                     console.info("\x1b[32minfo\x1b[0m:", "User " + username + ": User disabled");
                     return done(null, false, req.flash("message", "error_login_password"));
                 }
-                // User and password both match, return user from done method
-                // which will be treated like success
-                console.info("\x1b[32minfo\x1b[0m:", "User " + user.username + " is now logged in");
-                User.newLogin(user.id, function (err) {
-                    if (err) {
-                        console.log(err);
-                        return done(err);
-                    }
-                    else {
-                        return done(null, user);
-                    }
-                })
+                else return done(null, user);
             }
             );
 
         })
     );
-
-
-    var isValidPassword = function (user, password) {
-        return bCrypt.compareSync(password, user.password);
-    }
 
 };

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const User = require("../bin/models/user");
-const Group = require("../bin/models/userGroup");
+const Group = require("../bin/models/group");
 
 
 //===============================================================//
