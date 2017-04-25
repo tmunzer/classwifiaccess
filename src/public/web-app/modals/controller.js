@@ -265,11 +265,13 @@ angular.module("Modals").controller("DialogUserController", function ($scope, $r
 
     $scope.isNotValid = function () {
         if ($scope.user.username == "") return true;
-        else if ($scope.user.password == "") return true;
-        else if ($scope.password_confirm == "") return true;
-        else if ($scope.user.password != $scope.password_confirm) return true;
         else if (!$scope.user.GroupId > 0) return true;
         else if ($scope.user.GroupId > 1 && !$scope.user.SchoolId > 0) return true;
+        else if ($scope.changePassword) {
+            if ($scope.user.password == "") return true;
+            else if ($scope.password_confirm == "") return true;
+            else if ($scope.user.password != $scope.password_confirm) return true;
+        }
         else return false;
     };
     $scope.save = function () {
